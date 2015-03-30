@@ -1,5 +1,9 @@
-# django bananas
+# Django Bananas
 *Django extensions the monkey way*
+
+``` sh
+$ pip install django-bananas
+```
 
 ``` py
 class Book(TimeStampedModel):
