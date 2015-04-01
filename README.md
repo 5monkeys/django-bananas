@@ -19,13 +19,13 @@ book.date_created
 book.date_modified
 ```
 
-Extended `queryset.values()` with field renaming through kwargs, and *dot-dict* style results:
+New `queryset.dicts()` with field renaming through kwargs, and *dot-dict* style results:
 ``` py
 class Book(TimeStampedModel):
     author = ForeignKey(Author)
-    objects = Manager.from_queryset(ExtendedValuesQuerySet)()
+    objects = Manager.from_queryset(ExtendedQuerySet)()
 
->>> book = Book.objects.values('id', author='author__name').first()
+>>> book = Book.objects.dicts('id', author='author__name').first()
 {'id': 1, 'author': 'Jonas'}
 >>> book.author
 'Jonas'

@@ -1,7 +1,7 @@
 from django.db.models.query import QuerySet, ValuesQuerySet
 
 
-class ModelValues(dict):
+class ModelDict(dict):
 
     # TODO: Add lazy nested dot functionality, i.e. obj.x__y -> obj.x.y
 
@@ -12,7 +12,22 @@ class ModelValues(dict):
             return getattr(self, item)
 
 
-class NamedValuesQuerySet(ValuesQuerySet):
+class ExtendedValuesQuerySet(ValuesQuerySet):
+    """
+    Extended `ValuesQuerySet` with support for renaming fields
+    and choice of object class.
+    """
+    _values_class = dict
+
+    @property
+    def named_fields(self):
+        return getattr(self, '_named_fields')
+
+    def rename_fields(self, names):
+        named_fields = self.named_fields
+        if named_fields:
+            names = [named_fields.get(name, name) for name in names]
+        return names
 
     def iterator(self):
         """
@@ -23,28 +38,28 @@ class NamedValuesQuerySet(ValuesQuerySet):
         field_names = self.field_names
         annotation_names = list(self.query.annotation_select)
 
-        names = extra_names + field_names + annotation_names
-
         # Modified super(); rename fields given in queryset.values() kwargs
-        if hasattr(self, '_renames'):
-            names = [self._renames.get(name, name) for name in names]
+        names = self.rename_fields(extra_names + field_names + annotation_names)
 
         for row in self.query.get_compiler(self.db).results_iter():
-            yield ModelValues(zip(names, row))
+            yield self._values_class(zip(names, row))
 
     def _clone(self, klass=None, setup=False, **kwargs):
-        kwargs.update(_renames=getattr(self, '_renames', {}))
+        kwargs.update(_named_fields=self.named_fields,
+                      _values_class=self._values_class)
         return super()._clone(klass=klass, setup=setup, **kwargs)
 
 
-class ExtendedValuesMixin:
+class DictValuesMixin:
 
-    def values(self, *fields, **named_fields):
-        _fields = fields + tuple(named_fields.values())
-        _renames = {value: key for key, value in named_fields.items()}
-        return self._clone(klass=NamedValuesQuerySet, setup=True,
-                           _fields=_fields, _renames=_renames)
+    def dicts(self, *fields, **named_fields):
+        if named_fields:
+            named_fields = {value: key for key, value in named_fields.items()}
+            fields = fields + tuple(named_fields.keys())
+        return self._clone(klass=ExtendedValuesQuerySet, setup=True,
+                           _fields=fields, _named_fields=named_fields,
+                           _values_class=ModelDict)
 
 
-class ExtendedValuesQuerySet(ExtendedValuesMixin, QuerySet):
+class ExtendedQuerySet(DictValuesMixin, QuerySet):
     pass
