@@ -30,3 +30,30 @@ class Book(TimeStampedModel):
 >>> book.author
 'Jonas'
 ```
+
+Admin theme:
+``` py
+# settings.py
+INSTALLED_APPS = (
+    'bananas',  # Needs to be before 'django.contrib.admin'
+    'django.contrib.admin',
+    ...
+)
+
+ADMIN = {
+    'SITE_HEADER': 'Bananas',
+    'SITE_TITLE': 'Bananas Admin',
+    'INDEX_TITLE': 'Admin Panel',
+    # 'BACKGROUND_COLOR': '#363c3f',
+}
+```
+
+``` py
+# urls.py
+from bananas import admin
+
+urlpatterns = [
+    ...
+    url(r'^admin/', include(admin.site.urls)),
+]
+```
