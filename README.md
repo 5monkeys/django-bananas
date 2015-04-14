@@ -10,6 +10,7 @@ $ pip install django-bananas
 
 ### Examples
 
+#### Models
 Abstract `TimeStampedModel` with date created/modified fields:
 ``` py
 class Book(TimeStampedModel):
@@ -19,6 +20,7 @@ book.date_created
 book.date_modified
 ```
 
+#### ORM
 New `queryset.dicts()` with field renaming through kwargs, and *dot-dict* style results:
 ``` py
 class Book(TimeStampedModel):
@@ -31,7 +33,11 @@ class Book(TimeStampedModel):
 'Jonas'
 ```
 
-Admin theme:
+#### Admin
+Custom django admin stylesheet.
+
+> **Note:** Work-in-progress! Only a few views styled and not tested cross-browser.
+
 ``` py
 # settings.py
 INSTALLED_APPS = (
