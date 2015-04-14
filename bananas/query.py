@@ -9,7 +9,7 @@ class ModelDict(dict):
         try:
             return self.__getitem__(item)
         except KeyError:
-            return getattr(self, item)
+            return self.__getattribute__(item)
 
 
 class ExtendedValuesQuerySet(ValuesQuerySet):
