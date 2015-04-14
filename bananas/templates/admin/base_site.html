@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% load admin_static %}
+
+{% block bodyclass %}bananas{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/bananas.css" %}" />
+    <style stype="text/css">
+        body {
+            background: {{ settings.BACKGROUND_COLOR }};
+        }
+        body.login {
+            background: {{ settings.BACKGROUND_COLOR }};
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+{% endblock %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

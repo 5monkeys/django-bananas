@@ -1,0 +1,249 @@
+* {
+  -webkit-font-smoothing: antialiased;
+  text-shadow: rgba(0, 0, 0, 0.01) 0 0 1px;
+  font-family: "Helvetica Neue","Myriad Set Pro","Lucida Grande","Helvetica","Arial","Verdana",sans-serif !important; }
+
+body.bananas {
+  color: rgba(255, 255, 255, 0.8);
+  /*** Form ***/
+  /*** Table ***/
+  /*** Changelist ***/
+  /*** Inlines ***/
+  /*** Login ***/
+  /** Messages **/
+  /*** Icons ***/
+  /*** Dashboard ***/ }
+  body.bananas a:link, body.bananas a:visited {
+    color: #76CFF5; }
+  body.bananas a:hover {
+    text-decoration: underline; }
+  body.bananas #header {
+    background-color: rgba(0, 0, 0, 0.2); }
+  body.bananas #branding h1 {
+    padding: 0 15px; }
+  body.bananas #branding h1, body.bananas #branding h1 a:link, body.bananas #branding h1 a:visited {
+    color: #fff; }
+  body.bananas div.breadcrumbs {
+    background: rgba(0, 0, 0, 0.05);
+    border-top: 0;
+    border-bottom: 0;
+    padding: 5px 15px;
+    font-size: 1.1em; }
+  body.bananas h1 {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 2.2em;
+    font-weight: normal;
+    margin: 0 0 .5em 0; }
+  body.bananas #content-related .module h2 {
+    background: rgba(0, 0, 0, 0.1);
+    color: #fff; }
+  body.bananas #content-related h3 {
+    color: rgba(255, 255, 255, 0.8); }
+  body.bananas .module {
+    border: 0;
+    /*background: rgba(0, 0, 0, 0.2);*/
+    background: transparent;
+    margin-bottom: 15px; }
+  body.bananas .module h2, body.bananas .module caption, body.bananas .inline-group h2 {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px 12px;
+    font-size: 1.2em;
+    font-weight: normal; }
+    body.bananas .module h2 a, body.bananas .module caption a, body.bananas .inline-group h2 a {
+      color: rgba(255, 255, 255, 0.9); }
+      body.bananas .module h2 a:hover, body.bananas .module caption a:hover, body.bananas .inline-group h2 a:hover {
+        text-decoration: none; }
+  body.bananas .form-row {
+    border-bottom: 0;
+    /*border-bottom: 1px solid rgba(255, 255, 255, 0.1);*/ }
+  body.bananas .form-row:last-child {
+    /*border-bottom: 1px solid transparent;*/ }
+  body.bananas label {
+    font-size: 1.3em;
+    color: rgba(255, 255, 255, 0.5) !important; }
+  body.bananas .required label, body.bananas label.required {
+    font-weight: normal !important;
+    /*font-size: 1.2em;*/
+    color: rgba(255, 255, 255, 0.75) !important; }
+  body.bananas .submit-row {
+    background: transparent;
+    border: 0; }
+  body.bananas .button, body.bananas input[type=submit], body.bananas input[type=button], body.bananas .submit-row input, body.bananas a.button {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 0 15px;
+    height: 35px;
+    line-height: 35px;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 1.2em; }
+  body.bananas .button:hover, body.bananas input[type=submit]:hover, body.bananas input[type=button]:hover, body.bananas .submit-row input:hover, body.bananas a.button:hover {
+    background: rgba(255, 255, 255, 0.1); }
+  body.bananas .button.default, body.bananas input[type=submit].default, body.bananas .submit-row input.default {
+    border: 0;
+    background: #7CA0A7; }
+  body.bananas .button.default:hover, body.bananas input[type=submit].default:hover, body.bananas .submit-row input.default:hover {
+    background: #4c7483; }
+  body.bananas input[type=text], body.bananas input[type=password], body.bananas input[type=email], body.bananas input[type=url], body.bananas input[type=number], body.bananas textarea, body.bananas select, body.bananas .vTextField {
+    border-radius: 2px;
+    /*border: 0;*/
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.2em;
+    padding: 5px 10px; }
+  body.bananas td, body.bananas th {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.2em;
+    padding: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "Helvetica Neue","Myriad Set Pro","Lucida Grande","Helvetica","Arial","Verdana",sans-serif !important; }
+  body.bananas tbody tr:hover {
+    background: rgba(0, 0, 0, 0.1); }
+  body.bananas tbody tr:last-child td, body.bananas tbody tr:last-child th {
+    border-bottom: 0; }
+  body.bananas thead th {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 8px; }
+  body.bananas thead th, body.bananas tfoot td {
+    background: transparent;
+    border-left: 0;
+    font-size: 1.2em;
+    color: rgba(255, 255, 255, 0.8); }
+  body.bananas thead th.sorted {
+    background: transparent;
+    font-style: italic; }
+  body.bananas table thead th.sortable:hover {
+    background: transparent; }
+  body.bananas thead th a:link, body.bananas thead th a:visited {
+    color: rgba(255, 255, 255, 0.8); }
+  body.bananas table thead th .text a:hover {
+    color: #76CFF5;
+    text-decoration: none; }
+  body.bananas .row1 {
+    /*background: rgba(0, 0, 0, 0.1);*/
+    background: transparent; }
+  body.bananas .row2 {
+    background: transparent; }
+  body.bananas #changelist table thead th {
+    padding: 8px 3px; }
+  body.bananas #changelist table tbody td:first-child, body.bananas #changelist table tbody th:first-child {
+    border-right: 0; }
+  body.bananas #changelist table tbody td, body.bananas #changelist table tbody th {
+    border-left: 0; }
+  body.bananas #changelist table tbody tr.selected {
+    background-color: rgba(0, 0, 0, 0.2); }
+  body.bananas #changelist .actions {
+    /*background: rgba(0, 0, 0, 0.1);*/
+    background: transparent;
+    padding: 0;
+    margin-left: -0.5em;
+    border: 0; }
+  body.bananas #changelist .paginator {
+    background: transparent;
+    border: 0;
+    color: rgba(255, 255, 255, 0.5); }
+  body.bananas #changelist .actions .button {
+    line-height: 20px;
+    height: 20px;
+    padding: 0 10px; }
+  body.bananas .object-tools a:link, body.bananas .object-tools a:visited {
+    background-color: rgba(0, 0, 0, 0.2);
+    font-size: 1.3em;
+    line-height: 1.4em;
+    font-weight: normal; }
+  body.bananas .object-tools a:hover, body.bananas .object-tools li:hover a {
+    background-color: #7CA0A7;
+    text-decoration: none; }
+  body.bananas .inline-group {
+    border: 0; }
+  body.bananas .inline-related fieldset {
+    background: transparent; }
+  body.bananas fieldset table {
+    border: 0; }
+  body.bananas .inline-group div.add-row, body.bananas .inline-group .tabular tr.add-row td {
+    background: transparent; }
+  body.bananas .inline-group .tabular fieldset.module {
+    border-bottom: 0; }
+  body.bananas.login #container {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 0; }
+  body.bananas #content {
+    /*background-color: ;*/ }
+  body.bananas ul.messagelist li {
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 0;
+    padding: 10px 15px;
+    font-weight: normal; }
+  body.bananas ul.messagelist li.success {
+    color: #9c9;
+    background: rgba(0, 30, 0, 0.3); }
+  body.bananas .errornote {
+    border: 0;
+    color: #c66;
+    background: rgba(30, 0, 0, 0.3);
+    margin-top: 10px;
+    padding: 10px 12px;
+    font-weight: normal; }
+  body.bananas .form-row.errors {
+    border: 0; }
+  body.bananas .errors, body.bananas .form-row.errors {
+    background: transparent; }
+  body.bananas ul.errorlist {
+    color: #c66;
+    background: rgba(30, 0, 0, 0.3);
+    margin: 0 -10px 4px !important; }
+  body.bananas ul.errorlist li {
+    padding: 8px 10px; }
+  body.bananas img[src*="icon-yes"],
+  body.bananas img[src*="icon-no"] {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1px; }
+  body.bananas.dashboard #content {
+    width: auto;
+    margin-top: 15px; }
+  body.bananas.dashboard #content h1 {
+    display: none; }
+  body.bananas.dashboard #content .module table {
+    width: 100%; }
+  body.bananas.dashboard #content .module tbody tr {
+    display: block;
+    width: 200px;
+    float: left;
+    margin: 15px 15px 0 0;
+    border-radius: 3px; }
+  body.bananas.dashboard #content .module tbody th,
+  body.bananas.dashboard #content .module tbody td {
+    padding: 0;
+    border: 0; }
+  body.bananas.dashboard #content .module tbody th {
+    background: rgba(0, 0, 0, 0.2);
+    display: block; }
+  body.bananas.dashboard #content .module tbody th a {
+    display: block;
+    line-height: 100px;
+    text-align: center;
+    font-size: 2.2em;
+    font-weight: 200; }
+  body.bananas.dashboard #content .module tbody th a:hover {
+    background: rgba(0, 0, 0, 0.1);
+    text-decoration: none; }
+  body.bananas.dashboard #content .module tbody td {
+    background: rgba(0, 0, 0, 0.1);
+    display: block;
+    float: left;
+    width: 50%;
+    margin-top: 1px;
+    text-align: center; }
+  body.bananas.dashboard #content .module tbody td a {
+    padding: 10px 0;
+    background: none;
+    color: #fff; }
+  body.bananas.dashboard #content .module tbody td a:hover {
+    background: rgba(0, 0, 0, 0.1);
+    text-decoration: none; }
+
+/*# sourceMappingURL=bananas.css.map */
