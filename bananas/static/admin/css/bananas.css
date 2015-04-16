@@ -7,7 +7,6 @@ body.bananas {
   color: rgba(255, 255, 255, 0.8);
   /*** Form ***/
   /*** Table ***/
-  /*** Changelist ***/
   /*** Inlines ***/
   /*** Login ***/
   /** Messages **/
@@ -41,8 +40,7 @@ body.bananas {
     color: rgba(255, 255, 255, 0.8); }
   body.bananas .module {
     border: 0;
-    /*background: rgba(0, 0, 0, 0.2);*/
-    background: transparent;
+    background: transparent !important;
     margin-bottom: 15px; }
   body.bananas .module h2, body.bananas .module caption, body.bananas .inline-group h2 {
     background: rgba(0, 0, 0, 0.1);
@@ -134,28 +132,6 @@ body.bananas {
     border-left: 0; }
   body.bananas #changelist table tbody tr.selected {
     background-color: rgba(0, 0, 0, 0.2); }
-  body.bananas #changelist .actions {
-    /*background: rgba(0, 0, 0, 0.1);*/
-    background: transparent;
-    padding: 0;
-    margin-left: -0.5em;
-    border: 0; }
-  body.bananas #changelist .paginator {
-    background: transparent;
-    border: 0;
-    color: rgba(255, 255, 255, 0.5); }
-  body.bananas #changelist .actions .button {
-    line-height: 20px;
-    height: 20px;
-    padding: 0 10px; }
-  body.bananas .object-tools a:link, body.bananas .object-tools a:visited {
-    background-color: rgba(0, 0, 0, 0.2);
-    font-size: 1.3em;
-    line-height: 1.4em;
-    font-weight: normal; }
-  body.bananas .object-tools a:hover, body.bananas .object-tools li:hover a {
-    background-color: #7CA0A7;
-    text-decoration: none; }
   body.bananas .inline-group {
     border: 0; }
   body.bananas .inline-related fieldset {
@@ -245,5 +221,79 @@ body.bananas {
   body.bananas.dashboard #content .module tbody td a:hover {
     background: rgba(0, 0, 0, 0.1);
     text-decoration: none; }
+
+body.bananas #changelist #toolbar {
+  background: transparent;
+  border-bottom: 0;
+  margin-bottom: 15px; }
+  body.bananas #changelist #toolbar label[for="searchbar"]:before {
+    content: "Search: "; }
+  body.bananas #changelist #toolbar label[for="searchbar"] img {
+    display: None; }
+  body.bananas #changelist #toolbar form input {
+    font-size: 1.2em; }
+    body.bananas #changelist #toolbar form input[type="submit"] {
+      padding: 0 10px;
+      height: 23px;
+      line-height: 23px; }
+body.bananas #changelist .actions {
+  /*background: rgba(0, 0, 0, 0.1);*/
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0;
+  margin-left: -0.5em;
+  border: 0; }
+  body.bananas #changelist .actions label {
+    font-size: 1.2em; }
+    body.bananas #changelist .actions label select {
+      font-size: 1.1em; }
+  body.bananas #changelist .actions .button {
+    line-height: 23px;
+    height: 23px;
+    padding: 0 10px;
+    vertical-align: middle;
+    font-size: 1.2em; }
+body.bananas #changelist .results {
+  margin-bottom: 15px; }
+body.bananas #changelist .paginator {
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.5); }
+body.bananas .object-tools a:link, body.bananas .object-tools a:visited {
+  background-color: rgba(0, 0, 0, 0.2);
+  font-size: 1.3em;
+  line-height: 1.4em;
+  font-weight: normal; }
+body.bananas .object-tools a:hover, body.bananas .object-tools li:hover a {
+  background-color: rgba(0, 0, 0, 0.3);
+  text-decoration: none; }
+
+#changelist-filter {
+  right: auto;
+  background: transparent;
+  border-left: 0; }
+  #changelist-filter h2 {
+    display: none; }
+  #changelist-filter h3 {
+    margin-top: 0;
+    color: rgba(255, 255, 255, 0.7); }
+  #changelist-filter a {
+    color: rgba(255, 255, 255, 0.7); }
+    #changelist-filter a:hover {
+      color: white; }
+  #changelist-filter li.selected a {
+    color: #76CFF5 !important;
+    font-weight: bold; }
+
+.filtered .actions,
+.change-list .filtered .results,
+.change-list .filtered .paginator,
+.filtered #toolbar,
+.filtered div.xfull {
+  margin-left: 160px !important;
+  margin-right: 0 !important; }
+
+.change-list .filtered table {
+  border-right: 0; }
 
 /*# sourceMappingURL=bananas.css.map */

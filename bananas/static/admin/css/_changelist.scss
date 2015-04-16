@@ -1,0 +1,119 @@
+body.bananas {
+
+  #changelist #toolbar {
+    background: transparent;
+    border-bottom: 0;
+    margin-bottom: 15px;
+
+    label[for="searchbar"] {
+      &:before {
+        content: "Search: ";
+      }
+
+      img {
+        display: None;
+      }
+    }
+
+    form input {
+      font-size: 1.2em;
+
+      &[type="submit"] {
+        padding: 0 10px;
+        height: 23px;
+        line-height: 23px;
+      }
+    }
+  }
+
+  #changelist {
+    .actions {
+      /*background: rgba(0, 0, 0, 0.1);*/
+      background: transparent;
+      color: rgba(255, 255, 255, 0.5);
+      padding: 0;
+      margin-left: -0.5em;
+      border: 0;
+
+      label {
+        font-size: 1.2em;
+
+        select {
+          font-size: 1.1em;
+        }
+      }
+
+      .button {
+        line-height: 23px;
+        height: 23px;
+        padding: 0 10px;
+        vertical-align: middle;
+        font-size: 1.2em;
+      }
+    }
+
+    .results {
+      margin-bottom: 15px;
+    }
+  }
+
+  #changelist .paginator {
+    background: transparent;
+    border: 0;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .object-tools a:link, .object-tools a:visited {
+    background-color: rgba(0, 0, 0, 0.2);
+    font-size: 1.3em;
+    line-height: 1.4em;
+    font-weight: normal;
+  }
+
+  .object-tools a:hover, .object-tools li:hover a {
+    background-color: rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+  }
+
+}
+
+#changelist-filter {
+  right: auto;
+  background: transparent;
+  border-left: 0;
+
+  h2 {
+    display: none;
+  }
+
+  h3 {
+    margin-top: 0;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  a {
+    color: rgba(255, 255, 255, 0.7);
+
+    &:hover {
+      color: rgba(255, 255, 255, 1.0);
+    }
+  }
+
+  li.selected a {
+    color: $link-color !important;
+    font-weight: bold;
+  }
+}
+
+.filtered .actions,
+.change-list .filtered .results,
+.change-list .filtered .paginator,
+.filtered #toolbar,
+.filtered div.xfull {
+  margin-left: 160px !important;
+  margin-right: 0 !important;
+}
+
+.change-list .filtered table {
+  border-right: 0;
+}

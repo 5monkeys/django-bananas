@@ -1,3 +1,5 @@
+@import "variables";
+
 * {
     -webkit-font-smoothing: antialiased;
     text-shadow: rgba(0,0,0,.01) 0 0 1px;
@@ -8,7 +10,7 @@ body.bananas {
   color: rgba(255, 255, 255, 0.8);
 
   a:link, a:visited {
-      color: #76CFF5;
+      color: $link-color;
   }
   a:hover {
       text-decoration: underline;
@@ -52,8 +54,7 @@ body.bananas {
 
   .module {
       border: 0;
-      /*background: rgba(0, 0, 0, 0.2);*/
-      background: transparent;
+      background: transparent !important;
       margin-bottom: 15px;
   }
 
@@ -208,40 +209,6 @@ body.bananas {
       background-color: rgba(0, 0, 0, 0.2);
   }
 
-  /*** Changelist ***/
-
-  #changelist .actions {
-      /*background: rgba(0, 0, 0, 0.1);*/
-      background: transparent;
-      padding: 0;
-      margin-left: -0.5em;
-      border: 0;
-  }
-
-  #changelist .paginator {
-      background: transparent;
-      border: 0;
-      color: rgba(255, 255, 255, 0.5);
-  }
-
-  #changelist .actions .button {
-      line-height: 20px;
-      height: 20px;
-      padding: 0 10px;
-  }
-
-  .object-tools a:link, .object-tools a:visited {
-      background-color: rgba(0, 0, 0, 0.2);
-      font-size: 1.3em;
-      line-height: 1.4em;
-      font-weight: normal;
-  }
-
-  .object-tools a:hover, .object-tools li:hover a {
-      background-color: #7CA0A7;
-      text-decoration: none;
-  }
-
   /*** Inlines ***/
 
   .inline-group {
@@ -393,3 +360,5 @@ body.bananas {
   }
 
 }
+
+@import "changelist";
