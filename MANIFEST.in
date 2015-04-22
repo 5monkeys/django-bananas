@@ -1,0 +1,6 @@
+include setup.py README.md MANIFEST.in LICENSE AUTHORS
+
+recursive-include bananas/templates *
+recursive-include bananas/static *
+
+global-exclude *~
