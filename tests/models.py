@@ -6,8 +6,11 @@ from bananas.query import ExtendedQuerySet
 
 
 class Parent(TimeStampedModel):
+    name = models.CharField(max_length=255)
     objects = Manager.from_queryset(ExtendedQuerySet)()
 
 
 class Child(TimeStampedModel):
-    parent = models.ForeignKey(Parent)
+    name = models.CharField(max_length=255)
+    parent = models.ForeignKey(Parent, null=True)
+    objects = Manager.from_queryset(ExtendedQuerySet)()

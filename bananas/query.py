@@ -1,15 +1,83 @@
+from itertools import chain
 from django.db.models.query import QuerySet, ValuesQuerySet
+
+MISSING = object()
 
 
 class ModelDict(dict):
 
-    # TODO: Add lazy nested dot functionality, i.e. obj.x__y -> obj.x.y
+    _nested = None
 
     def __getattr__(self, item):
+        """
+        Try to to get attribute as key item.
+        Fallback on prefixed nested keys.
+        Finally fallback on real attribute lookup.
+        """
         try:
             return self.__getitem__(item)
         except KeyError:
-            return self.__getattribute__(item)
+            try:
+                return self.__getnested__(item)
+            except KeyError:
+                return self.__getattribute__(item)
+
+    def __getnested__(self, item):
+        """
+        Find existing items prefixed with given item
+        and return a new ModelDict containing matched keys,
+        stripped from prefix.
+
+        :param str item: Item prefix key to find
+        :return ModelDict:
+        """
+        # Ensure _nested cache
+        if self._nested is None:
+            self._nested = {}
+
+        # Try to get previously accessed/cached nested item
+        value = self._nested.get(item, MISSING)
+
+        if value is not MISSING:
+            # Return previously accessed nested item
+            return value
+
+        else:
+            # Find any keys matching nested prefix
+            prefix = item + '__'
+            keys = [key for key in self.keys() if key.startswith(prefix)]
+
+            if keys:
+                # Construct nested dict of matched keys, stripped from prefix
+                n = ModelDict({key[len(item)+2:]: self[key] for key in keys})
+
+                # Cache and return
+                self._nested[item] = n
+                return n
+
+        # Item not a nested key, raise
+        raise KeyError(item)
+
+    @classmethod
+    def from_model(cls, model, *fields, **named_fields):
+        """
+        Work-in-progress constructor,
+        consuming fields and values from django model instance.
+        """
+        d = ModelDict()
+
+        for name, field in chain(zip(fields, fields), named_fields.items()):
+            _fields = field.split('__')
+            value = model
+            for i, _field in enumerate(_fields, start=1):
+                value = getattr(value, _field)
+                if value is None:
+                    name = '__'.join(_fields[:i])
+                    break
+
+            d[name] = value
+
+        return d
 
 
 class ExtendedValuesQuerySet(ValuesQuerySet):

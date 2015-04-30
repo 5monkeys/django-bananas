@@ -1,14 +1,44 @@
 from django.test import TestCase
+from bananas.query import ModelDict
 from .models import Parent, Child
 
 
 class QuerySetTest(TestCase):
 
     def setUp(self):
-        parent = Parent.objects.create()
-        Child.objects.create(parent=parent)
+        self.parent = Parent.objects.create(name='A')
+        self.child = Child.objects.create(name='B', parent=self.parent)
+
+    def test_modeldict(self):
+        d = ModelDict(foo='bar', baz__ham='spam')
+        self.assertIn('foo', d, 'should have key "foo"')
+        self.assertNotIn('baz', d, 'should not have key "baz"')
+        self.assertRaises(AttributeError, d.__getattr__, 'x')
+        self.assertTrue(hasattr(d, 'foo'), 'should not have real attr "foo"')
+        self.assertEqual(d.foo, 'bar')
+        self.assertEqual(d.baz__ham, 'spam')
+        self.assertIsInstance(d.baz, ModelDict, 'should lazy resolve sub dict')
+
+    def test_modeldict_from_model(self):
+        d = ModelDict.from_model(self.child, 'id', 'parent__id', 'parent__name')
+        self.assertDictEqual(d, {
+            'id': self.child.id,
+            'parent__id': self.parent.id,
+            'parent__name': 'A'
+        })
+        self.assertTrue(d.parent)
+
+        _child = Child.objects.create(name='B')
+        d = ModelDict.from_model(_child, 'id', 'parent__id', 'parent__name')
+        self.assertDictEqual(d, {
+            'id': _child.id,
+            'parent': None,
+        })
 
     def test_dicts(self):
         self.assertTrue(hasattr(Parent.objects, 'dicts'))
-        parent = Parent.objects.dicts('id', 'child__date_created').first()
-        self.assertIsNotNone(parent.id)
+
+        child = Child.objects.dicts('name', 'parent__name').first()
+        self.assertEqual(child.name, self.child.name)
+        self.assertNotIn('parent', child)
+        self.assertEqual(child.parent.name, self.parent.name)
