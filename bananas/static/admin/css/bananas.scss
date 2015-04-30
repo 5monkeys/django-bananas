@@ -136,6 +136,27 @@ body.bananas {
       padding: 5px 10px;
   }
 
+  form .aligned p.help {
+      padding-left: 40px;
+  }
+
+  .aligned label {
+      width: 7em;
+  }
+
+  form .aligned p, form .aligned ul {
+      padding-left: 33px;
+  }
+
+  form .aligned .checkbox-row {
+      margin-left: 7em;
+      padding-left: 33px;
+  }
+
+  form .aligned ul li {
+      list-style-type: none;
+  }
+
   /*** Table ***/
 
   td, th {

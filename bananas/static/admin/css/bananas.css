@@ -91,6 +91,17 @@ body.bananas {
     color: rgba(255, 255, 255, 0.8);
     font-size: 1.2em;
     padding: 5px 10px; }
+  body.bananas form .aligned p.help {
+    padding-left: 40px; }
+  body.bananas .aligned label {
+    width: 7em; }
+  body.bananas form .aligned p, body.bananas form .aligned ul {
+    padding-left: 33px; }
+  body.bananas form .aligned .checkbox-row {
+    margin-left: 7em;
+    padding-left: 33px; }
+  body.bananas form .aligned ul li {
+    list-style-type: none; }
   body.bananas td, body.bananas th {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     font-size: 1.2em;
