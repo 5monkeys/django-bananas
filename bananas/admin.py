@@ -31,7 +31,7 @@ class ExtendedAdminSite(AdminSite):
     def urls(self):
         if self.settings['INHERIT_REGISTERED_MODELS']:
             for model, admin in list(django_admin_site._registry.items()):
-                django_admin_site.unregister(model)
+                # django_admin_site.unregister(model)
                 self._registry[model] = admin.__class__(model, self)
         return self.get_urls(), 'admin', self.name
 
