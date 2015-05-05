@@ -1,3 +1,4 @@
+import math
 import base64
 import os
 import uuid
@@ -44,12 +45,14 @@ class SecretField(models.CharField):
                               ' min_length=%(min_length)s')
     }
 
-    def __init__(self, verbose_name=None, length=24, min_length=24, auto=True,
+    def __init__(self, verbose_name=None, num_bytes=24, min_bytes=24, auto=True,
                  **kwargs):
-        self.length, self.auto, self.min_length = length, auto, min_length
+        self.num_bytes, self.auto, self.min_length = num_bytes, auto, min_bytes
+
+        field_length = self.get_field_length(self.num_bytes)
 
         defaults = {
-            'max_length': length,
+            'max_length': field_length,
         }
         defaults.update(kwargs)
 
@@ -58,6 +61,16 @@ class SecretField(models.CharField):
             defaults['blank'] = True
 
         super(SecretField, self).__init__(verbose_name, **defaults)
+
+    @staticmethod
+    def get_field_length(num_bytes):
+        """
+        Return the length of hexadecimal byte representation of ``n`` bytes.
+
+        :param num_bytes:
+        :return: The field length required to store the byte representation.
+        """
+        return num_bytes * 2
 
     def pre_save(self, model_instance, add):
         if self.auto and add:
@@ -85,10 +98,21 @@ class SecretField(models.CharField):
                                           'min_length': self.min_length})
 
     def get_random_bytes(self):
-        return os.urandom(self.length)
+        return os.urandom(self.num_bytes)
 
 
 class URLSecretField(SecretField):
+    @staticmethod
+    def get_field_length(num_bytes):
+        """
+        Get the maximum possible length of a base64 encoded bytearray of
+        length ``length``.
+
+        :param num_bytes: The length of the bytearray
+        :return: The worst case length of the base64 result.
+        """
+        return math.ceil(num_bytes / 3.0) * 4
+
     @staticmethod
     def y64_encode(s):
         """
