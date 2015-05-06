@@ -130,4 +130,4 @@ class URLSecretField(SecretField):
     def get_random_str(self):
         random = self.get_random_bytes()
         self._check_random_bytes(random)
-        return self.y64_encode(random)
+        return self.y64_encode(random).decode('utf-8')

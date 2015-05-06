@@ -1,6 +1,7 @@
+import re
 from django.test import TestCase
 from bananas.query import ModelDict
-from .models import Parent, Child
+from .models import Parent, Child, TestUUIDModel, SecretModel, URLSecretModel
 
 
 class QuerySetTest(TestCase):
@@ -42,3 +43,37 @@ class QuerySetTest(TestCase):
         self.assertEqual(child.name, self.child.name)
         self.assertNotIn('parent', child)
         self.assertEqual(child.parent.name, self.parent.name)
+
+    def test_uuid_model(self):
+        first = TestUUIDModel.objects.create(text='first')
+
+        second = TestUUIDModel.objects.create(text='second',
+                                              parent=first)
+
+        self.assertEqual(TestUUIDModel.objects.get(parent=first), second)
+        self.assertEqual(TestUUIDModel.objects.get(parent__pk=first.pk),
+                         second)
+
+    def test_secret_field(self):
+        model = SecretModel.objects.create()
+
+        field = SecretModel._meta.get_field('secret')
+
+        field_length = field.get_field_length(field.num_bytes)
+
+        self.assertEqual(len(model.secret), field_length)
+
+    def test_url_secret_field_field_length(self):
+        model = URLSecretModel.objects.create()
+
+        field = URLSecretModel._meta.get_field('secret')
+
+        field_length = field.get_field_length(field.num_bytes)
+
+        # secret value may be shorter
+        self.assertLessEqual(len(model.secret), field_length)
+
+    def test_url_secret_field_is_safe(self):
+        model = URLSecretModel.objects.create()
+
+        self.assertRegex(model.secret, r'^[A-Za-z0-9._-]+$')

@@ -13,7 +13,7 @@ def main():
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
     failures = test_runner.run_tests(["tests"])
-    sys.exit(bool(failures))
+    sys.exit(1 if failures else 0)
 
 
 if __name__ == "__main__":
