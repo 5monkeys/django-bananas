@@ -1,7 +1,10 @@
+import logging
 from itertools import chain
 from django.db.models.query import QuerySet, ValuesQuerySet
 
 MISSING = object()
+
+_log = logging.getLogger(__name__)
 
 
 class ModelDict(dict):
@@ -66,6 +69,13 @@ class ModelDict(dict):
         """
         d = ModelDict()
 
+        if not len(fields):
+            # Default to all fields
+            fields = [f.attname for f in model._meta.concrete_fields]
+
+        # Always get 'pk'
+        fields += ('pk',)
+
         for name, field in chain(zip(fields, fields), named_fields.items()):
             _fields = field.split('__')
             value = model
@@ -98,9 +108,6 @@ class ExtendedValuesQuerySet(ValuesQuerySet):
         return names
 
     def iterator(self):
-        """
-        Source copied from super to decrease nof dict initializations
-        """
         # Purge any extra columns that haven't been explicitly asked for
         extra_names = list(self.query.extra_select)
         field_names = self.field_names
@@ -110,12 +117,19 @@ class ExtendedValuesQuerySet(ValuesQuerySet):
         names = self.rename_fields(extra_names + field_names + annotation_names)
 
         for row in self.query.get_compiler(self.db).results_iter():
-            yield self._values_class(zip(names, row))
+            # Add 'pk' alias to result
+            values = dict(zip(names, row))
+            values.update({'pk': values[self.model._meta.pk.name]})
+
+            yield self._values_class(values)
 
     def _clone(self, klass=None, setup=False, **kwargs):
         kwargs.update(_named_fields=self.named_fields,
-                      _values_class=self._values_class)
-        return super()._clone(klass=klass, setup=setup, **kwargs)
+                      _values_class=self._values_class,
+                      klass=klass,
+                      setup=setup)
+
+        return super()._clone(**kwargs)
 
 
 class DictValuesMixin:
@@ -124,6 +138,11 @@ class DictValuesMixin:
         if named_fields:
             named_fields = {value: key for key, value in named_fields.items()}
             fields = fields + tuple(named_fields.keys())
+
+        # Always include pk field so that pk alias can be resolved in
+        # ExtendedValuesQuerySet.iterator()
+        fields += (self.model._meta.pk.name,)
+
         return self._clone(klass=ExtendedValuesQuerySet, setup=True,
                            _fields=fields, _named_fields=named_fields,
                            _values_class=ModelDict)
