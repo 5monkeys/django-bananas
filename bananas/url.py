@@ -20,7 +20,8 @@ Currently supported engines are:
  sqlite, sqlite3                django.db.backends.sqlite3
 ==============================  ===========================================
 
-You can add your own by running ``register(scheme, module)`` before parsing.
+You can add your own by running ``register(scheme, module_name)`` before
+parsing.
 """
 from collections import namedtuple
 
