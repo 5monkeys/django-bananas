@@ -45,7 +45,7 @@ class SecretField(models.CharField):
                               ' min_length=%(min_length)s')
     }
 
-    def __init__(self, verbose_name=None, num_bytes=24, min_bytes=24, auto=True,
+    def __init__(self, verbose_name=None, num_bytes=32, min_bytes=32, auto=True,
                  **kwargs):
         self.num_bytes, self.auto, self.min_length = num_bytes, auto, min_bytes
 
