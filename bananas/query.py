@@ -73,9 +73,6 @@ class ModelDict(dict):
             # Default to all fields
             fields = [f.attname for f in model._meta.concrete_fields]
 
-        # Always get 'pk'
-        fields += ('pk',)
-
         for name, field in chain(zip(fields, fields), named_fields.items()):
             _fields = field.split('__')
             value = model
@@ -117,11 +114,7 @@ class ExtendedValuesQuerySet(ValuesQuerySet):
         names = self.rename_fields(extra_names + field_names + annotation_names)
 
         for row in self.query.get_compiler(self.db).results_iter():
-            # Add 'pk' alias to result
-            values = dict(zip(names, row))
-            values.update({'pk': values[self.model._meta.pk.name]})
-
-            yield self._values_class(values)
+            yield self._values_class(zip(names, row))
 
     def _clone(self, klass=None, setup=False, **kwargs):
         kwargs.update(_named_fields=self.named_fields,
@@ -138,10 +131,6 @@ class DictValuesMixin:
         if named_fields:
             named_fields = {value: key for key, value in named_fields.items()}
             fields = fields + tuple(named_fields.keys())
-
-        # Always include pk field so that pk alias can be resolved in
-        # ExtendedValuesQuerySet.iterator()
-        fields += (self.model._meta.pk.name,)
 
         return self._clone(klass=ExtendedValuesQuerySet, setup=True,
                            _fields=fields, _named_fields=named_fields,
