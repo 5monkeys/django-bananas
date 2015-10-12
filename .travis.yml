@@ -1,0 +1,30 @@
+language: python
+
+python:
+  - 3.4
+
+env:
+  matrix:
+    - DJANGO=1.8
+
+matrix:
+  include:
+    - python: 3.4
+      env: DJANGO=1.8  COVERAGE=true  COVERALLS_REPO_TOKEN=OJpoo9DILUiLNUl6tXRcktDAQslPpaNLO
+  allow_failures:
+    - env: COVERAGE=true
+
+install:
+  - pip install --quiet "Django>="$DJANGO",<"$DJANGO".99" flake8
+  - make install
+
+script:
+  - make flake8 test
+
+after_script:
+  - if [ "$COVERAGE" == "true" ]; then
+    pip install --quiet python-coveralls;
+    make coverage;
+    coverage report;
+    coveralls --ignore-errors;
+    fi
