@@ -28,4 +28,4 @@ class SecretModel(models.Model):
 
 class URLSecretModel(models.Model):
     # num_bytes=25 forces the base64 algorithm to pad
-    secret = URLSecretField(num_bytes=25)
+    secret = URLSecretField(num_bytes=25, min_bytes=25)

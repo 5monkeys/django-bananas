@@ -1,4 +1,3 @@
-import re
 from django.test import TestCase
 from bananas.query import ModelDict
 from .models import Parent, Child, TestUUIDModel, SecretModel, URLSecretModel

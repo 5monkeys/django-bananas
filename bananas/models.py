@@ -94,7 +94,7 @@ class SecretField(models.CharField):
         if len(random) < self.min_length:
             raise ValidationError(self.error_messages['random-too-short'],
                                   code='invalid',
-                                  params={'num_bytes': len(bytes),
+                                  params={'num_bytes': len(random),
                                           'min_length': self.min_length})
 
     def get_random_bytes(self):
