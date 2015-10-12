@@ -17,6 +17,12 @@ class Child(TimeStampedModel):
     objects = Manager.from_queryset(ExtendedQuerySet)()
 
 
+class Node(TimeStampedModel):
+    name = models.CharField(max_length=255)
+    parent = models.ForeignKey('self', null=True)
+    objects = Manager.from_queryset(ExtendedQuerySet)()
+
+
 class TestUUIDModel(UUIDModel):
     text = models.CharField(max_length=255)
     parent = models.ForeignKey('TestUUIDModel', null=True)

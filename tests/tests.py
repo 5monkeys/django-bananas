@@ -1,6 +1,7 @@
 from django.test import TestCase
 from bananas.query import ModelDict
-from .models import Parent, Child, TestUUIDModel, SecretModel, URLSecretModel
+from .models import Parent, Child, TestUUIDModel, SecretModel, URLSecretModel,\
+    Node
 
 
 class QuerySetTest(TestCase):
@@ -34,6 +35,34 @@ class QuerySetTest(TestCase):
             'id': _child.id,
             'parent': None,
         })
+
+        _parent = Node.objects.create(name='A', parent=None)
+        _child = Node.objects.create(name='B', parent=_parent)
+        _grandchild = Node.objects.create(name='C', parent=_child)
+
+        d = ModelDict.from_model(_grandchild,
+                                 test__id='parent__parent__id',
+                                 test__name='parent__parent__name')
+        self.assertDictEqual(d, {
+            'test__id': self.parent.id,
+            'test__name': 'A',
+        })
+        self.assertDictEqual(d.test, {
+            'id': self.parent.id,
+            'name': 'A',
+        })
+
+        _child.parent = None
+        _child.save()
+
+        d = ModelDict.from_model(_grandchild,
+                                 test__id='parent__parent__id',
+                                 test__name='parent__parent__name')
+        self.assertDictEqual(d, {
+            'test__id': None,
+            'test__name': None,
+        })
+
 
     def test_dicts(self):
         self.assertTrue(hasattr(Parent.objects, 'dicts'))

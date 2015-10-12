@@ -69,17 +69,25 @@ class ModelDict(dict):
         """
         d = ModelDict()
 
-        if not len(fields):
+        if not (fields or named_fields):
             # Default to all fields
             fields = [f.attname for f in model._meta.concrete_fields]
+
+        not_found = object()
 
         for name, field in chain(zip(fields, fields), named_fields.items()):
             _fields = field.split('__')
             value = model
             for i, _field in enumerate(_fields, start=1):
-                value = getattr(value, _field)
-                if value is None:
-                    name = '__'.join(_fields[:i])
+                # NOTE: we don't want to rely on hasattr here
+                value = getattr(value, _field, not_found)
+
+                if value is not_found:
+                    raise KeyError
+
+                elif value is None:
+                    if name not in named_fields:
+                        name = '__'.join(_fields[:i])
                     break
 
             d[name] = value
