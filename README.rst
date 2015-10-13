@@ -2,6 +2,12 @@
 :banana: Django Bananas - Django extensions the monkey way
 ================================================================================
 
+.. image:: https://api.travis-ci.org/5monkeys/django-bananas.svg?branch=master
+  :target: https://travis-ci.org/5monkeys/django-bananas?branch=master
+
+.. image:: https://coveralls.io/repos/5monkeys/django-bananas/badge.svg?branch=master&service=github
+  :target: https://coveralls.io/github/5monkeys/django-bananas?branch=master
+
 --------------------------------------------------------------------------------
  Install
 --------------------------------------------------------------------------------

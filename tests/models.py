@@ -17,6 +17,12 @@ class Child(TimeStampedModel):
     objects = Manager.from_queryset(ExtendedQuerySet)()
 
 
+class Node(TimeStampedModel):
+    name = models.CharField(max_length=255)
+    parent = models.ForeignKey('self', null=True)
+    objects = Manager.from_queryset(ExtendedQuerySet)()
+
+
 class TestUUIDModel(UUIDModel):
     text = models.CharField(max_length=255)
     parent = models.ForeignKey('TestUUIDModel', null=True)
@@ -28,4 +34,4 @@ class SecretModel(models.Model):
 
 class URLSecretModel(models.Model):
     # num_bytes=25 forces the base64 algorithm to pad
-    secret = URLSecretField(num_bytes=25)
+    secret = URLSecretField(num_bytes=25, min_bytes=25)

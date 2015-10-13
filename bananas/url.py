@@ -111,7 +111,7 @@ def get_engine(scheme):
 
     try:
         engine, extra = engine
-    except ValueError as exc:
+    except ValueError:
         # engine was not a list of length 2
         raise ValueError('django-bananas.url\' engine '
                          'configuration is invalid: %r' %
