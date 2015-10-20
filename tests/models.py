@@ -10,6 +10,10 @@ class Parent(TimeStampedModel):
     name = models.CharField(max_length=255)
     objects = Manager.from_queryset(ExtendedQuerySet)()
 
+    @property
+    def attribute_error(self):
+        return getattr(object(), 'missing_attribute')
+
 
 class Child(TimeStampedModel):
     name = models.CharField(max_length=255)

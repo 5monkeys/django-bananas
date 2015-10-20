@@ -64,9 +64,13 @@ class QuerySetTest(TestCase):
         })
 
     def test_wrong_path(self):
-        self.assertRaises(KeyError,
+        self.assertRaises(AttributeError,
                           lambda: ModelDict.from_model(self.child,
                                                        'does__not__exist'))
+
+    def test_attribute_error(self):
+        self.assertRaises(ValueError, ModelDict.from_model, self.parent,
+                          test='attribute_error')
 
     def test_dicts(self):
         self.assertTrue(hasattr(Parent.objects, 'dicts'))
