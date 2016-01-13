@@ -22,7 +22,7 @@ django-bananas is on PyPI, so just run:
  Compatibility
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Currently bleeding edge, tested in
+Currently tested only for
 
 -   Django 1.8 under Python 3.4
 
