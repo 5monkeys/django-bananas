@@ -1,4 +1,10 @@
+from os import environ
+
+from django.conf import global_settings
 from django.test import TestCase
+
+from bananas import environment
+from bananas.environment import env
 from bananas.query import ModelDict
 from .models import Parent, Child, TestUUIDModel, SecretModel, URLSecretModel,\
     Node
@@ -113,3 +119,80 @@ class QuerySetTest(TestCase):
         model = URLSecretModel.objects.create()
 
         self.assertRegex(model.secret, r'^[A-Za-z0-9._-]+$')
+
+
+class EnvTest(TestCase):
+
+    def test_parse_bool(self):
+        self.assertTrue(environment.parse_bool('True'))
+        self.assertTrue(environment.parse_bool('true'))
+        self.assertTrue(environment.parse_bool('TRUE'))
+        self.assertTrue(environment.parse_bool('yes'))
+        self.assertTrue(environment.parse_bool('1'))
+        self.assertFalse(environment.parse_bool('False'))
+        self.assertFalse(environment.parse_bool('0'))
+        self.assertFalse(environment.parse_bool('foo'))
+
+    def test_parse_int(self):
+        self.assertEqual(environment.parse_int('123'), 123)
+        self.assertEqual(environment.parse_int('0644'), 420)
+        self.assertEqual(environment.parse_int('0o644'), 420)
+
+    def test_parse_tuple(self):
+        self.assertTupleEqual(environment.parse_tuple('a'), ('a',))
+        self.assertTupleEqual(environment.parse_tuple(' a,b, c '),
+                              ('a', 'b', 'c'))
+
+    def test_parse_list(self):
+        self.assertListEqual(environment.parse_list('a, b, c'), ['a', 'b', 'c'])
+
+    def test_parse_set(self):
+        self.assertSetEqual(environment.parse_set('b, a, c'), {'a', 'b', 'c'})
+
+    def test_env_wrapper(self):
+        self.assertEqual(env.get('foo', 'bar'), 'bar')
+
+        self.assertEqual(env.get('foo', 'bar'), 'bar')
+
+        self.assertIsNone(env.get_bool('foobar'))
+
+        self.assertFalse(env.get_bool('foobar', False))
+        environ['foobar'] = 'True'
+        self.assertTrue(env.get_bool('foobar', False))
+
+        environ['foobar'] = '123'
+        self.assertEqual(env.get_int('foobar'), 123)
+
+        environ['foobar'] = 'a, b, c'
+        self.assertTupleEqual(env.get_tuple('foobar'), ('a', 'b', 'c'))
+
+        environ['foobar'] = 'a, b, c'
+        self.assertListEqual(env.get_list('foobar'), ['a', 'b', 'c'])
+
+        environ['foobar'] = 'a, b, c'
+        self.assertSetEqual(env.get_set('foobar'), {'a', 'b', 'c'})
+        self.assertEqual(env.get('foobar'), 'a, b, c')
+        self.assertEqual(env['foobar'], 'a, b, c')
+
+
+class SettingsTest(TestCase):
+
+    def test_module(self):
+        environ.pop('DJANGO_ADMINS', None)
+        environ.update({
+            'DJANGO_DEBUG': 'true',
+            'DJANGO_INTERNAL_IPS': '127.0.0.1, 10.0.0.1',
+            'DJANGO_FILE_UPLOAD_PERMISSIONS': '0o644',
+        })
+
+        from . import settings_example as settings
+
+        self.assertEqual(global_settings.DEBUG, False)
+        self.assertEqual(settings.DEBUG, True)
+        self.assertTupleEqual(settings.INTERNAL_IPS, ('127.0.0.1', '10.0.0.1'))
+        self.assertIsNone(global_settings.FILE_UPLOAD_PERMISSIONS)
+        self.assertEqual(settings.FILE_UPLOAD_PERMISSIONS, 420)
+
+    def test_get_settings(self):
+        environ['DJANGO_ADMINS'] = 'foobar'
+        self.assertRaises(ValueError, environment.get_settings)
