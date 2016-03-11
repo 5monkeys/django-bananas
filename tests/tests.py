@@ -84,6 +84,16 @@ class QuerySetTest(TestCase):
         self.assertNotIn('parent', child)
         self.assertEqual(child.parent.name, self.parent.name)
 
+    def test_dicts_rename(self):
+        self.assertTrue(hasattr(Parent.objects, 'dicts'))
+
+        simple = Simple.objects.all().dicts('name').first()
+        self.assertEqual(simple.name, self.simple.name)
+
+        child = Child.objects.dicts('name', parent='parent__name').order_by('name').first()
+        self.assertEqual(child.name, self.child.name)
+        self.assertEqual(child.parent, self.parent.name)
+
     def test_uuid_model(self):
         first = TestUUIDModel.objects.create(text='first')
 
