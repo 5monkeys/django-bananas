@@ -1,34 +1,26 @@
 sudo: false
-
 language: python
-
-python:
-  - 3.4
-  - 3.5
-
-env:
-  matrix:
-    - DJANGO=1.8
 
 matrix:
   include:
     - python: 3.4
-      env: DJANGO=1.8  COVERAGE=true  COVERALLS_REPO_TOKEN=OJpoo9DILUiLNUl6tXRcktDAQslPpaNLO
-  allow_failures:
-    - env: COVERAGE=true
+      env: TOXENV=py34-django18
+    - python: 3.4
+      env: TOXENV=py34-django19
+    - python: 3.5
+      env: TOXENV=py35-django18
+    - python: 3.5
+      env: TOXENV=py35-django19
+    - python: 3.5
+      env: TOXENV=flake8
+    - python: 3.5
+      env: TOXENV=coverage
 
 install:
-  - pip install --quiet "Django>="$DJANGO",<"$DJANGO".99" flake8
-  - make install
+  - pip install tox
 
 script:
-  - make flake8
-  - make test
+  - tox
 
-after_script:
-  - if [ "$COVERAGE" == "true" ]; then
-    pip install --quiet python-coveralls;
-    make coverage;
-    coverage report;
-    coveralls --ignore-errors;
-    fi
+after_success:
+  - coveralls
