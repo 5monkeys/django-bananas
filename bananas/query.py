@@ -80,10 +80,18 @@ class ModelDict(dict):
             value = model
             for i, _field in enumerate(_fields, start=1):
                 # NOTE: we don't want to rely on hasattr here
-                value = getattr(value, _field, not_found)
+                previous_value = value
+                value = getattr(previous_value, _field, not_found)
 
                 if value is not_found:
-                    raise KeyError
+                    if _field in dir(previous_value):
+                        raise ValueError(
+                            '{!r}.{} had an AttributeError exception'
+                            .format(previous_value, _field))
+                    else:
+                        raise AttributeError(
+                            '{!r} does not have {!r} attribute'
+                            .format(previous_value, _field))
 
                 elif value is None:
                     if name not in named_fields:
@@ -93,6 +101,33 @@ class ModelDict(dict):
             d[name] = value
 
         return d
+
+
+class ModelDictValuesQuerySet(ValuesQuerySet):
+
+    def iterator(self):
+        return (ModelDict(v) for v in super(ModelDictValuesQuerySet,
+                                            self).iterator())
+
+
+class ModelDictQuerySetMixin:
+
+    def dicts(self, *fields):
+        return self._clone(klass=ModelDictValuesQuerySet, setup=True,
+                           _fields=fields)
+
+
+class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):
+    pass
+
+
+class ModelDictManagerMixin:
+
+    def dicts(self, *fields):
+        return self.get_queryset().dicts(*fields)
+
+    def get_queryset(self):
+        return ModelDictQuerySet(self.model, using=self._db)
 
 
 class ExtendedValuesQuerySet(ValuesQuerySet):
@@ -133,7 +168,7 @@ class ExtendedValuesQuerySet(ValuesQuerySet):
         return super()._clone(**kwargs)
 
 
-class DictValuesMixin:
+class ExtendedModelDictQuerySetMixin:
 
     def dicts(self, *fields, **named_fields):
         if named_fields:
@@ -145,5 +180,5 @@ class DictValuesMixin:
                            _values_class=ModelDict)
 
 
-class ExtendedQuerySet(DictValuesMixin, QuerySet):
+class ExtendedQuerySet(ExtendedModelDictQuerySetMixin, QuerySet):
     pass

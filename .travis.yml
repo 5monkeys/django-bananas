@@ -1,7 +1,10 @@
+sudo: false
+
 language: python
 
 python:
   - 3.4
+  - 3.5
 
 env:
   matrix:
@@ -19,7 +22,8 @@ install:
   - make install
 
 script:
-  - make flake8 test
+  - make flake8
+  - make test
 
 after_script:
   - if [ "$COVERAGE" == "true" ]; then

@@ -1,12 +1,13 @@
 from django.test import TestCase
 from bananas.query import ModelDict
-from .models import Parent, Child, TestUUIDModel, SecretModel, URLSecretModel,\
-    Node
-
+from .models import (
+    Parent, Child, TestUUIDModel, SecretModel, URLSecretModel, Node, Simple
+)
 
 class QuerySetTest(TestCase):
 
     def setUp(self):
+        self.simple = Simple.objects.create(name='S')
         self.parent = Parent.objects.create(name='A')
         self.child = Child.objects.create(name='B', parent=self.parent)
 
@@ -64,12 +65,19 @@ class QuerySetTest(TestCase):
         })
 
     def test_wrong_path(self):
-        self.assertRaises(KeyError,
+        self.assertRaises(AttributeError,
                           lambda: ModelDict.from_model(self.child,
                                                        'does__not__exist'))
 
+    def test_attribute_error(self):
+        self.assertRaises(ValueError, ModelDict.from_model, self.parent,
+                          test='attribute_error')
+
     def test_dicts(self):
         self.assertTrue(hasattr(Parent.objects, 'dicts'))
+
+        simple = Simple.objects.all().dicts('name').first()
+        self.assertEqual(simple.name, self.simple.name)
 
         child = Child.objects.dicts('name', 'parent__name').first()
         self.assertEqual(child.name, self.child.name)
