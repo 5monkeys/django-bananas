@@ -124,10 +124,13 @@ class EnvironWrapper(object):
     """
     Wrapper around os environ with type conversion support.
     """
-    __getattr__ = environ.__getattribute__
+    __delitem__ = environ.__delitem__
     __getitem__ = environ.__getitem__
     __setitem__ = environ.__setitem__
     __contains__ = environ.__contains__
+
+    def __getattr__(self, item):
+        return getattr(environ, item)
 
     def parse(self, parser, key, default=None):
         value = environ.get(key, UNDEFINED)
