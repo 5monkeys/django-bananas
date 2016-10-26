@@ -217,3 +217,54 @@ generate_conf_from_url(url)
        ('PORT', 4242),
        ('SCHEMA', 'tweetschema'),
        ('USER', 'joar')]
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+bananas.environment - Helpers to get setting values from environment variables
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+``bananas.environment.env`` is a wrapper around ``os.environ``, it provides the
+standard ``.get(key, value)``, method to get a value for a key, or a default if
+the key is not set - by default that default is ``None`` as you would expect.
+What is more useful is the additional type-parsing ``.get_*`` methods it
+provides:
+
+-   ``get_bool``
+-   ``get_int``
+-   ``get_list``, ``get_set``, ``get_tuple``
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``get_bool(key, default=None)``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    env.get_bool('FOO')
+
+returns ``True`` if the value of ``os.environ['FOO']`` is any of
+case-insensitive.
+
+-   ``"yes"``
+-   ``"true"``
+-   ``"on"``
+-   ``"1"``
+
+If ``'FOO' not in os.environ`` it will return the value passed is as
+``default``.
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``get_tuple(...)``, ``get_list(...)``, ``get_set(...)``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns a ``tuple``, ``list`` or ``set`` of the environment variable string,
+split by the ascii comma character. e.g.:
+
+.. code-block:: python
+
+    # env FOOS=foo,foo,bar
+    >>> get_list('FOO')
+    ['foo', 'foo', 'bar']
+    >>> get_set('FOO')
+    set(['foo', 'bar'])
