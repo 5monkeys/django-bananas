@@ -217,3 +217,83 @@ generate_conf_from_url(url)
        ('PORT', 4242),
        ('SCHEMA', 'tweetschema'),
        ('USER', 'joar')]
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+bananas.environment - Helpers to get setting values from environment variables
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+``bananas.environment.env`` is a wrapper around ``os.environ``, it provides the
+standard ``.get(key, value)``, method to get a value for a key, or a default if
+the key is not set - by default that default is ``None`` as you would expect.
+What is more useful is the additional type-parsing ``.get_*`` methods it
+provides:
+
+-   ``get_bool``
+-   ``get_int``
+-   ``get_list``, ``get_set``, ``get_tuple``
+
+
+:get_int:
+
+    .. code-block:: python
+
+        >>> # env ONE=1
+        >>> env.get_int('ONE')
+        1
+        >>> env.get_int('TWO')  # Not set
+        None
+        >>> env.get_int('TWO', -1)  # Not set, default to -1
+        -1
+
+
+:get_bool:
+    returns ``True`` if the environment variable value is any of,
+    case-insensitive:
+
+    -   ``"true"``
+    -   ``"yes"``
+    -   ``"on"``
+    -   ``"1"``
+
+    returns ``False`` if the environment variable value is any of,
+    case-insensitive:
+
+    -   ``"false"``
+    -   ``"no"``
+    -   ``"off"``
+    -   ``"0"``
+
+    if the value is set to anything other than above, the default value will be returned instead.
+
+    e.g.:
+
+    .. code-block:: python
+
+        >>> # env CAN_DO=1 NO_THANKS=false NO_HABLA=f4lse
+        >>> env.get_bool('CAN_DO')
+        True
+        >>> env.get_bool('NO_THANKS')
+        False
+        >>> env.get_bool('NO_HABLA')  # Set, but not valid
+        None
+        >>> env.get_bool('NO_HABLA', True)  # Set, but not valid, with default
+        True
+        >>> env.get_bool('IS_NONE')  # Not set
+        None
+        >>> env.get_bool('IS_NONE', False)  # Not set, default provided
+        False
+
+
+:get_tuple, get_list, get_set:
+
+    Returns a ``tuple``, ``list`` or ``set`` of the environment variable string,
+    split by the ascii comma character. e.g.:
+
+    .. code-block:: python
+
+        >>> # env FOOS=foo,foo,bar
+        >>> get_list('FOO')
+        ['foo', 'foo', 'bar']
+        >>> get_set('FOO')
+        set(['foo', 'bar'])
