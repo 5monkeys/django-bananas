@@ -234,37 +234,55 @@ provides:
 -   ``get_list``, ``get_set``, ``get_tuple``
 
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``get_bool(key, default=None)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:get_int:
 
-.. code-block:: python
+    .. code-block:: python
 
-    env.get_bool('FOO')
-
-returns ``True`` if the value of ``os.environ['FOO']`` is any of
-case-insensitive.
-
--   ``"yes"``
--   ``"true"``
--   ``"on"``
--   ``"1"``
-
-If ``'FOO' not in os.environ`` it will return the value passed is as
-``default``.
+        >>> # env ONE=1
+        >>> env.get_int('ONE')
+        1
+        >>> env.get_int('TWO')  # Not set
+        None
+        >>> env.get_int('TWO', -1)  # Not set, default to -1
+        -1
 
 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``get_tuple(...)``, ``get_list(...)``, ``get_set(...)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:get_bool:
+    returns ``True`` if the environment variable value is any of,
+    case-insensitive:
 
-Returns a ``tuple``, ``list`` or ``set`` of the environment variable string,
-split by the ascii comma character. e.g.:
+    -   ``"yes"``
+    -   ``"true"``
+    -   ``"on"``
+    -   ``"1"``
 
-.. code-block:: python
+    e.g.:
 
-    # env FOOS=foo,foo,bar
-    >>> get_list('FOO')
-    ['foo', 'foo', 'bar']
-    >>> get_set('FOO')
-    set(['foo', 'bar'])
+    .. code-block:: python
+
+        >>> # env IS_TRUE=1 IS_NOT_TRUE=f4lse
+        >>> env.get_bool('IS_TRUE')
+        True
+        >>> env.get_bool('IS_FALSE')  # Set, but not "truthy"
+        False
+        >>> env.get_bool('IS_NONE')  # Not set
+        None
+        >>> env.get_bool('IS_NONE', False)  # Not set, default provided
+        False
+        >>> # env IS_ON=on
+        >>> env.get_bool('IS_ON')
+        True
+
+
+:get_tuple, get_list, get_set:
+
+    Returns a ``tuple``, ``list`` or ``set`` of the environment variable string,
+    split by the ascii comma character. e.g.:
+
+    .. code-block:: python
+
+        >>> # env FOOS=foo,foo,bar
+        >>> get_list('FOO')
+        ['foo', 'foo', 'bar']
+        >>> get_set('FOO')
+        set(['foo', 'bar'])
