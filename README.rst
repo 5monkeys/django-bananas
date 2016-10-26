@@ -251,27 +251,38 @@ provides:
     returns ``True`` if the environment variable value is any of,
     case-insensitive:
 
-    -   ``"yes"``
     -   ``"true"``
+    -   ``"yes"``
     -   ``"on"``
     -   ``"1"``
+
+    returns ``False`` if the environment variable value is any of,
+    case-insensitive:
+
+    -   ``"false"``
+    -   ``"no"``
+    -   ``"off"``
+    -   ``"0"``
+
+    if the value is set to anything other than above, the default value will be returned instead.
 
     e.g.:
 
     .. code-block:: python
 
-        >>> # env IS_TRUE=1 IS_NOT_TRUE=f4lse
-        >>> env.get_bool('IS_TRUE')
+        >>> # env CAN_DO=1 NO_THANKS=false NO_HABLA=f4lse
+        >>> env.get_bool('CAN_DO')
         True
-        >>> env.get_bool('IS_FALSE')  # Set, but not "truthy"
+        >>> env.get_bool('NO_THANKS')
         False
+        >>> env.get_bool('NO_HABLA')  # Set, but not valid
+        None
+        >>> env.get_bool('NO_HABLA', True)  # Set, but not valid, with default
+        True
         >>> env.get_bool('IS_NONE')  # Not set
         None
         >>> env.get_bool('IS_NONE', False)  # Not set, default provided
         False
-        >>> # env IS_ON=on
-        >>> env.get_bool('IS_ON')
-        True
 
 
 :get_tuple, get_list, get_set:

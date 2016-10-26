@@ -135,7 +135,7 @@ class EnvTest(TestCase):
         self.assertTrue(environment.parse_bool('1'))
         self.assertFalse(environment.parse_bool('False'))
         self.assertFalse(environment.parse_bool('0'))
-        self.assertFalse(environment.parse_bool('foo'))
+        self.assertRaises(ValueError, environment.parse_bool, 'foo')
 
     def test_parse_int(self):
         self.assertEqual(environment.parse_int('123'), 123)
@@ -163,6 +163,9 @@ class EnvTest(TestCase):
         self.assertFalse(env.get_bool('foobar', False))
         environ['foobar'] = 'True'
         self.assertTrue(env.get_bool('foobar', False))
+        environ['foobar'] = 'Ture'
+        self.assertIsNone(env.get_bool('foobar'))
+        self.assertFalse(env.get_bool('foobar', False))
 
         environ['foobar'] = '123'
         self.assertEqual(env.get_int('foobar'), 123)

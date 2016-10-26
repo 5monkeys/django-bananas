@@ -1,3 +1,5 @@
+import logging
+
 from functools import partial
 from os import environ
 
@@ -7,6 +9,8 @@ from django.conf import global_settings
 __all__ = [
     'parse_bool', 'parse_int', 'parse_tuple', 'parse_list', 'parse_set'
 ]
+
+log = logging.getLogger(__name__)
 
 UNDEFINED = object()
 
@@ -34,7 +38,14 @@ def parse_bool(value):
     :param str value: String value to parse as bool
     :return bool:
     """
-    return value.strip().capitalize() in ('True', 'Yes', 'On', '1')
+    boolean = value.strip().capitalize()
+
+    if boolean in ('True', 'Yes', 'On', '1'):
+        return True
+    elif boolean in ('False', 'No', 'Off', '0'):
+        return False
+    else:
+        raise ValueError('Unable to parse boolean value "{}"'.format(value))
 
 
 def parse_int(value):
@@ -136,7 +147,17 @@ class EnvironWrapper(object):
         value = environ.get(key, UNDEFINED)
         if value is UNDEFINED:
             return default
-        return parser(value)
+        try:
+            return parser(value)
+        except ValueError:
+            log.warning((
+                'Unable to parse environment variable '
+                '{key}={value}'
+            ).format(
+                key=key,
+                value=value,
+            ))
+            return default
 
     def get_bool(self, key, default=None):
         return self.parse(parse_bool, key, default=default)
