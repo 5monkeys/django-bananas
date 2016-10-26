@@ -103,6 +103,33 @@ class ModelDict(dict):
         return d
 
 
+class ModelDictValuesQuerySet(ValuesQuerySet):
+
+    def iterator(self):
+        return (ModelDict(v) for v in super(ModelDictValuesQuerySet,
+                                            self).iterator())
+
+
+class ModelDictQuerySetMixin:
+
+    def dicts(self, *fields):
+        return self._clone(klass=ModelDictValuesQuerySet, setup=True,
+                           _fields=fields)
+
+
+class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):
+    pass
+
+
+class ModelDictManagerMixin:
+
+    def dicts(self, *fields):
+        return self.get_queryset().dicts(*fields)
+
+    def get_queryset(self):
+        return ModelDictQuerySet(self.model, using=self._db)
+
+
 class ExtendedValuesQuerySet(ValuesQuerySet):
     """
     Extended `ValuesQuerySet` with support for renaming fields
@@ -141,7 +168,7 @@ class ExtendedValuesQuerySet(ValuesQuerySet):
         return super()._clone(**kwargs)
 
 
-class DictValuesMixin:
+class ExtendedModelDictQuerySetMixin:
 
     def dicts(self, *fields, **named_fields):
         if named_fields:
@@ -153,5 +180,5 @@ class DictValuesMixin:
                            _values_class=ModelDict)
 
 
-class ExtendedQuerySet(DictValuesMixin, QuerySet):
+class ExtendedQuerySet(ExtendedModelDictQuerySetMixin, QuerySet):
     pass

@@ -1,9 +1,20 @@
 from django.db import models
+from django.db.models import Model
 from django.db.models.manager import Manager
 
-from bananas.models import TimeStampedModel, URLSecretField, SecretField,\
-    UUIDModel
-from bananas.query import ExtendedQuerySet
+from bananas.models import (
+    TimeStampedModel, URLSecretField, SecretField, UUIDModel
+)
+from bananas.query import ExtendedQuerySet, ModelDictManagerMixin
+
+
+class SimpleManager(ModelDictManagerMixin, Manager):
+    pass
+
+
+class Simple(Model):
+    name = models.CharField(max_length=255)
+    objects = SimpleManager()
 
 
 class Parent(TimeStampedModel):

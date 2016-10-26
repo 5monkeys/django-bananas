@@ -23,6 +23,7 @@ Currently supported engines are:
 You can add your own by running ``register(scheme, module_name)`` before
 parsing.
 """
+import warnings
 from collections import namedtuple
 
 try:
@@ -206,6 +207,9 @@ def parse_database_url(url):
                  port=4242,
                  params={'hello': 'world'})
     """
+    if url == 'sqlite://:memory:':
+        raise Exception('Your url is "sqlite://:memory:", if you want '
+                        'an sqlite memory database, just use "sqlite://"')
     url_parts = urlsplit(url)
 
     engine = get_engine(url_parts.scheme)
