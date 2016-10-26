@@ -23,7 +23,6 @@ Currently supported engines are:
 You can add your own by running ``register(scheme, module_name)`` before
 parsing.
 """
-import warnings
 from collections import namedtuple
 
 try:
