@@ -8,6 +8,9 @@
 .. image:: https://coveralls.io/repos/5monkeys/django-bananas/badge.svg?branch=master&service=github
   :target: https://coveralls.io/github/5monkeys/django-bananas?branch=master
 
+.. image:: https://img.shields.io/pypi/v/django-bananas.svg
+  :target: https://pypi.python.org/pypi/django-bananas/
+
 --------------------------------------------------------------------------------
  Install
 --------------------------------------------------------------------------------
@@ -24,7 +27,7 @@ django-bananas is on PyPI, so just run:
 
 Currently tested only for
 
--   Django 1.8 under Python 3.4
+-   Django 1.8 and 1.9 under Python 3.4 and 3.5
 
 pull requests welcome!
 
