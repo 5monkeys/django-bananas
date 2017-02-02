@@ -1,5 +1,6 @@
 from os import environ
 
+import django
 from django.conf import global_settings
 from django.test import TestCase
 
@@ -88,6 +89,11 @@ class QuerySetTest(TestCase):
         child = Child.objects.dicts('name', 'parent__name').first()
         self.assertEqual(child.name, self.child.name)
         self.assertNotIn('parent', child)
+        self.assertEqual(child.parent.name, self.parent.name)
+
+    def test_dicts_rename(self):
+        child = Child.objects.dicts('parent__name', alias='name').first()
+        self.assertEqual(child.alias, self.child.name)
         self.assertEqual(child.parent.name, self.parent.name)
 
     def test_uuid_model(self):
@@ -196,7 +202,10 @@ class SettingsTest(TestCase):
 
         self.assertEqual(global_settings.DEBUG, False)
         self.assertEqual(settings.DEBUG, True)
-        self.assertTupleEqual(settings.INTERNAL_IPS, ('127.0.0.1', '10.0.0.1'))
+        if django.VERSION[:2] >= (1, 9):
+            self.assertListEqual(settings.INTERNAL_IPS, ['127.0.0.1', '10.0.0.1'])
+        else:
+            self.assertTupleEqual(settings.INTERNAL_IPS, ('127.0.0.1', '10.0.0.1'))
         self.assertIsNone(global_settings.FILE_UPLOAD_PERMISSIONS)
         self.assertEqual(settings.FILE_UPLOAD_PERMISSIONS, 420)
 
