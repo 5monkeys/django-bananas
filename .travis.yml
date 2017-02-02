@@ -9,11 +9,12 @@ python:
 env:
   matrix:
     - DJANGO=1.8
+    - DJANGO=1.9
 
 matrix:
   include:
-    - python: 3.4
-      env: DJANGO=1.8  COVERAGE=true  COVERALLS_REPO_TOKEN=OJpoo9DILUiLNUl6tXRcktDAQslPpaNLO
+    - python: 3.5
+      env: DJANGO=1.9  COVERAGE=true  COVERALLS_REPO_TOKEN=OJpoo9DILUiLNUl6tXRcktDAQslPpaNLO
   allow_failures:
     - env: COVERAGE=true
 
