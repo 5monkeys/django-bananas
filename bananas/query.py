@@ -58,7 +58,7 @@ if django.VERSION[:2] < (1, 9):
     """
     Patch ModelDictQuerySetMixin for old Django compatibility
     """
-    from .compat.django18 import ModelDictQuerySetMixin
+    from .compat.django18 import ModelDictQuerySetMixin  # noqa
 
 
 class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):
