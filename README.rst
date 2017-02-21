@@ -197,7 +197,7 @@ Currently supported engines are:
 
 You can add your own by running ``register(scheme, module_name)`` before parsing.
 
-generate_conf_from_url(url)
+database_conf_from_url(url)
   Return a django-style database configuration based on ``url``.
 
   :param url: Database URL
@@ -207,7 +207,7 @@ generate_conf_from_url(url)
 
   .. code-block:: py
 
-      >>> from bananas.url import generate_conf_from_url
+      >>> from bananas.url import database_conf_from_url
       >>> conf = database_conf_from_url(
       ...     'pgsql://joar:hunter2@5monkeys.se:4242/tweets/tweetschema'
       ...     '?hello=world')
