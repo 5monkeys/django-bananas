@@ -1,35 +1,42 @@
 sudo: false
-
 language: python
 
+cache: pip
+
+# Tox cannot install pythons, so we set 3.5 as default, use 3.4 already
+# available in container and then include 3.6 in matrix.
 python:
-  - 3.4
   - 3.5
 
 env:
-  matrix:
-    - DJANGO=1.8
-    - DJANGO=1.9
+ - TOXENV=py34-django18
+ - TOXENV=py34-django19
+ - TOXENV=py34-django110
+ - TOXENV=py34-django111
+
+ - TOXENV=py35-django18
+ - TOXENV=py35-django19
+ - TOXENV=py35-django110
+ - TOXENV=py35-django111
+
+ - TOXENV=lint
+ - TOXENV=coverage
 
 matrix:
   include:
-    - python: 3.5
-      env: DJANGO=1.9  COVERAGE=true  COVERALLS_REPO_TOKEN=OJpoo9DILUiLNUl6tXRcktDAQslPpaNLO
-  allow_failures:
-    - env: COVERAGE=true
+    - python: 3.6
+      env: TOXENV=py36-django110
+    - python: 3.6
+      env: TOXENV=py36-django111
 
 install:
-  - pip install --quiet "Django>="$DJANGO",<"$DJANGO".99" flake8
-  - make install
+  - pip install tox
 
 script:
-  - make flake8
-  - make test
+  - tox
 
-after_script:
-  - if [ "$COVERAGE" == "true" ]; then
+after_success:
+  - if [ "$TOXENV" == "coverage" ]; then
     pip install --quiet python-coveralls;
-    make coverage;
-    coverage report;
     coveralls --ignore-errors;
     fi
