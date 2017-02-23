@@ -1,7 +1,10 @@
 sudo: false
 language: python
 
-cache: pip
+cache:
+  pip: true
+  directories:
+    - $HOME/.cov  # coverage reports are collected there
 
 # Tox cannot install pythons, so we set 3.5 as default, use 3.4 already
 # available in container and then include 3.6 in matrix.
@@ -9,18 +12,18 @@ python:
   - 3.5
 
 env:
- - TOXENV=py34-django18
- - TOXENV=py34-django19
- - TOXENV=py34-django110
- - TOXENV=py34-django111
+  global:
+    - COVERAGE_FILE=$HOME/.cov/.coverage
+  matrix:
+    - TOXENV=py34-django18
+    - TOXENV=py34-django19
+    - TOXENV=py34-django110
+    - TOXENV=py34-django111
 
- - TOXENV=py35-django18
- - TOXENV=py35-django19
- - TOXENV=py35-django110
- - TOXENV=py35-django111
-
- - TOXENV=lint
- - TOXENV=coverage
+    - TOXENV=py35-django18
+    - TOXENV=py35-django19
+    - TOXENV=py35-django110
+    - TOXENV=py35-django111
 
 matrix:
   include:
@@ -28,6 +31,11 @@ matrix:
       env: TOXENV=py36-django110
     - python: 3.6
       env: TOXENV=py36-django111
+    - python: 3.4  # i.e. avoids installing 3.5
+      env: TOXENV=lint
+    - python: 3.4
+      env: TOXENV=py34-django18,py34-django19,coverage
+      # env: TOXENV=coverage  # better to run it after tests
 
 install:
   - pip install tox
@@ -36,7 +44,7 @@ script:
   - tox
 
 after_success:
-  - if [ "$TOXENV" == "coverage" ]; then
+  - if [[ $TOXENV =~ coverage ]]; then
     pip install --quiet python-coveralls;
     coveralls --ignore-errors;
     fi

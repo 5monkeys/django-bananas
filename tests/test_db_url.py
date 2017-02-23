@@ -37,3 +37,39 @@ class DBURLTest(TestCase):
             'SCHEMA': 'tweetschema',
             'USER': 'joar',
         })
+
+    def test_alias(self):
+        self.assertEqual(repr(url.Alias(target='x')), '<Alias to "x">')
+
+    def test_register(self):
+        url.register_engine('abc', 'a.b.c')
+        conf = url.database_conf_from_url('abc://5monkeys.se')
+        self.maxDiff = None
+        self.assertDictEqual(conf, {
+            'ENGINE': 'a.b.c',
+            'HOST': '5monkeys.se',
+            'NAME': '',
+            'PARAMS': {},
+            'PASSWORD': None,
+            'PORT': None,
+            'SCHEMA': None,
+            'USER': None,
+        })
+
+    def test_resolve(self):
+        url.register_engine('abc', 'a.b.c')
+        self.assertRaises(KeyError, url.resolve, cursor={}, key='xyz')
+
+    def test_get_engine(self):
+        self.assertRaisesMessage(KeyError, 'postgres has no sub-engines',
+                                 url.get_engine, 'postgres+psycopg2+postgis')
+        url.register_engine('a', ['b'])
+        self.assertRaisesRegex(ValueError, '^django-bananas\.url',
+                               url.get_engine, 'a')
+        url.register_engine('a', ['a', {'b': 'c'}])
+        self.assertEqual(url.get_engine('a+b'), 'c')
+
+    def test_parse(self):
+        self.assertRaises(ValueError, url.parse_path, None)
+        self.assertRaisesRegex(Exception, '^Your url is',
+                               url.parse_database_url, 'sqlite://:memory:')

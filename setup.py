@@ -24,5 +24,6 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[],
+    tests_require=['detox', 'coverage'],
     test_suite='runtests.main'
 )

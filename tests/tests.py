@@ -2,14 +2,16 @@ from os import environ
 
 import django
 from django.conf import global_settings
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from bananas import environment
+from bananas import environment, admin
 from bananas.environment import env
 from bananas.query import ModelDict
 from .models import (
     Parent, Child, TestUUIDModel, SecretModel, URLSecretModel, Node, Simple
 )
+
 
 class QuerySetTest(TestCase):
 
@@ -71,6 +73,9 @@ class QuerySetTest(TestCase):
             'test__name': None,
         })
 
+        d = ModelDict.from_model(self.child)
+        self.assertEqual(len(d), 5)
+
     def test_wrong_path(self):
         self.assertRaises(AttributeError,
                           lambda: ModelDict.from_model(self.child,
@@ -84,6 +89,9 @@ class QuerySetTest(TestCase):
         self.assertTrue(hasattr(Parent.objects, 'dicts'))
 
         simple = Simple.objects.all().dicts('name').first()
+        self.assertEqual(simple.name, self.simple.name)
+
+        simple = Simple.objects.dicts('name').first()
         self.assertEqual(simple.name, self.simple.name)
 
         child = Child.objects.dicts('name', 'parent__name').first()
@@ -115,6 +123,19 @@ class QuerySetTest(TestCase):
 
         self.assertEqual(len(model.secret), field_length)
 
+        field.auto = False
+        self.assertEqual(len(field.pre_save(model, None)), field_length)
+
+        self.assertRaisesMessage(
+            ValidationError, 'SecretField.get_random_bytes returned None',
+            field._check_random_bytes, None)
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'Too few random bytes received from get_random_bytes. '
+            'Number of bytes=3, min_length=32',
+            field._check_random_bytes, '123')
+
     def test_url_secret_field_field_length(self):
         model = URLSecretModel.objects.create()
 
@@ -129,6 +150,11 @@ class QuerySetTest(TestCase):
         model = URLSecretModel.objects.create()
 
         self.assertRegex(model.secret, r'^[A-Za-z0-9._-]+$')
+
+    def test_nested(self):
+        md = ModelDict()
+        md._nested = {'x': 1}
+        self.assertEqual(md.x, 1)
 
 
 class EnvTest(TestCase):
@@ -196,6 +222,7 @@ class SettingsTest(TestCase):
             'DJANGO_DEBUG': 'true',
             'DJANGO_INTERNAL_IPS': '127.0.0.1, 10.0.0.1',
             'DJANGO_FILE_UPLOAD_PERMISSIONS': '0o644',
+            'DJANGO_SECRET_KEY': '123',
         })
 
         from . import settings_example as settings
@@ -212,3 +239,21 @@ class SettingsTest(TestCase):
     def test_get_settings(self):
         environ['DJANGO_ADMINS'] = 'foobar'
         self.assertRaises(ValueError, environment.get_settings)
+        del environ['DJANGO_ADMINS']
+
+    def test_unsupported_settings_type(self):
+        environ['DJANGO_DATABASES'] = 'foobar'
+        self.assertRaises(NotImplementedError, environment.get_settings)
+        del environ['DJANGO_DATABASES']
+
+
+class AdminTest(TestCase):
+    def test_admin(self):
+        class FakeRequest:
+            META = {'SCRIPT_NAME': ''}
+
+            class user:
+                is_active = False
+        ctx = admin.site.each_context(FakeRequest())
+        self.assertTrue('settings' in ctx)
+        self.assertIsInstance(admin.site.urls, tuple)
