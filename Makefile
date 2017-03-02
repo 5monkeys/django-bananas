@@ -1,8 +1,16 @@
-.PHONY: test
-test:
-	python setup.py test
+.DEFAULT_GOAL := help
 
-.PHONY: lint
+.PHONY: help  # shows available commands
+help:
+	@echo "\nAvailable commands:\n\n $(shell sed -n 's/^.PHONY:\(.*\)/ *\1\\n/p' Makefile)"
+
+.PHONY: test  # runs tests using detox, combines coverage and reports it
+test:
+	detox
+	coverage combine
+	coverage report
+
+.PHONY: lint  # runs flake8
 lint:
 	flake8 bananas
 
@@ -14,11 +22,9 @@ install:
 develop:
 	python setup.py develop
 
-.PHONY: coverage
-coverage:
-	coverage run setup.py test
-	coverage report
-
 .PHONY: clean
 clean:
-	rm -rf dist/ *.egg *.egg-info .coverage
+	rm -rf dist/ *.egg *.egg-info .coverage .coverage.*
+
+.PHONY: all  # runs clean, test, lint
+all: clean test lint

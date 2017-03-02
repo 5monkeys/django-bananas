@@ -31,6 +31,16 @@ SETTINGS_TYPES = {
 }
 
 
+def parse_str(value):
+    """
+    Clean string.
+
+    :param str value: Original str.
+    :return: str: Cleaned str.
+    """
+    return value.strip()
+
+
 def parse_bool(value):
     """
     Parse string to bool.
@@ -38,7 +48,7 @@ def parse_bool(value):
     :param str value: String value to parse as bool
     :return bool:
     """
-    boolean = value.strip().capitalize()
+    boolean = parse_str(value).capitalize()
 
     if boolean in ('True', 'Yes', 'On', '1'):
         return True
@@ -55,10 +65,11 @@ def parse_int(value):
     :param str value: String value to parse as int
     :return int:
     """
+    value = parse_str(value=value)
     if value.startswith('0'):
         return int(value.lstrip('0o'), 8)
     else:
-        return int(value.strip())
+        return int(value)
 
 
 def parse_iterable(typ, value):
@@ -69,7 +80,7 @@ def parse_iterable(typ, value):
     :param value: String value to parse as iterable
     :return: Given type
     """
-    return typ(v.strip() for v in value.split(','))
+    return typ(parse_str(v) for v in value.split(','))
 
 
 parse_tuple = partial(parse_iterable, tuple)
@@ -84,13 +95,17 @@ def get_parser(typ):
     :param typ: Type to get parser for.
     :return function: Parser
     """
-    return {
-        bool: parse_bool,
-        int: parse_int,
-        tuple: parse_tuple,
-        list: parse_list,
-        set: parse_set,
-    }.get(typ)
+    try:
+        return {
+            str: parse_str,
+            bool: parse_bool,
+            int: parse_int,
+            tuple: parse_tuple,
+            list: parse_list,
+            set: parse_set,
+        }[typ]
+    except KeyError:
+        raise NotImplementedError("Unsupported setting type: %r", typ)
 
 
 def get_settings():
