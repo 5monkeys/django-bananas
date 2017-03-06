@@ -8,6 +8,7 @@ DATABASES = {
 }
 
 INSTALLED_APPS = [
+    'bananas',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -15,3 +16,5 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tests'
 ]
+
+ROOT_URLCONF = 'tests.urls'
