@@ -116,6 +116,39 @@ class QuerySetTest(TestCase):
             expected_dicts
         )
 
+        # Test renaming a field with another that's not renamed
+        expected_dicts = [
+            {'id': self.parent.pk, 'child_name': self.child.name},
+            {'id': self.parent.pk, 'child_name': self.other_child.name}
+        ]
+
+        self.assertListEqual(
+            list(Parent.objects.filter(name='A').dicts('id', child_name='child__name')),
+            expected_dicts
+        )
+
+        # Test multiple renamed fileds together
+        expected_dicts = [
+            {'id': self.child.pk, 'child_name': self.child.name},
+            {'id': self.other_child.pk, 'child_name': self.other_child.name}
+        ]
+
+        self.assertListEqual(
+            list(Parent.objects.filter(name='A').dicts(id='child__id', child_name='child__name')),
+            expected_dicts
+        )
+
+        # Test multiple renamed fileds together with another that's not
+        expected_dicts = [
+            {'id': self.parent.pk, 'child_id': self.child.pk, 'child_name': self.child.name},
+            {'id': self.parent.pk, 'child_id': self.other_child.pk, 'child_name': self.other_child.name}
+        ]
+
+        self.assertListEqual(
+            list(Parent.objects.filter(name='A').dicts('id', child_id='child__id', child_name='child__name')),
+            expected_dicts
+        )
+
     def test_uuid_model(self):
         first = TestUUIDModel.objects.create(text='first')
 
