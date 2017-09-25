@@ -31,7 +31,7 @@ class ExtendedAdminSite(AdminSite):
         'INDEX_TITLE': env.get(
             'DJANGO_ADMIN_INDEX_TITLE', AdminSite.index_title),
         'COLOR': env.get(
-            'DJANGO_ADMIN_COLOR', '#444'),
+            'DJANGO_ADMIN_COLOR', '#417690'),
     }
 
     def __init__(self, name='admin'):
