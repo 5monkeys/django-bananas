@@ -1,16 +1,37 @@
+# coding=utf-8
+import re
+from django.apps import apps
+from django.db.models import Model
 from django.conf import settings as django_settings
-from django.contrib.admin import AdminSite
+from django.conf.urls import url
+from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.sites import site as django_admin_site
+from django.contrib.auth.decorators import (
+    user_passes_test,
+    permission_required,
+    login_required,
+)
+from django.shortcuts import render
+from django.utils.encoding import force_text
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import View
+
+from .environtment import env
 
 
 class ExtendedAdminSite(AdminSite):
 
     default_settings = {
-        'INHERIT_REGISTERED_MODELS': True,
-        'SITE_TITLE': AdminSite.site_title,
-        'SITE_HEADER': AdminSite.site_header,
-        'INDEX_TITLE': AdminSite.index_title,
-        'BACKGROUND_COLOR': '#444'
+        'INHERIT_REGISTERED_MODELS': env.get_bool(
+            'DJANGO_ADMIN_INHERIT_REGISTERED_MODELS', True),
+        'SITE_TITLE': env.get(
+            'DJANGO_ADMIN_SITE_TITLE', AdminSite.site_title),
+        'SITE_HEADER': env.get(
+            'DJANGO_ADMIN_SITE_HEADER', AdminSite.site_header),
+        'INDEX_TITLE': env.get(
+            'DJANGO_ADMIN_INDEX_TITLE', AdminSite.index_titlei),
+        'COLOR': env.get(
+            'DJANGO_ADMIN_COLOR', '#444'),
     }
 
     def __init__(self, name='admin'):
@@ -34,6 +55,138 @@ class ExtendedAdminSite(AdminSite):
                 # django_admin_site.unregister(model)
                 self._registry[model] = admin.__class__(model, self)
         return self.get_urls(), 'admin', self.name
+
+
+class ModelAdminView(ModelAdmin):
+
+    def __init__(self, *args, **kwargs):
+        super(ModelAdminView, self).__init__(*args, **kwargs)
+
+    def get_urls(self):
+        app_label = self.model._meta.app_label
+
+        self.access_permission = '{app_label}.{codename}'.format(
+            app_label=app_label,
+            codename=self.model._meta.permissions[0]
+        )
+
+        View = self.model.View
+        view = View.as_view(admin=self)
+        view = user_passes_test(lambda u: u.is_active and u.is_staff)(view)
+        view = permission_required(self.access_permission)(view)
+        view = login_required(view)
+
+        info = app_label, View.label
+        urlpatterns = [
+            url(r'^$', view, name='{}_{}'.format(*info)),
+            url(r'^$', view, name='{}_{}_changelist'.format(*info)),
+        ]
+
+        extra_urls = self.model.View(admin=self).get_urls()
+        if extra_urls:
+            urlpatterns += extra_urls
+
+        return urlpatterns
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.has_perm(self.access_permission)
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_context(self, request, **extra):
+        opts = self.model._meta
+        context = self.admin_site.each_context(request)
+        context.update({
+            'app_label': opts.app_label,
+            'model_name': force_text(opts.verbose_name_plural),
+            'title': force_text(opts.verbose_name_plural),
+            'cl': {'opts': opts},  # change_list.html requirement
+        })
+        context.update(extra or {})
+        return context
+
+
+def register(view, admin_site=None):
+    """
+    Register a generic class based view wrapped with ModelAdmin and fake model
+    """
+    app_package = view.__module__[:view.__module__.index('.admin')]
+    app_config = apps.get_app_config(app_package)
+
+    label = getattr(view, 'label', None)
+    if not label:
+        label = re.sub('(Admin)|(View)', '', view.__name__).lower()
+    view.label = label
+
+    model_name = label.capitalize()
+    verbose_name = getattr(view, 'verbose_name', model_name)
+    view.verbose_name = verbose_name
+
+    access_perm_codename = 'can_access_' + model_name.lower()
+    access_perm_name = _('Can access {verbose_name}').format(
+        verbose_name=verbose_name
+    )
+    permissions = (
+        (access_perm_codename, access_perm_name),
+    ) + tuple(getattr(view, 'permissions', [])),
+
+    model = type(model_name, (Model,), {
+        '__module__': view.__module__ + '.__models__',  # Fake
+        'View': view,
+        'app_config': app_config,
+        'Meta': type('Meta', (object,), dict(
+            managed=False,
+            abstract=True,
+            app_label=app_config.label,
+            verbose_name=verbose_name,
+            verbose_name_plural=verbose_name,
+            permissions=permissions,
+        ))
+    })
+
+    # Do register on admin site
+    if not admin_site:
+        admin_site = site
+
+    admin_site._registry[model] = ModelAdminView(model, admin_site)
+
+
+class AdminView(View):
+
+    admin = None
+
+    def get_urls(self):
+        return None
+
+    def admin_view(self, view, perm=None):
+        perm = perm or 'can_access_' + self.admin.model._meta.verbose_name
+        if '.' not in perm:
+            perm = self.admin.model._meta.app_label + '.' + perm
+        return permission_required(perm)(view)
+
+    def has_permission(self, codename):
+        return self.request.user.has_perm(
+            '{}.{}'.format(self.admin.model._meta.app_label, codename)
+        )
+
+    def has_access(self):
+        perm = 'can_access_' + self.admin.model._meta.verbose_name
+        return self.has_permission(perm)
+
+    def get_context(self, **extra):
+        return self.admin.get_context(self.request, **extra)
+
+    def render(self, template, context=None):
+        extra = context or {}
+        return render(
+            self.request,
+            template,
+            self.get_context(**extra)
+        )
 
 
 site = ExtendedAdminSite()
