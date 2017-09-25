@@ -29,7 +29,7 @@ class ExtendedAdminSite(AdminSite):
         'SITE_HEADER': env.get(
             'DJANGO_ADMIN_SITE_HEADER', AdminSite.site_header),
         'INDEX_TITLE': env.get(
-            'DJANGO_ADMIN_INDEX_TITLE', AdminSite.index_titlei),
+            'DJANGO_ADMIN_INDEX_TITLE', AdminSite.index_title),
         'COLOR': env.get(
             'DJANGO_ADMIN_COLOR', '#444'),
     }
