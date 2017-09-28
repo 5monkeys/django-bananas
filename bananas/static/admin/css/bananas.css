@@ -55,7 +55,7 @@ body:not(.login) #header {
   width: var(--sidebar-width);
   height: 100%;
   padding: 0;
-  background-color: #41769a /* fallback */;
+  background-color: #417690 /* fallback */;
   background-color: var(--theme-color);
   color: white;
 }
@@ -69,7 +69,7 @@ body:not(.login) #header {
   display: block;
   height: 70px /* fallback */;
   height: var(--topbar-height);
-  background-color: #41769a /* fallback */;
+  background-color: #417690 /* fallback */;
   background-color: var(--theme-color);
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)) /* fallback */;
   background-image: var(--bg-darken-25);
@@ -107,6 +107,7 @@ body.login #branding a:active {
 #branding a.logo img {
   height: calc(70px - 15px * 2) /* fallback */;
   height: var(--topbar-height-inner);
+  vertical-align: middle /* fallback */;
   vertical-align: var(--logo-align);
   margin-right: 10px;
 }
@@ -170,6 +171,7 @@ body.login #branding a:active {
 
 /* Add space for the top bar. */
 body:not(.login) #messages {
+  padding-top: 70px /* fallback */;
   padding-top: var(--topbar-height);
 }
 
@@ -191,7 +193,7 @@ body:not(.login) #messages {
   margin: 0;
   padding: 15px /* fallback */;
   padding: var(--topbar-padding);
-  background-color: #41769a /* fallback */;
+  background-color: #417690 /* fallback */;
   background-color: var(--theme-color);
   color: white;
 }
@@ -303,6 +305,7 @@ body.popup #title .back-arrow {
 
 a:link, a:visited,
 #changelist-filter li.selected a {
+  color: #447e9b /* fallback */;
   color: var(--secondary-color);
 }
 #content-main a:focus,
@@ -312,6 +315,7 @@ a:link, a:visited,
 .datetimeshortcuts .date-icon,
 .datetimeshortcuts .clock-icon {
   background: none;
+  background-color: #447e9b /* fallback */;
   background-color: var(--secondary-color);
   background-blend-mode: overlay;
 }
@@ -340,7 +344,7 @@ input[type="button"],
 .timelist a:hover,
 .timelist a:focus,
 .calendar td.selected a {
-  background-color: #41769a /* fallback */;
+  background-color: #417690 /* fallback */;
   background-color: var(--theme-color);
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)) /* fallback */;
   background-image: var(--bg-lighten-25);
@@ -363,7 +367,7 @@ input[type="button"]:active,
 .submit-row input:active,
 .calendar td a:active,
 .timelist a:active {
-  background-color: #41769a /* fallback */;
+  background-color: #417690 /* fallback */;
   background-color: var(--theme-color);
   background-image: none;
 }
@@ -371,7 +375,7 @@ input[type="button"]:active,
 .button.default,
 input[type="submit"].default,
 .submit-row input.default {
-  background: #41769a /* fallback */;
+  background: #417690 /* fallback */;
   background: var(--theme-color);
 }
 
@@ -384,7 +388,7 @@ input[type="submit"].default:active,
 .submit-row input.default:hover,
 .submit-row input.default:focus,
 .submit-row input.default:active {
-  background: #41769a /* fallback */;
+  background: #417690 /* fallback */;
   background: var(--theme-color);
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)) /* fallback */;
   background-image: var(--bg-darken-25);
