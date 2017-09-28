@@ -67,7 +67,7 @@ class ModelAdminView(ModelAdmin):
 
         self.access_permission = '{app_label}.{codename}'.format(
             app_label=app_label,
-            codename=self.model._meta.permissions[0]
+            codename=self.model._meta.permissions[0][0]  # First perm codename
         )
 
         View = self.model.View
