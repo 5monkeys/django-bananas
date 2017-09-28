@@ -1,0 +1,8 @@
+:root {
+  --width: 15px;
+}
+
+a {
+  width: 15px /* fallback */;
+  width: var(--width);
+}

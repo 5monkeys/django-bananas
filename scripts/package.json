@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "build-css": "node build-css.js"
+  },
+  "dependencies": {
+    "postcss": "6.0.12",
+    "postcss-custom-properties": "6.1.0"
+  }
+}

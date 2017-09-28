@@ -1,26 +1,155 @@
 {% extends "admin/base.html" %}
-{% load admin_static %}
+{% load i18n admin_urls static admin_modify %}
 
-{% block bodyclass %}bananas{% endblock %}
+
+{% block title %}{% if title %}{{ title }} | {% endif %}{{ site_title|default:_('Django site admin') }}{% endblock %}
+
 
 {% block extrahead %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static "admin/css/bananas.css" %}" />
-    <style stype="text/css">
-        body {
-            background: {{ settings.BACKGROUND_COLOR }};
-        }
-        body.login {
-            background: {{ settings.BACKGROUND_COLOR }};
-            color: rgba(255, 255, 255, 0.8);
-        }
-    </style>
-{% endblock %}
+  {{ block.super }}
 
-{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+  <link rel="stylesheet" href="{% static 'admin/css/bananas.css' %}">
+
+  <style>
+    :root {
+      --theme-color: {{ settings.PRIMARY_COLOR|default:'#41769a' }};
+      --secondary-color: {{ settings.SECONDARY_COLOR|default:'#447e9b' }};
+      --logo-align: {{ settings.LOGO_ALIGN|default:'middle' }};
+    }
+  </style>
+{% endblock extrahead %}
+
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
-{% endblock %}
+  {# Include SVG icons as early as possible since some browsers have #}
+  {# problems displaying SVG elements defined after their first use. #}
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <!-- (<) -->
+    <symbol id="svg-chevron-left" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="23" fill="none" stroke-width="2" vector-effect="non-scaling-stroke" />
+      <path d="M 28,10 L 14,24 28,38" fill="none" stroke-width="2" stroke-linecap="butt" vector-effect="non-scaling-stroke" />
+    </symbol>
+    <!-- = -->
+    <symbol id="svg-hamburger" viewBox="0 0 48 48">
+      <path d="M10 10 H38" fill="none" stroke-width="2" stroke-linecap="butt" vector-effect="non-scaling-stroke" />
+      <path d="M10 24 H38" fill="none" stroke-width="2" stroke-linecap="butt" vector-effect="non-scaling-stroke" />
+      <path d="M10 38 H38" fill="none" stroke-width="2" stroke-linecap="butt" vector-effect="non-scaling-stroke" />
+    </symbol>
+  </svg>
 
-{% block nav-global %}{% endblock %}
+  <a href="{% url 'admin:index' %}"{% if settings.LOGO %} class="logo"{% endif %}>
+    {% if settings.LOGO %}<img src="{% static settings.LOGO %}">{% endif %}{{ site_header|default:_('Django administration') }}
+  </a>
+{% endblock branding %}
+
+
+{% block nav-global %}
+  {% if has_permission %}
+    <nav>
+      <ul>
+        {% for app in available_apps %}
+          <li>
+            <a href="{{ app.app_url }}">
+              {{ app.name }}
+            </a>
+            {% if app.models %}
+              <ul>
+                {% for model in app.models %}
+                  <li>
+                    {% if model.admin_url %}
+                      <a href="{{ model.admin_url }}">
+                        {{ model.name }}
+                      </a>
+                    {% else %}
+                      <a>{{ model.name }}</a>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+
+        <li>
+          <a>
+            {% block welcome-msg %}
+              {% firstof user.get_short_name user.get_username %}
+            {% endblock %}
+          </a>
+
+          <ul>
+            {% if user.has_usable_password %}
+              <li>
+                <a href="{% url 'admin:password_change' %}">
+                  {% trans 'Change password' %}
+                </a>
+              </li>
+            {% endif %}
+
+            <li>
+              <a href="{% url 'admin:logout' %}">
+                {% trans 'Log out' %}
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  {% endif %}
+{% endblock nav-global %}
+
+
+{% block messages %}
+  <div id="messages">
+    {{ block.super }}
+  </div>
+{% endblock messages %}
+
+
+{% block content_title %}
+  <div id="title">
+    <button type="button" class="hamburger">
+      <svg><use xlink:href="#svg-hamburger"/></svg>
+    </button>
+
+    {% if cl.opts %}
+      <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}" class="back-arrow">
+        <svg><use xlink:href="#svg-chevron-left"/></svg>
+      </a>
+      <span class="subject">{{ cl.opts.app_config.verbose_name }}</span>
+    {% elif opts %}
+      {% if has_change_permission or not object %}
+          <a href="{% url opts|admin_urlname:'changelist' %}" class="back-arrow">
+            <svg><use xlink:href="#svg-chevron-left"/></svg>
+          </a>
+      {% else %}
+        <a href="{% url opts|admin_urlname:'change' object.pk|admin_urlquote %}" class="back-arrow">
+          <svg><use xlink:href="#svg-chevron-left"/></svg>
+        </a>
+      {% endif %}
+      <span class="subject">
+        {{ opts.verbose_name_plural|capfirst }}
+      </span>
+    {% elif app_label %}
+      <a href="{% url 'admin:index' %}" class="back-arrow">
+        <svg><use xlink:href="#svg-chevron-left"/></svg>
+      </a>
+    {% else %}
+      <span class="back-arrow"></span>
+    {% endif %}
+
+    {% if title %}
+      <h1>{{ title }}</h1>
+    {% endif %}
+  </div>
+{% endblock content_title %}
+
+
+{% block footer %}
+  {{ block.super }}
+  <script src="{% static 'admin/js/bananas.js' %}"></script>
+{% endblock footer %}
+
+
+{% block usertools %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
