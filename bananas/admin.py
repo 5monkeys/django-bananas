@@ -88,6 +88,9 @@ class ModelAdminView(ModelAdmin):
 
         return urlpatterns
 
+    def has_module_permission(self, request):
+        return request.user.has_perm(self.access_permission)
+
     def has_change_permission(self, request, obj=None):
         return request.user.has_perm(self.access_permission)
 
