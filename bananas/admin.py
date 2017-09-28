@@ -25,15 +25,15 @@ class ExtendedAdminSite(AdminSite):
         'INHERIT_REGISTERED_MODELS': env.get_bool(
             'DJANGO_ADMIN_INHERIT_REGISTERED_MODELS', True),
         'SITE_TITLE': env.get(
-            'DJANGO_ADMIN_SITE_TITLE', 'admin'),
+            'DJANGO_ADMIN_SITE_TITLE', AdminSite.site_title),
         'SITE_HEADER': env.get(
-            'DJANGO_ADMIN_SITE_HEADER', AdminSite.site_header),
+            'DJANGO_ADMIN_SITE_HEADER', 'admin'),
         'INDEX_TITLE': env.get(
             'DJANGO_ADMIN_INDEX_TITLE', AdminSite.index_title),
         'PRIMARY_COLOR': env.get(
-            'DJANGO_ADMIN_PRIMARY_COLOR', '#417690'),
+            'DJANGO_ADMIN_PRIMARY_COLOR', '#34A77B'),
         'SECONDARY_COLOR': env.get(
-            'DJANGO_ADMIN_SECONDARY_COLOR', '#447e9b'),
+            'DJANGO_ADMIN_SECONDARY_COLOR', '#20AA76'),
         'LOGO': env.get(
             'DJANGO_ADMIN_LOGO', 'admin/img/django.svg'),
         'LOGO_ALIGN': env.get(

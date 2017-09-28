@@ -307,7 +307,7 @@ a:link, a:visited,
 }
 #content-main a:focus,
 #content-main a:hover {
-  filter: brightness(66%);
+  filter: brightness(120%) saturate(75%);
 }
 .datetimeshortcuts .date-icon,
 .datetimeshortcuts .clock-icon {
