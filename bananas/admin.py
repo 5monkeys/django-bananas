@@ -130,9 +130,9 @@ def register(view, admin_site=None):
     access_perm_name = _('Can access {verbose_name}').format(
         verbose_name=verbose_name
     )
-    permissions = (
-        (access_perm_codename, access_perm_name),
-    ) + tuple(getattr(view, 'permissions', [])),
+    permissions = tuple([
+        (access_perm_codename, access_perm_name)
+    ] + list(getattr(view, 'permissions', [])))
 
     model = type(model_name, (Model,), {
         '__module__': view.__module__ + '.__models__',  # Fake
