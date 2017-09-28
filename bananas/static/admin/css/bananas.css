@@ -9,7 +9,7 @@ See `scripts/build-css.js` for more information.
 */
 :root {
   /* Really supposed to be overridden: */
-  --theme-color: #41769a;
+  --theme-color: #417690;
   --secondary-color: #447e9b;
   --logo-align: middle;
 
