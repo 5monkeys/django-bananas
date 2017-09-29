@@ -223,6 +223,10 @@ body:not(.login) #messages {
   width: auto;
 }
 
+#changelist .paginator {
+  border: 0;
+}
+
 #changelist .actions label {
   background-color: #417690 /* fallback */;
   background-color: var(--theme-color);
@@ -269,9 +273,13 @@ body:not(.login) #messages {
 }
 
 #changelist-filter {
-    position: relative;
-    float: right;
-    margin-bottom: 30px;
+  position: relative;
+  float: right;
+  margin-bottom: 30px;
+}
+
+.form-row {
+  border-bottom: 0;
 }
 
 body.popup #title {
