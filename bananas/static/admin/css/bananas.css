@@ -209,14 +209,54 @@ body:not(.login) #messages {
 }
 
 #changelist .actions {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 60px;
-  padding: 16px 0;
-  background: none;
+  background: #f8f8f8;
+  padding: 0;
+  margin-bottom: 15px;
+  float: right;
+  clear: right;
+  width: 240px;
+}
+
+.change-list .results,
+.change-list .paginator {
+  margin-right: 280px;
+  width: auto;
+}
+
+#changelist .actions label {
+  background-color: #417690 /* fallback */;
+  background-color: var(--theme-color);
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)) /* fallback */;
+  background-image: var(--bg-lighten-25);
   box-sizing: border-box;
-  z-index: 1000;
+  height: 29px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 5px 15px;
+  color: #fff;
+  line-height: normal;
+  display: block;
+  vertical-align: none;
+}
+
+#changelist .actions select {
+  display: inline-block;
+  margin: 20px 0 10px 0;
+  float: left;
+  background-color: #fff;
+}
+
+#changelist .actions .button {
+  display: inline-block;
+  float: right;
+  margin: 15px 15px 0 0;
+}
+
+#changelist .actions span.action-counter {
+  display: block;
+  clear: both;
+  margin: 0 15px 15px;
 }
 
 .filtered .actions {
@@ -228,7 +268,9 @@ body:not(.login) #messages {
 }
 
 #changelist-filter {
-  top: 90px;
+    position: relative;
+    float: right;
+    margin-bottom: 30px;
 }
 
 body.popup #title {
