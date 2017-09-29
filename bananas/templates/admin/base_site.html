@@ -147,6 +147,16 @@
 
 {% block footer %}
   {{ block.super }}
+  <script>
+    if (!window.django) {
+      document.write('<script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"><\/script>');
+    }
+  </script>
+  <script>
+    if (!window.django && window.jQuery) {
+      window.django = {jQuery: window.jQuery.noConflict(true)};
+    }
+  </script>
   <script src="{% static 'admin/js/bananas.js' %}"></script>
 {% endblock footer %}
 
