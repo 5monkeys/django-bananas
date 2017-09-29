@@ -245,6 +245,7 @@ body:not(.login) #messages {
   margin: 20px 0 10px 0;
   float: left;
   background-color: #fff;
+  width: 75%;
 }
 
 #changelist .actions .button {
