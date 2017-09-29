@@ -278,8 +278,13 @@ body:not(.login) #messages {
   margin-bottom: 30px;
 }
 
-.form-row {
+fieldset .form-row:last-child {
   border-bottom: 0;
+}
+
+#content-related .module h2 {
+  padding: 16px 0 10px 0;
+  background-color: #fff;
 }
 
 body.popup #title {
