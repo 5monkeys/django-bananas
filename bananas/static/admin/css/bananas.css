@@ -353,6 +353,32 @@ input[type="button"],
   background-image: var(--bg-lighten-25);
 }
 
+.module > h2,
+.module > caption,
+.module > table > caption {
+  background-color: none;
+  background: none;
+  color: #333;
+  font-size: 22px;
+}
+
+.module > h2 a.section:link,
+.module > caption a.section:link,
+.module > h2 a.section:visited,
+.module > caption a.section:visited,
+.module > table > caption a.section {
+  color: #333;
+  font-size: 22px;
+}
+
+tbody th {
+  font-weight: normal;
+}
+
+.dashboard #content {
+  width: auto;
+}
+
 .button:hover,
 .button:focus,
 .button:active,
