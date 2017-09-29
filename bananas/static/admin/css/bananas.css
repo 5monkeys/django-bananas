@@ -201,6 +201,36 @@ body:not(.login) #messages {
   color: white;
 }
 
+#changelist #toolbar {
+  margin: -30px -40px 30px;
+  padding: 16px;
+  height: 60px;
+  box-sizing: border-box;
+}
+
+#changelist .actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 60px;
+  padding: 16px 0;
+  background: none;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.filtered .actions {
+  margin-right: 0;
+}
+
+.selector-chosen select {
+  height: 20.7em;
+}
+
+#changelist-filter {
+  top: 90px;
+}
+
 body.popup #title {
   left: 0;
 }
