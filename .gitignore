@@ -58,3 +58,6 @@ target/
 
 # Pycharm:
 .idea
+
+# Database
+*.sqlite3

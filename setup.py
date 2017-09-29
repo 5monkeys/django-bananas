@@ -20,7 +20,7 @@ setup(
     long_description=long_description,
     url='https://github.com/5monkeys/django-bananas',
     version=__import__('bananas').__version__,
-    packages=find_packages(exclude=['tests', '_*']),
+    packages=find_packages(exclude=['tests', '_*', 'example']),
     include_package_data=True,
     zip_safe=False,
     install_requires=[],
