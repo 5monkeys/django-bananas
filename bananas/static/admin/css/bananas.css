@@ -405,26 +405,6 @@ a:link, a:visited,
   filter: brightness(120%) saturate(75%);
 }
 
-.module h2,
-.module caption,
-.inline-group h2,
-.selector-chosen h2,
-.button,
-a.button,
-input[type="submit"],
-input[type="button"],
-.submit-row input,
-.calendar td a:hover,
-.calendar td a:focus,
-.timelist a:hover,
-.timelist a:focus,
-.calendar td.selected a {
-  background-color: #417690 /* fallback */;
-  background-color: var(--theme-color);
-  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)) /* fallback */;
-  background-image: var(--bg-lighten-25);
-}
-
 .button:hover,
 .button:focus,
 .button:active,
@@ -447,11 +427,29 @@ input[type="button"]:active,
   background-image: none;
 }
 
-.button.default,
-input[type="submit"].default,
-.submit-row input.default {
-  background: #417690 /* fallback */;
-  background: var(--theme-color);
+.module h2,
+.module caption,
+.inline-group h2,
+.selector-chosen h2,
+.button,
+.button:disabled,
+a.button,
+a.button:disabled,
+input[type="submit"],
+input[type="submit"]:disabled,
+input[type="button"],
+input[type="button"]:disabled,
+.submit-row input,
+.submit-row input:disabled,
+.calendar td a:hover,
+.calendar td a:focus,
+.timelist a:hover,
+.timelist a:focus,
+.calendar td.selected a {
+  background-color: #417690 /* fallback */;
+  background-color: var(--theme-color);
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)) /* fallback */;
+  background-image: var(--bg-lighten-25);
 }
 
 .button.default:hover,
@@ -467,6 +465,22 @@ input[type="submit"].default:active,
   background: var(--theme-color);
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)) /* fallback */;
   background-image: var(--bg-darken-25);
+}
+
+.button.default,
+.button.default:default,
+input[type="submit"].default,
+input[type="submit"].default:disabled,
+.submit-row input.default,
+.submit-row input.default:disabled {
+  background: #417690 /* fallback */;
+  background: var(--theme-color);
+}
+
+.button:disabled,
+a.button:disabled,
+input:disabled {
+  cursor: not-allowed;
 }
 
 .module > h2,
