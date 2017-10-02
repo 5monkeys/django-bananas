@@ -384,9 +384,9 @@ body.popup #title .back-arrow {
   background-color: var(--darken-25);
 }
 
-#content-main .object-tools a:hover,
-#content-main .object-tools a:focus,
-#content-main .object-tools a:active {
+#content .object-tools a:hover,
+#content .object-tools a:focus,
+#content .object-tools a:active {
   background-color: rgba(0, 0, 0, 0.33) /* fallback */;
   background-color: var(--darken-33);
   filter: none;

@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import (
     login_required,
 )
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
@@ -167,27 +168,51 @@ def register(view, admin_site=None):
 class AdminView(View):
 
     admin = None
+    tools = None
 
     def get_urls(self):
         return None
 
+    def get_view_tools(self):
+        tools = []
+
+        if self.tools:
+            for tool in self.tools:
+                perm = None
+                if len(tool) == 3:
+                    tool, perm = tool[:-1], tool[-1]
+                if perm and not self.has_permission(perm):
+                    continue
+                text, link = tool
+                if '/' not in link:
+                    link = reverse(link)
+                tools.append((text, link))
+
+        return tools
+
     def admin_view(self, view, perm=None):
         perm = perm or 'can_access_' + self.admin.model._meta.verbose_name
-        if '.' not in perm:
-            perm = self.admin.model._meta.app_label + '.' + perm
+        perm = self.get_permission(perm)
         return permission_required(perm)(view)
 
-    def has_permission(self, codename):
-        return self.request.user.has_perm(
-            '{}.{}'.format(self.admin.model._meta.app_label, codename)
-        )
+    def get_permission(self, perm):
+        if '.' not in perm:
+            perm = '{}.{}'.format(self.admin.model._meta.app_label, perm)
+        return perm
+
+    def has_permission(self, perm):
+        perm = self.get_permission(perm)
+        return self.request.user.has_perm(perm)
 
     def has_access(self):
         perm = 'can_access_' + self.admin.model._meta.verbose_name
         return self.has_permission(perm)
 
     def get_context(self, **extra):
-        return self.admin.get_context(self.request, **extra)
+        return self.admin.get_context(
+            self.request,
+            view_tools=self.get_view_tools()
+        )
 
     def render(self, template, context=None):
         extra = context or {}

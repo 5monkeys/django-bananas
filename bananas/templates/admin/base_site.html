@@ -142,6 +142,17 @@
       <h1>{{ title }}</h1>
     {% endif %}
   </div>
+  {% block view-tools %}
+  <ul class="object-tools">
+    {% block view-tools-items %}
+      {% for text, link in view_tools %}
+        <li>
+          <a href="{{ link }}">{{ text }}</a>
+        </li>
+      {% endfor %}
+    {% endblock %}
+  </ul>
+  {% endblock %}
 {% endblock content_title %}
 
 
