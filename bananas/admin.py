@@ -211,7 +211,8 @@ class AdminView(View):
     def get_context(self, **extra):
         return self.admin.get_context(
             self.request,
-            view_tools=self.get_view_tools()
+            view_tools=self.get_view_tools(),
+            **extra
         )
 
     def render(self, template, context=None):
