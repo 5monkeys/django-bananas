@@ -534,11 +534,11 @@ input[type="submit"].default:active,
 }
 
 @media (max-width: 1019px) {
-  body:not(.popup) #container {
+  body:not(.popup):not(.login) #container {
     padding-left: 0;
   }
 
-  #header {
+  body:not(.login) #header {
     left: auto;
     right: 100%;
     height: 100%;
@@ -566,6 +566,10 @@ input[type="submit"].default:active,
     clear: both;
   }
 
+  #changelist #toolbar {
+    margin-top: 0;
+  }
+
   #header,
   #title,
   #messages,
@@ -582,5 +586,18 @@ input[type="submit"].default:active,
   html.is-sidebarOpen #footer {
     transform: translateX(250px) /* fallback */;
     transform: translateX(var(--sidebar-width));
+  }
+}
+
+@media (max-width: 500px) {
+  .login #container {
+    box-sizing: border-box;
+    min-width: 0;
+    width: calc(100% - 30px);
+    margin: 30px auto;
+  }
+
+  .login .submit-row {
+    padding-left: 0;
   }
 }
