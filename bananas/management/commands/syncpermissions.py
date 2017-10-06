@@ -32,7 +32,6 @@ class Command(BaseCommand):
                         ct.name, ct.app_label
                     ))
 
-                import pdb; pdb.set_trace()
                 for codename, name in model._meta.permissions:
                     p, created = Permission.objects.get_or_create(
                         codename=codename, name=name, content_type=ct
