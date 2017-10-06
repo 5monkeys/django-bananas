@@ -468,7 +468,7 @@ input[type="submit"].default:active,
 }
 
 .button.default,
-.button.default:default,
+.button.default:disabled,
 input[type="submit"].default,
 input[type="submit"].default:disabled,
 .submit-row input.default,
