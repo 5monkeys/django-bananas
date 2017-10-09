@@ -271,6 +271,9 @@ body.popup #title .back-arrow {
   margin: 0;
   line-height: calc(70px - 15px * 2) /* fallback */;
   line-height: var(--topbar-height-inner);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .breadcrumbs {
@@ -617,5 +620,9 @@ tbody th {
 
   .login .submit-row {
     padding-left: 0;
+  }
+
+  #changelist #toolbar #searchbar {
+    width: calc(100vw - 140px);
   }
 }
