@@ -67,6 +67,19 @@ class ModelDict(dict):
         # Item not a nested key, raise
         raise KeyError(item)
 
+    def expand(self):
+        keys = list(self)
+        for key in keys:
+            field, __, nested_key = key.partition('__')
+            if nested_key:
+                if field not in keys:
+                    nested = self.__getnested__(field)
+                    if isinstance(nested, self.__class__):
+                        nested = nested.expand()
+                    self[field] = nested
+                del self[key]
+        return dict(self)
+
     @classmethod
     def from_model(cls, model, *fields, **named_fields):
         """
