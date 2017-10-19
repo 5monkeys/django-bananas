@@ -78,7 +78,7 @@ class ModelDict(dict):
                         nested = nested.expand()
                     self[field] = nested
                 del self[key]
-        return dict(self)
+        return ModelDict(self)
 
     @classmethod
     def from_model(cls, model, *fields, **named_fields):
