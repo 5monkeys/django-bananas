@@ -1,5 +1,7 @@
 from bananas.admin import AdminView, register
+from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+from . import models
 
 
 @register
@@ -12,3 +14,9 @@ class BananasAdmin(AdminView):
 
     def get(self, request):
         return self.render('bananas.html')
+
+
+@admin.register(models.Monkey)
+class MonkeyAdmin(admin.ModelAdmin):
+    list_display = ('id',)
+    raw_id_fields = ('user',)
