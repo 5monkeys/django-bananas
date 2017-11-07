@@ -3,7 +3,12 @@ import re
 from django.apps import apps
 from django.db.models import Model
 from django.conf import settings as django_settings
-from django.conf.urls import url
+
+try:
+    from django.conf.urls import url
+except ImportError:
+    from django.conf.urls.defaults import url
+
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.sites import site as django_admin_site
 from django.contrib.auth.decorators import (
@@ -18,6 +23,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
 from .environment import env
+from .compat import urlpatterns as compat_urlpatterns
 
 
 class ExtendedAdminSite(AdminSite):
@@ -84,10 +90,11 @@ class ModelAdminView(ModelAdmin):
         view = login_required(view)
 
         info = app_label, View.label
-        urlpatterns = [
+
+        urlpatterns = compat_urlpatterns(
             url(r'^$', view, name='{}_{}'.format(*info)),
             url(r'^$', view, name='{}_{}_changelist'.format(*info)),
-        ]
+        )
 
         extra_urls = self.model.View(admin=self).get_urls()
         if extra_urls:
