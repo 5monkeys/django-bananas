@@ -24,6 +24,7 @@ You can add your own by running ``register(scheme, module_name)`` before
 parsing.
 """
 from collections import namedtuple
+from urllib.parse import unquote_plus
 
 try:
     # Python 2
@@ -154,7 +155,7 @@ def parse_path(path):
 
     parts = path.strip('/').split('/')
 
-    database = parts[0] if len(parts) else None
+    database = unquote_plus(parts[0]) if len(parts) else None
     schema = parts[1] if len(parts) > 1 else None
 
     return database, schema
