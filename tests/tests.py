@@ -19,6 +19,7 @@ class QuerySetTest(TestCase):
         self.simple = Simple.objects.create(name='S')
         self.parent = Parent.objects.create(name='A')
         self.child = Child.objects.create(name='B', parent=self.parent)
+        self.other_child = Child.objects.create(name='C', parent=self.parent)
 
     def test_modeldict(self):
         d = ModelDict(foo='bar', baz__ham='spam')
@@ -103,6 +104,50 @@ class QuerySetTest(TestCase):
         child = Child.objects.dicts('parent__name', alias='name').first()
         self.assertEqual(child.alias, self.child.name)
         self.assertEqual(child.parent.name, self.parent.name)
+
+        # Test that renamed fields on reverse relation fields
+        # will actually return all possible results
+        expected_dicts = [
+            {'child_name': self.child.name},
+            {'child_name': self.other_child.name}
+        ]
+        self.assertListEqual(
+            list(Parent.objects.filter(name='A').dicts(child_name='child__name')),
+            expected_dicts
+        )
+
+        # Test renaming a field with another that's not renamed
+        expected_dicts = [
+            {'id': self.parent.pk, 'child_name': self.child.name},
+            {'id': self.parent.pk, 'child_name': self.other_child.name}
+        ]
+
+        self.assertListEqual(
+            list(Parent.objects.filter(name='A').dicts('id', child_name='child__name')),
+            expected_dicts
+        )
+
+        # Test multiple renamed fileds together
+        expected_dicts = [
+            {'id': self.child.pk, 'child_name': self.child.name},
+            {'id': self.other_child.pk, 'child_name': self.other_child.name}
+        ]
+
+        self.assertListEqual(
+            list(Parent.objects.filter(name='A').dicts(id='child__id', child_name='child__name')),
+            expected_dicts
+        )
+
+        # Test multiple renamed fileds together with another that's not
+        expected_dicts = [
+            {'id': self.parent.pk, 'child_id': self.child.pk, 'child_name': self.child.name},
+            {'id': self.parent.pk, 'child_id': self.other_child.pk, 'child_name': self.other_child.name}
+        ]
+
+        self.assertListEqual(
+            list(Parent.objects.filter(name='A').dicts('id', child_id='child__id', child_name='child__name')),
+            expected_dicts
+        )
 
     def test_uuid_model(self):
         first = TestUUIDModel.objects.create(text='first')
