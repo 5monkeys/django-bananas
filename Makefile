@@ -4,10 +4,18 @@
 help:
 	@echo "\nAvailable commands:\n\n $(shell sed -n 's/^.PHONY:\(.*\)/ *\1\\n/p' Makefile)"
 
-.PHONY: test  # runs tests using detox, combines coverage and reports it
+.PHONY: test  # runs tests
 test:
+	coverage run setup.py test
+
+.PHONY: test_all  # runs tests using detox, combines coverage and reports it
+test_all:
 	detox
-	coverage combine
+	make coverage
+
+.PHONY: coverage  # combines coverage and reports it
+coverage:
+	coverage combine || true
 	coverage report
 
 .PHONY: lint  # runs flake8
@@ -34,5 +42,5 @@ example:
 clean:
 	rm -rf dist/ *.egg *.egg-info .coverage .coverage.* example/db.sqlite3
 
-.PHONY: all  # runs clean, test, lint
-all: clean test lint
+.PHONY: all  # runs clean, test_all, lint
+all: clean test_all lint

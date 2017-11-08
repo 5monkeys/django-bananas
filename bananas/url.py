@@ -25,13 +25,7 @@ parsing.
 """
 from collections import namedtuple
 from urllib.parse import unquote_plus
-
-try:
-    # Python 2
-    from urlparse import urlsplit, parse_qs
-except ImportError:
-    # Python 3
-    from urllib.parse import urlsplit, parse_qs
+from .compat import urlsplit, parse_qs
 
 
 class Alias(object):

@@ -3,12 +3,7 @@ import re
 from django.apps import apps
 from django.db.models import Model
 from django.conf import settings as django_settings
-
-try:
-    from django.conf.urls import url
-except ImportError:
-    from django.conf.urls.defaults import url
-
+from django.conf.urls import url
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.sites import site as django_admin_site
 from django.contrib.auth.decorators import (
@@ -17,13 +12,12 @@ from django.contrib.auth.decorators import (
     login_required,
 )
 from django.shortcuts import render
-from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
 from .environment import env
-from .compat import urlpatterns as compat_urlpatterns
+from . import compat
 
 
 class ExtendedAdminSite(AdminSite):
@@ -91,7 +85,7 @@ class ModelAdminView(ModelAdmin):
 
         info = app_label, View.label
 
-        urlpatterns = compat_urlpatterns(
+        urlpatterns = compat.urlpatterns(
             url(r'^$', view, name='{}_{}'.format(*info)),
             url(r'^$', view, name='{}_{}_changelist'.format(*info)),
         )
@@ -192,7 +186,7 @@ class AdminView(View):
                     continue
                 text, link = tool
                 if '/' not in link:
-                    link = reverse(link)
+                    link = compat.reverse(link)
                 tools.append((text, link))
 
         return tools

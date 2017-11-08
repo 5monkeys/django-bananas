@@ -28,19 +28,20 @@ class Parent(TimeStampedModel):
 
 class Child(TimeStampedModel):
     name = models.CharField(max_length=255)
-    parent = models.ForeignKey(Parent, null=True)
+    parent = models.ForeignKey(Parent, null=True, on_delete=models.CASCADE)
     objects = Manager.from_queryset(ExtendedQuerySet)()
 
 
 class Node(TimeStampedModel):
     name = models.CharField(max_length=255)
-    parent = models.ForeignKey('self', null=True)
+    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
     objects = Manager.from_queryset(ExtendedQuerySet)()
 
 
 class TestUUIDModel(UUIDModel):
     text = models.CharField(max_length=255)
-    parent = models.ForeignKey('TestUUIDModel', null=True)
+    parent = models.ForeignKey('TestUUIDModel', null=True,
+                               on_delete=models.CASCADE)
 
 
 class SecretModel(models.Model):
