@@ -8,7 +8,13 @@ class CommandTests(TestCase):
     def test_show_urls(self):
         urls = show_urls.collect_urls()
 
-        n_urls = 13 + int(django.VERSION >= (1, 9))
+        if django.VERSION < (1, 9):
+            n_urls = 13
+        elif django.VERSION < (2, 0):
+            n_urls = 14
+        else:
+            n_urls = 15
+
         self.assertEqual(len(urls), n_urls)
 
         class FakeSys:
