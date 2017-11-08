@@ -17,18 +17,20 @@ env:
     - TOXENV=py34-django19
     - TOXENV=py34-django110
     - TOXENV=py34-django111
+    - TOXENV=py34-django20
 
     - TOXENV=py35-django18
     - TOXENV=py35-django19
     - TOXENV=py35-django110
     - TOXENV=py35-django111
+    - TOXENV=py35-django20
 
 matrix:
   include:
     - python: 3.6
-      env: TOXENV=py36-django110
-    - python: 3.6
       env: TOXENV=py36-django111
+    - python: 3.6
+      env: TOXENV=py36-django20
     - python: 3.4  # i.e. skip installing 3.5
       env: TOXENV=lint
     - python: 3.4
@@ -38,11 +40,13 @@ install:
   - pip install tox stasher
 
 script:
-  - if [[ $TOXENV =~ coverage ]]; then
+  - if [[ $TOXENV =~ coverage ]] && [ -n "$STASH_SECRET" ]; then
     stash pull $STASH_BOX -wc $(TOXENV= tox -l | wc -l);
     fi
-  - tox
-  - if [[ $TOXENV =~ py ]]; then
+  - if [[ ! $TOXENV =~ coverage ]] || [ -n "$STASH_SECRET" ]; then
+    tox;
+    fi
+  - if [[ $TOXENV =~ py ]] && [ -n "$STASH_SECRET" ]; then
     stash push $STASH_BOX $(ls .coverage.*);
     fi
 
