@@ -587,19 +587,6 @@ tbody th {
     display: block;
   }
 
-  .object-tools {
-    position: static;
-    float: none;
-    transform: none;
-    margin-bottom: 15px;
-  }
-
-  .object-tools::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-
   #changelist #toolbar,
   body.popup #changelist #toolbar {
     margin-top: 0;
@@ -638,5 +625,18 @@ tbody th {
 
   #changelist #toolbar #searchbar {
     width: calc(100vw - 140px);
+  }
+
+  .object-tools {
+    position: static;
+    float: none;
+    transform: none;
+    margin-bottom: 15px;
+  }
+
+  .object-tools::after {
+    content: "";
+    display: block;
+    clear: both;
   }
 }
