@@ -12,12 +12,12 @@ from django.contrib.auth.decorators import (
     login_required,
 )
 from django.shortcuts import render
-from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
 from .environment import env
+from . import compat
 
 
 class ExtendedAdminSite(AdminSite):
@@ -84,10 +84,11 @@ class ModelAdminView(ModelAdmin):
         view = login_required(view)
 
         info = app_label, View.label
-        urlpatterns = [
+
+        urlpatterns = compat.urlpatterns(
             url(r'^$', view, name='{}_{}'.format(*info)),
             url(r'^$', view, name='{}_{}_changelist'.format(*info)),
-        ]
+        )
 
         extra_urls = self.model.View(admin=self).get_urls()
         if extra_urls:
@@ -185,7 +186,7 @@ class AdminView(View):
                     continue
                 text, link = tool
                 if '/' not in link:
-                    link = reverse(link)
+                    link = compat.reverse(link)
                 tools.append((text, link))
 
         return tools

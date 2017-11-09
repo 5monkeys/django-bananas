@@ -3,21 +3,24 @@ from collections import OrderedDict
 
 import django
 from django.core.management import BaseCommand
-from django.conf.urls import RegexURLPattern, RegexURLResolver
-from django.core import urlresolvers
+from ... import compat
 
 
 def collect_urls(urls=None, namespace=None, prefix=None):
     if urls is None:
-        urls = urlresolvers.get_resolver(urlconf=None)
+        urls = compat.get_resolver(urlconf=None)
     prefix = prefix or []
-    if isinstance(urls, RegexURLResolver):
+    if isinstance(urls, compat.URLResolver):
         res = []
+        if django.VERSION < (2, 0):
+            pattern = urls.regex.pattern
+        else:
+            pattern = urls.pattern.regex.pattern
         for x in urls.url_patterns:
             res += collect_urls(x, namespace=urls.namespace or namespace,
-                                prefix=prefix + [urls.regex.pattern])
+                                prefix=prefix + [pattern])
         return res
-    elif isinstance(urls, RegexURLPattern):
+    elif isinstance(urls, compat.URLPattern):
         if django.VERSION < (1, 10):
             callback = urls._callback
             lookup_str = callback.__module__ + '.'
@@ -28,9 +31,13 @@ def collect_urls(urls=None, namespace=None, prefix=None):
         else:  # pragma: no cover
             lookup_str = urls.lookup_str
 
+        if django.VERSION < (2, 0):
+            pattern = urls.regex.pattern
+        else:
+            pattern = urls.pattern.regex.pattern
         return [OrderedDict([('namespace', namespace),
                              ('name', urls.name),
-                             ('pattern', prefix + [urls.regex.pattern]),
+                             ('pattern', prefix + [pattern]),
                              ('lookup_str', lookup_str),
                              ('default_args', dict(urls.default_args))])]
     else:  # pragma: no cover

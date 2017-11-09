@@ -60,7 +60,7 @@ class ModelDictQuerySetMixin:
         return clone
 
 
-if django.VERSION[:2] < (1, 9):
+if django.VERSION < (1, 9):
     """
     Patch ModelDictQuerySetMixin for old Django compatibility
     """
