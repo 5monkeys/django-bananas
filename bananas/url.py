@@ -24,13 +24,8 @@ You can add your own by running ``register(scheme, module_name)`` before
 parsing.
 """
 from collections import namedtuple
-
-try:
-    # Python 2
-    from urlparse import urlsplit, parse_qs
-except ImportError:
-    # Python 3
-    from urllib.parse import urlsplit, parse_qs
+from urllib.parse import unquote_plus
+from .compat import urlsplit, parse_qs
 
 
 class Alias(object):
@@ -154,7 +149,7 @@ def parse_path(path):
 
     parts = path.strip('/').split('/')
 
-    database = parts[0] if len(parts) else None
+    database = unquote_plus(parts[0]) if len(parts) else None
     schema = parts[1] if len(parts) > 1 else None
 
     return database, schema

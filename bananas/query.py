@@ -11,9 +11,9 @@ _log = logging.getLogger(__name__)
 
 class ModelDictIterable(object):
 
-    def __init__(self, queryset, named_fields=None):
+    def __init__(self, queryset):
         self.queryset = queryset
-        self.named_fields = named_fields
+        self.named_fields = self.queryset._hints.get('_named_fields')
 
     def __iter__(self):
         queryset = self.queryset
@@ -34,7 +34,7 @@ class ModelDictIterable(object):
 
     def rename_fields(self, names):
         named_fields = {value: key for key, value in self.named_fields.items()}
-        names = (named_fields.get(name, name) for name in names)
+        names = [named_fields.get(name, name) for name in names]
         return names
 
 
@@ -46,15 +46,21 @@ class ModelDictQuerySetMixin:
         if named_fields:
             fields += tuple(named_fields.values())
 
-        def iterable(queryset):
-            return ModelDictIterable(queryset, named_fields)
-
         clone = self.values(*fields)
-        clone._iterable_class = iterable
+        clone._iterable_class = ModelDictIterable
+
+        # QuerySet._hints is a dict object used by db router
+        # to aid deciding which db should get a request. Currently
+        # django only supports `instance`, so it's probably
+        # fine to set a custom key on this dict as it's a guaranteed
+        # way that it'll be returned with the QuerySet instance
+        # while leaving the queryset intact
+        clone._add_hints(**{'_named_fields': named_fields})
+
         return clone
 
 
-if django.VERSION[:2] < (1, 9):
+if django.VERSION < (1, 9):
     """
     Patch ModelDictQuerySetMixin for old Django compatibility
     """
