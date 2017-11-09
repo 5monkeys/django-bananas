@@ -301,6 +301,10 @@ body.popup #title .back-arrow {
   background-color: var(--darken-25);
 }
 
+#content-main .object-tools li {
+  float: right;
+}
+
 #content .object-tools a:hover,
 #content .object-tools a:focus,
 #content .object-tools a:active {
@@ -314,6 +318,10 @@ body.popup #title .back-arrow {
   margin: -30px -40px 30px;
   padding: 16px;
   height: 60px;
+}
+
+body.popup #changelist #toolbar {
+  margin: -20px -20px 30px;
 }
 
 #changelist .actions {
@@ -570,24 +578,17 @@ tbody th {
     left: 0;
   }
 
+  #content,
+  body.popup #content {
+    padding-top: 0px;
+  }
+
   .hamburger {
     display: block;
   }
 
-  .object-tools {
-    position: static;
-    float: none;
-    transform: none;
-    margin-bottom: 15px;
-  }
-
-  .object-tools::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-
-  #changelist #toolbar {
+  #changelist #toolbar,
+  body.popup #changelist #toolbar {
     margin-top: 0;
   }
 
@@ -624,5 +625,18 @@ tbody th {
 
   #changelist #toolbar #searchbar {
     width: calc(100vw - 140px);
+  }
+
+  .object-tools {
+    position: static;
+    float: none;
+    transform: none;
+    margin-bottom: 15px;
+  }
+
+  .object-tools::after {
+    content: "";
+    display: block;
+    clear: both;
   }
 }
