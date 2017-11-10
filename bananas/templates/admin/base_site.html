@@ -8,7 +8,7 @@
 {% block extrahead %}
   {{ block.super }}
 
-  <link rel="stylesheet" href="{% static 'admin/css/bananas.css' %}">
+  <link rel="stylesheet" href="{% static 'admin/bananas/css/bananas.css' %}">
 
   <style>
     :root {
@@ -18,6 +18,12 @@
     }
   </style>
 {% endblock extrahead %}
+
+
+{% block responsive %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/bananas/css/banansive.css' %}">
+{% endblock responsive %}
 
 
 {% block branding %}
@@ -160,7 +166,7 @@
   {{ block.super }}
   <script>
     if (!window.django) {
-      document.write('<script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"><\/script>');
+      document.write('<script src="{% static 'admin/bananas/js/vendor/jquery/jquery.min.js' %}"><\/script>');
     }
   </script>
   <script>
@@ -168,7 +174,7 @@
       window.django = {jQuery: window.jQuery.noConflict(true)};
     }
   </script>
-  <script src="{% static 'admin/js/bananas.js' %}"></script>
+  <script src="{% static 'admin/bananas/js/bananas.js' %}"></script>
 {% endblock footer %}
 
 

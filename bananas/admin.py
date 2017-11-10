@@ -36,7 +36,7 @@ class ExtendedAdminSite(AdminSite):
         'SECONDARY_COLOR': env.get(
             'DJANGO_ADMIN_SECONDARY_COLOR', '#20AA76'),
         'LOGO': env.get(
-            'DJANGO_ADMIN_LOGO', 'admin/img/django.svg'),
+            'DJANGO_ADMIN_LOGO', 'admin/bananas/img/django.svg'),
         'LOGO_ALIGN': env.get(
             'DJANGO_ADMIN_LOGO_ALIGN', 'middle'),
     }

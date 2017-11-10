@@ -1,9 +1,11 @@
-FROM python:3
+ARG PYTHON=3
+FROM python:${PYTHON}
 
 # Install system dependencies
+ARG DJANGO=2.0b1
 RUN apt-get update && apt-get install -y \
         gettext && \
-    pip install Django
+    pip install --pre Django==${DJANGO}
 
 # Install bananas source
 WORKDIR /usr/src
@@ -16,4 +18,4 @@ RUN pip install -e django-bananas && \
 WORKDIR /app
 COPY example ./
 
-ENTRYPOINT ["python3", "manage.py"]
+ENTRYPOINT ["python", "manage.py"]
