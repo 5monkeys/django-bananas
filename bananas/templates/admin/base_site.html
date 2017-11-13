@@ -20,10 +20,11 @@
 {% endblock extrahead %}
 
 
-{% block responsive %}
+{# Using blockbots block for backwards compability #}
+{% block blockbots %}
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'admin/bananas/css/banansive.css' %}">
-{% endblock responsive %}
+{% endblock blockbots %}
 
 
 {% block branding %}
