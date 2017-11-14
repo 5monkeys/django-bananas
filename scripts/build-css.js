@@ -35,20 +35,48 @@ const path = require("path");
 const postcss = require("postcss");
 const customProperties = require("postcss-custom-properties");
 
-const CSS_FILE = path.join(__dirname, "../bananas/static/admin/css/bananas.css");
-// const CSS_FILE = path.join(__dirname, "test.css");
+const mainCssFile = path.join(
+  __dirname,
+  "../bananas/static/admin/bananas/css/bananas.css"
+);
+
+const variables = extractVariables(mainCssFile);
+
+const CSS_FILES = [
+  mainCssFile,
+  path.join(__dirname, "../bananas/static/admin/bananas/css/banansive.css")
+];
 
 const FALLBACK_COMMENT = "/* fallback */";
 
-const input = fs.readFileSync(CSS_FILE, "utf8");
+CSS_FILES.forEach(cssFile => {
+  const input = fs.readFileSync(cssFile, "utf8");
 
-const output = postcss()
-  .use(removeOldFallbacks)
-  .use(customProperties({ preserve: true }))
-  .use(markFallbacksWithComment)
-  .process(input).css;
+  const output = postcss()
+    .use(removeOldFallbacks)
+    .use(customProperties({ preserve: true, variables }))
+    .use(markFallbacksWithComment)
+    .process(input).css;
 
-fs.writeFileSync(CSS_FILE, output);
+  fs.writeFileSync(cssFile, output);
+});
+
+function extractVariables(file) {
+  const input = fs.readFileSync(file, "utf8");
+  const root = postcss.parse(input);
+
+  const variables = {};
+
+  root.walkRules(":root", rule => {
+    rule.each(decl => {
+      if (decl.prop && decl.prop.startsWith("--")) {
+        variables[decl.prop.slice(2)] = decl.value;
+      }
+    });
+  });
+
+  return variables;
+}
 
 function removeOldFallbacks(root) {
   root.walkDecls(decl => {
