@@ -293,7 +293,7 @@ body.popup #title .back-arrow {
   z-index: 3000;
   top: calc(70px / 2) /* fallback */;
   top: calc(var(--topbar-height) / 2);
-  right: 40px;
+  right: 30px;
   transform: translateY(-50%);
   margin: 0;
 }

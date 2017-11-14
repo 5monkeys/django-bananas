@@ -282,6 +282,10 @@
   .change-list .filtered {
     margin-bottom: 0;
   }
+
+  .object-tools {
+    right: 20px;
+  }
 }
 
 @media (min-width: 439px) {
