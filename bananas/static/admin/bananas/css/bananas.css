@@ -472,6 +472,16 @@ tbody th {
   width: auto;
 }
 
+a.selector-chooseall, a.selector-clearall {
+  font-weight: normal;
+}
+
+a.active.selector-chooseall:focus, a.active.selector-clearall:focus, a.active.selector-chooseall:hover, a.active.selector-clearall:hover {
+  color: #447e9b /* fallback */;
+  color: var(--secondary-color);
+  /* TODO: selector-icons.svg is hardcoded blue on hover */
+}
+
 .datetimeshortcuts .date-icon,
 .datetimeshortcuts .clock-icon {
   background: none;
@@ -481,13 +491,13 @@ tbody th {
 }
 
 .datetimeshortcuts .date-icon {
-  -webkit-mask-image: url(../img/icon-calendar.svg);
-  mask-image: url(../img/icon-calendar.svg);
+  -webkit-mask-image: url(../../img/icon-calendar.svg);
+  mask-image: url(../../img/icon-calendar.svg);
 }
 
 .datetimeshortcuts .clock-icon {
-  -webkit-mask-image: url(../img/icon-clock.svg);
-  mask-image: url(../img/icon-clock.svg);
+  -webkit-mask-image: url(../../img/icon-clock.svg);
+  mask-image: url(../../img/icon-clock.svg);
 }
 
 .calendar caption,
