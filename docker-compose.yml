@@ -1,13 +1,30 @@
 version: "3.3"
 
 services:
-  django:
-    build: .
+  django1:
+    build:
+      context: .
+      args:
+        DJANGO: 1.11.7
     command: ["runserver", "0.0.0.0:8000"]
     stdin_open: true
     tty: true
     ports:
       - "8000:8000"
+    volumes:
+      - ./bananas:/usr/src/django-bananas/bananas
+      - ./example:/app
+
+  django2:
+    build:
+      context: .
+      args:
+        DJANGO: 2.0b1
+    command: ["runserver", "0.0.0.0:8000"]
+    stdin_open: true
+    tty: true
+    ports:
+      - "8001:8000"
     volumes:
       - ./bananas:/usr/src/django-bananas/bananas
       - ./example:/app

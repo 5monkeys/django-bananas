@@ -31,15 +31,14 @@ develop:
 	python setup.py develop
 
 .PHONY: example		# starts exmpale app using docker
-DJANGO ?= 2.0b1
 example:
-	@docker-compose build --build-arg DJANGO=${DJANGO} django
-	@docker-compose up -d --no-build --force-recreate
+	@docker-compose up -d --build --force-recreate
 	@rm -rf example/db.sqlite3
-	@docker-compose run --rm django migrate --no-input
-	@docker-compose run --rm django createsuperuser \
+	@docker-compose run --rm django1 migrate --no-input
+	@docker-compose run --rm django1 createsuperuser \
 	 	--username admin \
 		--email admin@example.com
+	@docker-compose ps
 
 .PHONY: clean
 clean:
