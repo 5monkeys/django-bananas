@@ -7,7 +7,7 @@
     window
       .getComputedStyle($html[0])
       .getPropertyValue("--sidebar-transition-duration"),
-    10,
+    10
   ); // ms
 
   polyfillWindowScrollProperties();
@@ -16,7 +16,7 @@
 
   function markCurrentSidebarLink() {
     var navLinks = Array.prototype.slice.call(
-      document.querySelectorAll("#header nav a"),
+      document.querySelectorAll("#header nav a")
     );
 
     var matching = navLinks
