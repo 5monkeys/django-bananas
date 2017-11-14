@@ -265,9 +265,9 @@
 
   #changelist-filter h2 {
     background: none;
-    background-color: #417690 [> fallback <];
+    background-color: #417690 /* fallback */;
     background-color: var(--theme-color);
-    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)) [> fallback <];
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)) /* fallback */;
     background-image: var(--bg-lighten-25);
     color: white;
     line-height: 29px;
