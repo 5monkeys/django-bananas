@@ -8,10 +8,12 @@
     top: 160px;
     right: -40px;
     z-index: 1000;
+    min-height: calc(100vh - 160px - 70px) /* fallback */;
     min-height: calc(100vh - 160px - var(--topbar-height));
   }
   .popup #changelist-filter {
     top: 25px;
+    min-height: calc(100vh - 25px - 70px) /* fallback */;
     min-height: calc(100vh - 25px - var(--topbar-height));
   }
 
