@@ -167,13 +167,15 @@
 {% block footer %}
   {{ block.super }}
   <script>
-    if (!window.django) {
-      document.write('<script src="{% static 'admin/bananas/js/vendor/jquery/jquery.min.js' %}"><\/script>');
+    if (!window.django || !window.django.jQuery) {
+      document.write('<script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"><\/script>');
     }
   </script>
   <script>
     if (!window.django && window.jQuery) {
       window.django = {jQuery: window.jQuery.noConflict(true)};
+    } else if (window.django && !window.django.jQuery) {
+      window.django.jQuery = window.jQuery.noConflict(true);
     }
   </script>
   <script src="{% static 'admin/bananas/js/bananas.js' %}"></script>
