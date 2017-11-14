@@ -7,7 +7,8 @@
     position: absolute;
     top: 160px;
     right: -40px;
-    z-index: 3000;
+    z-index: 1000;
+    min-height: calc(100vh - 160px - var(--topbar-height));
   }
   .popup #changelist-filter {
     top: 23px;
@@ -24,7 +25,7 @@
   #changelist .actions {
     position: absolute;
     top: 0;
-    z-index: 4000;
+    z-index: 1500;
 
     display: block;
     /*float: right;*/
@@ -120,6 +121,9 @@
     left: 0;
   }
 
+  .object-tools {
+    position: absolute;
+  }
   /*body.change-list #content {*/
     /*padding-top: 0;*/
   /*}*/
@@ -272,6 +276,10 @@
   .change-list .results, .change-list .paginator,
   .change-list .filtered .results, .change-list .filtered .paginator {
     margin-right: 0;
+  }
+
+  .change-list .filtered {
+    margin-bottom: 0;
   }
 }
 
