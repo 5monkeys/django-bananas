@@ -329,7 +329,7 @@ body.popup #title .back-arrow {
 }
 
 body.popup #changelist #toolbar {
-  margin: -30px -20px 30px;
+  margin: -30px -20px 25px;
 }
 
 .change-list .results,

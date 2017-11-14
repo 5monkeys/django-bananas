@@ -11,7 +11,8 @@
     min-height: calc(100vh - 160px - var(--topbar-height));
   }
   .popup #changelist-filter {
-    top: 23px;
+    top: 25px;
+    min-height: calc(100vh - 25px - var(--topbar-height));
   }
 
   #changelist-filter h2 {
@@ -102,7 +103,6 @@
   .filtered .actions {
     margin-right: 0;
   }
-
 }
 
 @media (max-width: 1024px) {
@@ -185,6 +185,11 @@
   .change-list .filtered .results, .change-list .filtered .paginator {
     margin-right: 205px;
   }
+
+  body.popup.change-list .filtered .results,
+  body.popup.change-list .filtered .paginator {
+    margin-right: 195px;
+  }
 }
 
 @media (max-width: 767px) {
@@ -209,10 +214,6 @@
   #changelist #toolbar,
   body.popup #changelist #toolbar {
     margin-top: -20px;
-  }
-
-  .change-list .filtered .results, .change-list .filtered .paginator, .filtered #toolbar, .filtered .actions, .filtered div.xfull {
-    margin-right: 200px;
   }
 
   #changelist-search > div {
