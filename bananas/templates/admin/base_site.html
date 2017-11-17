@@ -1,5 +1,5 @@
 {% extends "admin/base.html" %}
-{% load i18n admin_urls static admin_modify %}
+{% load i18n admin_urls static admin_modify admin_list %}
 
 
 {% block title %}{% if title %}{{ title }} | {% endif %}{{ site_title|default:_('Django site admin') }}{% endblock %}
@@ -52,6 +52,24 @@
 
 
 {% block nav-global %}
+  {# Only show searchbar, object-tools and filters on real changelists #}
+  {% if cl.result_count is not None %}
+  {% block search %}{% endblock search %}
+  {% endif %}
+  <div id="object-tools">
+    <h2>{% trans 'Tools' %}</h2>
+    {% if view_tools %}
+    <ul class="object-tools view-tools">
+    {% for text, link in view_tools %}
+      <li>
+        <a href="{{ link }}">{{ text }}</a>
+      </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% block object-tools %}{% endblock object-tools %}
+  </div>
+  {% block filters %}{% endblock filters %}
   {% if has_permission %}
     <nav>
       <ul>
@@ -115,7 +133,7 @@
 
 
 {% block content_title %}
-  <div id="title">
+  <div id="title" title="{{ opts.verbose_name_plural|capfirst }}">
     <button type="button" class="hamburger">
       <svg><use xlink:href="#svg-hamburger"/></svg>
     </button>
@@ -150,17 +168,15 @@
       <h1>{{ title }}</h1>
     {% endif %}
   </div>
-  {% block view-tools %}
+  {% if view_tools %}
   <ul class="object-tools">
-    {% block view-tools-items %}
-      {% for text, link in view_tools %}
-        <li>
-          <a href="{{ link }}">{{ text }}</a>
-        </li>
-      {% endfor %}
-    {% endblock %}
+  {% for text, link in view_tools %}
+    <li>
+      <a href="{{ link }}">{{ text }}</a>
+    </li>
+  {% endfor %}
   </ul>
-  {% endblock %}
+  {% endif %}
 {% endblock content_title %}
 
 

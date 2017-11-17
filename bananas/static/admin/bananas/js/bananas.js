@@ -2,6 +2,7 @@
   var $ = window.django.jQuery;
   var $document = $(document);
   var $html = $("html");
+  var $searchbars = $("input[name=q]");
 
   var SIDEBAR_TRANSITION_DURATION = parseInt(
     window
@@ -91,6 +92,13 @@
         closeSidebar();
       }
     });
+
+    $submit = $searchbars.siblings("[type=submit]");
+    var verbose_name_plural = $("#title").attr("title");
+    $searchbars.attr(
+      'placeholder',
+      $submit.val() + ' ' + verbose_name_plural.toLowerCase() + ' ...'
+    );
   }
 
   function openSidebar() {

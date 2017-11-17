@@ -17,15 +17,18 @@ See `scripts/build-css.js` for more information.
   --darken-25: rgba(0, 0, 0, 0.25);
   --darken-33: rgba(0, 0, 0, 0.33);
   --lighten-25: rgba(255, 255, 255, 0.25);
+  --lighten-33: rgba(255, 255, 255, 0.33);
   --lighten-50: rgba(255, 255, 255, 0.5);
   --lighten-75: rgba(255, 255, 255, 0.75);
   --bg-lighten-25: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)) /* fallback */;
   --bg-lighten-25: linear-gradient(to bottom, var(--lighten-25), var(--lighten-25));
+  --bg-lighten-33: linear-gradient(to bottom, var(--lighten-33), var(--lighten-33));
   --bg-darken-25: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)) /* fallback */;
   --bg-darken-25: linear-gradient(to bottom, var(--darken-25), var(--darken-25));
   --bg-darken-33: linear-gradient(to bottom, rgba(0, 0, 0, 0.33), rgba(0, 0, 0, 0.33)) /* fallback */;
   --bg-darken-33: linear-gradient(to bottom, var(--darken-33), var(--darken-33));
   --sidebar-width: 250px;
+  --searchbar-height: 45px;
   --topbar-height: 70px;
   --topbar-padding: 15px;
   --topbar-height-inner: calc(70px - 15px * 2) /* fallback */;
@@ -61,6 +64,7 @@ body:not(.login) #header {
   background-color: #417690 /* fallback */;
   background-color: var(--theme-color);
   color: white;
+  outline: 0;
 }
 
 #branding {
@@ -185,8 +189,9 @@ body:not(.login) #messages {
 #content,
 body.dashboard #content,
 body.changelist #content,
+body.admin-view #content,
 body.popup #content {
-  padding-top: 30px;
+  padding: 30px 40px;
 }
 
 /* This is the top bar. */
@@ -288,62 +293,118 @@ body.popup #title .back-arrow {
 }
 
 /* This is the "Add new <model>" button etc. */
-.object-tools {
+#header .object-tools {
+  position: static;
+  overflow: visible;
+  margin: 0;
+  padding: 0 0 0 15px;
+}
+
+#header .object-tools {
+  float: none;
+  overflow: hidden;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed var(--lighten-25);
+}
+
+#header .object-tools.view-tools {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+#header .object-tools li {
+  clear: left;
+  height: auto;
+  margin-left: 0;
+  overflow: visible;
+}
+
+#header .object-tools a {
+  float: none;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  font-size: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+  background-color: transparent;
+}
+
+#content .object-tools {
   position: fixed;
   z-index: 3000;
-  top: calc(70px / 2) /* fallback */;
+  top: calc(70px / 2) [> fallback <];
   top: calc(var(--topbar-height) / 2);
-  right: 30px;
+  right: 20px;
   transform: translateY(-50%);
   margin: 0;
 }
 
-.object-tools li {
+#content .object-tools li {
   height: auto;
+  margin-left: 10px;
 }
 
-.object-tools a:link,
-.object-tools a:visited {
-  background-color: rgba(0, 0, 0, 0.25) /* fallback */;
+#content .object-tools a:link,
+#content .object-tools a:visited {
+  background-color: rgba(0, 0, 0, 0.25) [> fallback <];
   background-color: var(--darken-25);
 }
 
-#content-main .object-tools li {
+#content .object-tools li {
   float: right;
 }
 
 #content .object-tools a:hover,
 #content .object-tools a:focus,
 #content .object-tools a:active {
-  background-color: rgba(0, 0, 0, 0.33) /* fallback */;
+  background-color: rgba(0, 0, 0, 0.33) [> fallback <];
   background-color: var(--darken-33);
   filter: none;
-}
-
-#changelist #toolbar {
-  box-sizing: border-box;
-  margin: -30px -40px 30px;
-  padding: 16px;
-  height: 60px;
-  border: 0;
-}
-
-body.popup #changelist #toolbar {
-  margin: -30px -20px 25px;
 }
 
 .change-list .results,
 .change-list .paginator {
   width: auto;
-  /*margin-right: 30px;*/
 }
 
 #changelist .paginator {
   border: none;
 }
 
-.selector-chosen select {
-  height: 20.7em;
+.paginator .this-page {
+  border-radius: 100px;
+  border: 1px solid var(--theme-color);
+  background: var(--theme-color);
+  padding: 2px 8px;
+  color: #fff;
+}
+
+.paginator a:link,
+.paginator a:visited {
+  box-sizing: border-box;
+  border: 1px solid #fff;
+  border-radius: 100px;
+  padding: 2px 8px;
+  background: none;
+  color: var(--secondary-color);
+}
+
+.paginator a:focus,
+.paginator a:hover {
+  background: #ccc;
+  border-color: var(--theme-color);
+}
+
+.paginator a.showall {
+  background: none;
+  color: var(--secondary-color);
+}
+
+.paginator a.showall:focus,
+.paginator a.showall:hover {
+  color: var(--secondary-color);
+  filter: brightness(120%) saturate(75%);
 }
 
 fieldset .form-row:last-child {
@@ -476,7 +537,10 @@ a.selector-chooseall, a.selector-clearall {
   font-weight: normal;
 }
 
-a.active.selector-chooseall:focus, a.active.selector-clearall:focus, a.active.selector-chooseall:hover, a.active.selector-clearall:hover {
+a.active.selector-chooseall:focus,
+a.active.selector-clearall:focus,
+a.active.selector-chooseall:hover,
+a.active.selector-clearall:hover {
   color: #447e9b /* fallback */;
   color: var(--secondary-color);
   /* TODO: selector-icons.svg is hardcoded blue on hover */
@@ -518,4 +582,141 @@ a.active.selector-chooseall:focus, a.active.selector-clearall:focus, a.active.se
 
 .calendarbox .calendarnav-next {
   background-position: 0 -45px;
+}
+
+#header #changelist-filter {
+  width: auto;
+  position: static;
+  display: block;
+  margin-top: 15px;
+  background: transparent;
+  clear: both;
+  border-bottom: 1px dashed var(--lighten-25);
+}
+
+#header #changelist-filter h2,
+#header #changelist-filter h3,
+#header #object-tools h2 {
+  display: block;
+  padding-left: 15px;
+  padding-right: 10px;
+  color: rgba(255, 255, 255, 0.75) /* fallback */;
+  color: var(--lighten-75);
+  font-size: 12px;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: normal;
+  margin: 15px 0 0 0;
+  line-height: 20px;
+  padding: 0 0 0 15px;
+}
+
+#header #changelist-filter h2 {
+  margin: 0 0.3em 0 0;
+  float: left;
+}
+
+#header #changelist-filter h3 {
+  margin: 0;
+}
+
+#header #object-tools h2 {
+  margin: 15px 0 0 0;
+}
+
+#header #changelist-filter ul {
+  margin-bottom: 15px;
+  padding: 0 15px 0;
+  border-bottom: 0;
+}
+#header #changelist-filter li.selected {
+  border-left-color: var(--darken-25);
+}
+
+#header #changelist-filter li a {
+  color: var(--lighten-75);
+}
+
+#header #changelist-filter li.selected a {
+  color: #fff;
+}
+
+#changelist #toolbar {
+  display: none;
+}
+
+.change-list .filtered .results,
+.change-list .filtered .paginator,
+.filtered #toolbar,
+.filtered div.xfull,
+#changelist .actions {
+  margin-right: 0;
+}
+
+.change-list #content {
+  padding: 0;
+}
+
+.change-list #content-main {
+  padding-top: var(--searchbar-height);
+}
+
+#changelist #changelist-filter {
+  display: none;
+}
+
+#changelist .toplinks {
+  background-color: #f6f6f6;
+  border-bottom: 0;
+}
+
+#changelist .actions {
+  position: absolute;
+  top: calc(-1 * var(--searchbar-height));
+  left: 0;
+  right: 0;
+  background: var(--theme-color);
+  background-image: var(--bg-lighten-33);
+  color: #fff;
+  line-height: 25px;
+  height: 25px;
+}
+
+#changelist .results ~ .actions {
+  position: static;
+  background-color: transparent;
+  color: #333;
+}
+
+#changelist .results ~ .actions select {
+  border-color: #ccc;
+}
+
+#changelist .actions label {
+  vertical-align: top;
+}
+
+#changelist .actions select {
+  min-width: 300px;
+  height: 25px;
+  background: #fff;
+  border-color: #fff;
+}
+
+#changelist .actions .button {
+  min-width: 48px;
+  height: 25px;
+  margin: 0 0 0 10px;
+  vertical-align: top;
+  background: var(--theme-color);
+  box-shadow: none;
+  border: 0;
+  color: #fff;
+}
+
+#changelist .actions span.all,
+#changelist .actions span.action-counter,
+#changelist .actions span.clear,
+#changelist .actions span.question {
+  margin: 0 0 0 10px;
 }
