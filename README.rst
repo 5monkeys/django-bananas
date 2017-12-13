@@ -193,6 +193,10 @@ Currently supported engines are:
  mysql                          django.db.backends.mysql
  oracle                         django.db.backends.oracle
  sqlite, sqlite3                django.db.backends.sqlite3
+ mysqlgis                       django.contrib.gis.db.backends.mysql
+ oraclegis                      django.contrib.gis.db.backends.oracle
+ postgis                        django.contrib.gis.db.backends.postgis
+ spatialite                     django.contrib.gis.db.backends.spatialite
 ==============================  ===========================================
 
 You can add your own by running ``register(scheme, module_name)`` before parsing.
