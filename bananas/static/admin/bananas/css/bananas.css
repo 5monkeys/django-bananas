@@ -149,8 +149,8 @@ body.login #branding a:active {
   display: block;
   padding-left: 15px;
   padding-right: 10px;
-  color: rgba(255, 255, 255, 0.75) /* fallback */;
-  color: var(--lighten-75);
+  color: rgba(255, 255, 255, 0.50) /* fallback */;
+  color: var(--lighten-50);
   font-size: 12px;
   text-transform: uppercase;
   text-decoration: none;
@@ -611,8 +611,8 @@ a.active.selector-clearall:hover {
   display: block;
   padding-left: 15px;
   padding-right: 10px;
-  color: rgba(255, 255, 255, 0.75) /* fallback */;
-  color: var(--lighten-75);
+  color: rgba(255, 255, 255, 0.50) /* fallback */;
+  color: var(--lighten-50);
   font-size: 12px;
   text-transform: uppercase;
   text-decoration: none;
