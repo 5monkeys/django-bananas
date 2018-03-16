@@ -28,8 +28,7 @@ You can add your own by running ``register(scheme, module_name)`` before
 parsing.
 """
 from collections import namedtuple
-from urllib.parse import unquote_plus
-from .compat import urlsplit, parse_qs
+from urllib.parse import unquote_plus, urlsplit, parse_qs
 
 
 class Alias(object):
