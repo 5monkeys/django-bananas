@@ -5,10 +5,10 @@
 indent_style = space
 indent_size = 4
 
-# 4 space indentation
+# 2 space indentation
 [*.html]
 indent_style = space
-indent_size = 4
+indent_size = 2
 
 # Tab indentation (no size specified)
 [Makefile]
