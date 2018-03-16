@@ -53,7 +53,7 @@
 
 {% block nav-global %}
   {# Only show searchbar, object-tools and filters on real changelists #}
-  {% if cl.result_count is not None %}
+  {% if cl.result_count != None %}
   {% block search %}{% endblock search %}
   {% endif %}
   <div id="object-tools">

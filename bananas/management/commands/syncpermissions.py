@@ -7,7 +7,7 @@ class Command(BaseCommand):
     help = "Create admin permissions"
 
     def handle(self, *args, **options):
-        if args:
+        if args:  # pragma: no cover
             raise CommandError("Command doesn't accept any arguments")
         return self.handle_noargs(**options)
 

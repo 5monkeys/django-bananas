@@ -5,7 +5,7 @@ from django.conf import global_settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from bananas import environment, admin
+from bananas import environment
 from bananas.environment import env
 from bananas.query import ModelDict
 from .models import (
@@ -298,15 +298,3 @@ class SettingsTest(TestCase):
         environ['DJANGO_DATABASES'] = 'foobar'
         self.assertRaises(NotImplementedError, environment.get_settings)
         del environ['DJANGO_DATABASES']
-
-
-class AdminTest(TestCase):
-    def test_admin(self):
-        class FakeRequest:
-            META = {'SCRIPT_NAME': ''}
-
-            class user:
-                is_active = False
-        ctx = admin.site.each_context(FakeRequest())
-        self.assertTrue('settings' in ctx)
-        self.assertIsInstance(admin.site.urls, tuple)

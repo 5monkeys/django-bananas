@@ -1,5 +1,6 @@
 # coding=utf-8
 import re
+
 from django.apps import apps
 from django.db.models import Model
 from django.conf import settings as django_settings
@@ -7,12 +8,11 @@ from django.conf.urls import url
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.sites import site as django_admin_site
 from django.contrib.auth.decorators import (
-    user_passes_test,
-    permission_required,
-    login_required,
+    user_passes_test, permission_required, login_required
 )
 from django.shortcuts import render
 from django.utils.encoding import force_text
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
@@ -66,35 +66,51 @@ class ExtendedAdminSite(AdminSite):
 
 class ModelAdminView(ModelAdmin):
 
-    def __init__(self, *args, **kwargs):
-        super(ModelAdminView, self).__init__(*args, **kwargs)
+    @cached_property
+    def access_permission(self):
+        meta = self.model._meta
+        return '{app_label}.{codename}'.format(
+            app_label=meta.app_label,
+            codename=meta.permissions[0][0],  # First perm codename
+        )
 
     def get_urls(self):
         app_label = self.model._meta.app_label
-
-        self.access_permission = '{app_label}.{codename}'.format(
-            app_label=app_label,
-            codename=self.model._meta.permissions[0][0]  # First perm codename
-        )
-
         View = self.model.View
-        view = View.as_view(admin=self)
-        view = user_passes_test(lambda u: u.is_active and u.is_staff)(view)
-        view = permission_required(self.access_permission)(view)
-        view = login_required(view)
-
         info = app_label, View.label
-
         urlpatterns = compat.urlpatterns(
-            url(r'^$', view, name='{}_{}'.format(*info)),
-            url(r'^$', view, name='{}_{}_changelist'.format(*info)),
+            url(r'^$',
+                self.admin_view(View.as_view(admin=self)),
+                name='{}_{}'.format(*info)),
+            # We add the same url here with _changelist to make sure the
+            # admin app index reverse urls to correct view.
+            url(r'^$',
+                self.admin_view(View.as_view(admin=self)),
+                name='{}_{}_changelist'.format(*info)),
         )
-
         extra_urls = self.model.View(admin=self).get_urls()
         if extra_urls:
             urlpatterns += extra_urls
-
         return urlpatterns
+
+    def admin_view(self, view, perm=None):
+        if perm is not None:
+            perm = self.get_permission(perm)
+        else:
+            perm = self.access_permission
+
+        admin_login_url = compat.reverse_lazy('admin:login')
+        view = user_passes_test(
+            lambda u: u.is_active and u.is_staff,
+            login_url=admin_login_url
+        )(view)
+        view = permission_required(perm, login_url=admin_login_url)(view)
+        return view
+
+    def get_permission(self, perm):
+        if '.' not in perm:
+            perm = '{}.{}'.format(self.model._meta.app_label, perm)
+        return perm
 
     def has_module_permission(self, request):
         return request.user.has_perm(self.access_permission)
@@ -122,62 +138,110 @@ class ModelAdminView(ModelAdmin):
         return context
 
 
-def register(view, admin_site=None):
+def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
     """
     Register a generic class based view wrapped with ModelAdmin and fake model
+
+    :param view: The AdminView to register.
+    :param admin_site: The AdminSite to register the view on.
+        Defaults to bananas.admin.ExtendedAdminSite.
+    :param admin_class: The ModelAdmin class to use for eg. permissions.
+        Defaults to bananas.admin.ModelAdminView.
+
+    Example:
+
+    @register  # Or with args @register(admin_class=MyModelAdminSubclass)
+    class MyAdminView(bananas.admin.AdminView):
+        def get(request):
+            return self.render('template.html', {})
+
+    # Also possible:
+    register(MyAdminView, admin_class=MyModelAdminSublass)
+
     """
-    app_package = view.__module__[:view.__module__.index('.admin')]
-    app_config = apps.get_app_config(app_package)
-
-    label = getattr(view, 'label', None)
-    if not label:
-        label = re.sub('(Admin)|(View)', '', view.__name__).lower()
-    view.label = label
-
-    model_name = label.capitalize()
-    verbose_name = getattr(view, 'verbose_name', model_name)
-    view.verbose_name = verbose_name
-
-    access_perm_codename = 'can_access_' + model_name.lower()
-    access_perm_name = _('Can access {verbose_name}').format(
-        verbose_name=verbose_name
-    )
-    permissions = tuple([
-        (access_perm_codename, access_perm_name)
-    ] + list(getattr(view, 'permissions', [])))
-
-    model = type(model_name, (Model,), {
-        '__module__': view.__module__ + '.__models__',  # Fake
-        'View': view,
-        'app_config': app_config,
-        'Meta': type('Meta', (object,), dict(
-            managed=False,
-            abstract=True,
-            app_label=app_config.label,
-            verbose_name=verbose_name,
-            verbose_name_plural=verbose_name,
-            permissions=permissions,
-        ))
-    })
-
-    # Do register on admin site
     if not admin_site:
         admin_site = site
 
-    admin_site._registry[model] = ModelAdminView(model, admin_site)
+    def wrapped(inner_view):
+        module = inner_view.__module__
+        app_package = module[:module.index('.admin')]
+        app_config = apps.get_app_config(app_package)
+
+        label = getattr(inner_view, 'label', None)
+        if not label:
+            label = re.sub('(Admin)|(View)', '', inner_view.__name__).lower()
+        inner_view.label = label
+
+        model_name = label.capitalize()
+        verbose_name = getattr(inner_view, 'verbose_name', model_name)
+        inner_view.verbose_name = verbose_name
+
+        access_perm_codename = 'can_access_' + model_name.lower()
+        access_perm_name = _('Can access {verbose_name}').format(
+            verbose_name=verbose_name
+        )
+        # The first permission here is expected to be
+        # the general access permission.
+        permissions = tuple(
+            [(access_perm_codename, access_perm_name)] +
+            list(getattr(inner_view, 'permissions', []))
+        )
+
+        model = type(model_name, (Model,), {
+            '__module__': module + '.__models__',  # Fake
+            'View': inner_view,
+            'app_config': app_config,
+            'Meta': type('Meta', (object,), dict(
+                managed=False,
+                abstract=True,
+                app_label=app_config.label,
+                verbose_name=verbose_name,
+                verbose_name_plural=verbose_name,
+                permissions=permissions,
+            )),
+        })
+
+        admin_site._registry[model] = admin_class(model, admin_site)
+        return inner_view
+
+    if view is None:  # Used as a decorator
+        return wrapped
+
+    return wrapped(view)
 
 
 class AdminView(View):
-
-    admin = None
+    admin = None  # type: ModelAdminView
     tools = None
+    action = None
+
+    def dispatch(self, request, *args, **kwargs):
+        # Try to fetch set action first.
+        # This should be the view name for custom views
+        action = self.action
+        if action is None:
+            return super().dispatch(request, *args, **kwargs)
+
+        handler = getattr(self, action)
+        return handler(request, *args, **kwargs)
 
     def get_urls(self):
+        """ Should return a list of urls
+        Views should be wrapped in `self.admin_view` if the view isn't
+        supposed to be accessible for non admin users.
+        Omitting this can cause threading issues.
+
+        Example:
+
+            return [
+                url(r'^custom/$,
+                    self.admin_view(self.custom_view))
+            ]
+        """
         return None
 
     def get_view_tools(self):
         tools = []
-
         if self.tools:
             for tool in self.tools:
                 perm = None
@@ -185,30 +249,26 @@ class AdminView(View):
                     tool, perm = tool[:-1], tool[-1]
                 if perm and not self.has_permission(perm):
                     continue
+
                 text, link = tool
                 if '/' not in link:
                     link = compat.reverse(link)
                 tools.append((text, link))
-
         return tools
 
     def admin_view(self, view, perm=None):
-        perm = perm or 'can_access_' + self.admin.model._meta.verbose_name
-        perm = self.get_permission(perm)
-        return permission_required(perm)(view)
+        view = self.__class__.as_view(action=view.__name__, admin=self.admin)
+        return self.admin.admin_view(view, perm=perm)
 
     def get_permission(self, perm):
-        if '.' not in perm:
-            perm = '{}.{}'.format(self.admin.model._meta.app_label, perm)
-        return perm
+        return self.admin.get_permission(perm)
 
     def has_permission(self, perm):
         perm = self.get_permission(perm)
         return self.request.user.has_perm(perm)
 
     def has_access(self):
-        perm = 'can_access_' + self.admin.model._meta.verbose_name
-        return self.has_permission(perm)
+        return self.has_permission(self.admin.access_permission)
 
     def get_context(self, **extra):
         return self.admin.get_context(
