@@ -149,8 +149,8 @@ body.login #branding a:active {
   display: block;
   padding-left: 15px;
   padding-right: 10px;
-  color: rgba(255, 255, 255, 0.75) /* fallback */;
-  color: var(--lighten-75);
+  color: rgba(255, 255, 255, 0.50) /* fallback */;
+  color: var(--lighten-50);
   font-size: 12px;
   text-transform: uppercase;
   text-decoration: none;
@@ -159,6 +159,14 @@ body.login #branding a:active {
 #header nav > ul > li > ul {
   margin: 0;
   padding: 0;
+}
+
+.filtered nav > ul > li > ul {
+  display: none;
+}
+
+.filtered nav > ul > li:last-child > ul {
+  display: block;
 }
 
 #header nav > ul > li > ul > li > a {
@@ -187,10 +195,9 @@ body:not(.login) #messages {
 /*}*/
 
 #content,
-body.dashboard #content,
-body.changelist #content,
-body.admin-view #content,
-body.popup #content {
+.dashboard #content,
+.admin-view #content,
+.popup #content {
   padding: 30px 40px;
 }
 
@@ -215,6 +222,10 @@ body.popup #content {
 
 body.popup #title {
   left: 0;
+}
+
+body.popup.change-list #content-main {
+  padding-top: 0;
 }
 
 .hamburger {
@@ -600,8 +611,8 @@ a.active.selector-clearall:hover {
   display: block;
   padding-left: 15px;
   padding-right: 10px;
-  color: rgba(255, 255, 255, 0.75) /* fallback */;
-  color: var(--lighten-75);
+  color: rgba(255, 255, 255, 0.50) /* fallback */;
+  color: var(--lighten-50);
   font-size: 12px;
   text-transform: uppercase;
   text-decoration: none;
@@ -641,7 +652,10 @@ a.active.selector-clearall:hover {
   color: #fff;
 }
 
-#changelist #toolbar {
+body.popup #changelist #toolbar {
+  margin-bottom: 0;
+}
+body:not(.popup) #changelist #toolbar {
   display: none;
 }
 

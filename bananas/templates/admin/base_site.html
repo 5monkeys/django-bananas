@@ -52,76 +52,78 @@
 
 
 {% block nav-global %}
-  {# Only show searchbar, object-tools and filters on real changelists #}
-  {% if cl.result_count != None %}
-  {% block search %}{% endblock search %}
-  {% endif %}
-  <div id="object-tools">
-    <h2>{% trans 'Tools' %}</h2>
-    {% if view_tools %}
-    <ul class="object-tools view-tools">
-    {% for text, link in view_tools %}
-      <li>
-        <a href="{{ link }}">{{ text }}</a>
-      </li>
-    {% endfor %}
-    </ul>
+  <div{% if cl.has_filters %} class="filtered"{% endif %}>
+    {# Only show searchbar, object-tools and filters on real changelists #}
+    {% if cl.result_count is not None %}
+    {% block search %}{% endblock search %}
     {% endif %}
-    {% block object-tools %}{% endblock object-tools %}
-  </div>
-  {% block filters %}{% endblock filters %}
-  {% if has_permission %}
-    <nav>
-      <ul>
-        {% for app in available_apps %}
-          <li>
-            <a href="{{ app.app_url }}">
-              {{ app.name }}
-            </a>
-            {% if app.models %}
-              <ul>
-                {% for model in app.models %}
-                  <li>
-                    {% if model.admin_url %}
-                      <a href="{{ model.admin_url }}">
-                        {{ model.name }}
-                      </a>
-                    {% else %}
-                      <a>{{ model.name }}</a>
-                    {% endif %}
-                  </li>
-                {% endfor %}
-              </ul>
-            {% endif %}
-          </li>
-        {% endfor %}
-
+    <div id="object-tools">
+      <h2>{% trans 'Tools' %}</h2>
+      {% if view_tools %}
+      <ul class="object-tools view-tools">
+      {% for text, link in view_tools %}
         <li>
-          <a>
-            {% block welcome-msg %}
-              {% firstof user.get_short_name user.get_username %}
-            {% endblock %}
-          </a>
+          <a href="{{ link }}">{{ text }}</a>
+        </li>
+      {% endfor %}
+      </ul>
+      {% endif %}
+      {% block object-tools %}{% endblock object-tools %}
+    </div>
+    {% block filters %}{% endblock filters %}
+    {% if has_permission %}
+      <nav>
+        <ul>
+          {% for app in available_apps %}
+            <li>
+              <a href="{{ app.app_url }}">
+                {{ app.name }}
+              </a>
+              {% if app.models %}
+                <ul>
+                  {% for model in app.models %}
+                    <li>
+                      {% if model.admin_url %}
+                        <a href="{{ model.admin_url }}">
+                          {{ model.name }}
+                        </a>
+                      {% else %}
+                        <a>{{ model.name }}</a>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
 
-          <ul>
-            {% if user.has_usable_password %}
+          <li>
+            <a>
+              {% block welcome-msg %}
+                {% firstof user.get_short_name user.get_username %}
+              {% endblock %}
+            </a>
+
+            <ul>
+              {% if user.has_usable_password %}
+                <li>
+                  <a href="{% url 'admin:password_change' %}">
+                    {% trans 'Change password' %}
+                  </a>
+                </li>
+              {% endif %}
+
               <li>
-                <a href="{% url 'admin:password_change' %}">
-                  {% trans 'Change password' %}
+                <a href="{% url 'admin:logout' %}">
+                  {% trans 'Log out' %}
                 </a>
               </li>
-            {% endif %}
-
-            <li>
-              <a href="{% url 'admin:logout' %}">
-                {% trans 'Log out' %}
-              </a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </nav>
-  {% endif %}
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
 {% endblock nav-global %}
 
 

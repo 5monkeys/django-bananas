@@ -2,7 +2,7 @@
   display: none;
 }
 
-#header #object-tools {
+body:not(.popup) #header #object-tools {
   display: none;
 }
 
@@ -111,7 +111,7 @@
     transform: translateX(var(--sidebar-width));
   }
 
-  #content .object-tools {
+  body:not(.popup) #content .object-tools {
     display: none;
   }
 
