@@ -30,11 +30,12 @@ install:
 develop:
 	python setup.py develop
 
-.PHONY: example		# starts exmpale app using docker
+.PHONY: example		# starts example app using docker
 example:
 	@docker-compose up -d --build --force-recreate
 	@rm -rf example/db.sqlite3
 	@docker-compose run --rm django1 migrate --no-input
+	@docker-compose run --rm django1 syncpermissions
 	@docker-compose run --rm django1 createsuperuser \
 	 	--username admin \
 		--email admin@example.com
