@@ -161,6 +161,14 @@ body.login #branding a:active {
   padding: 0;
 }
 
+.filtered nav > ul > li > ul {
+  display: none;
+}
+
+.filtered nav > ul > li:last-child > ul {
+  display: block;
+}
+
 #header nav > ul > li > ul > li > a {
   display: block;
   padding: 2px 10px;
