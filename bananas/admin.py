@@ -8,7 +8,7 @@ from django.conf.urls import url
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.sites import site as django_admin_site
 from django.contrib.auth.decorators import (
-    user_passes_test, permission_required, login_required
+    user_passes_test, permission_required
 )
 from django.shortcuts import render
 from django.utils.encoding import force_text
