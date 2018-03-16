@@ -75,7 +75,6 @@ class AdminTest(TestCase):
 
         ctx = admin.site.each_context(FakeRequest())
         self.assertTrue('settings' in ctx)
-        print(admin.site, admin.site.__module__)
         self.assertIsInstance(admin.site.urls, tuple)
 
     @reset_admin_registry
