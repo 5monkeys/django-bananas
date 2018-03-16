@@ -201,6 +201,14 @@ class QuerySetTest(TestCase):
         md._nested = {'x': 1}
         self.assertEqual(md.x, 1)
 
+    def test_expand(self):
+        md = ModelDict(on=False, monkey__name='Pato', monkey__banana=True)
+        md.expand()
+        self.assertEqual(md, {
+            'on': False,
+            'monkey': {'name': 'Pato', 'banana': True}
+        })
+
 
 class EnvTest(TestCase):
 
