@@ -256,8 +256,12 @@ class AdminView(View):
                 tools.append((text, link))
         return tools
 
-    def admin_view(self, view, perm=None):
-        view = self.__class__.as_view(action=view.__name__, admin=self.admin)
+    def admin_view(self, view, perm=None, **initkwargs):
+        view = self.__class__.as_view(
+            action=view.__name__,
+            admin=self.admin,
+            **initkwargs,
+        )
         return self.admin.admin_view(view, perm=perm)
 
     def get_permission(self, perm):
