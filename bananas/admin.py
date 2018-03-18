@@ -260,7 +260,7 @@ class AdminView(View):
         view = self.__class__.as_view(
             action=view.__name__,
             admin=self.admin,
-            **initkwargs,
+            **initkwargs
         )
         return self.admin.admin_view(view, perm=perm)
 
