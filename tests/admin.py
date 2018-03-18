@@ -9,7 +9,12 @@ class SimpleAdminView(admin.AdminView):
         ('can_do_special_stuff', 'Can do special stuff'),
     ]
     tools = [
-        ('Special Action', 'admin:tests_simple_special', 'can_do_special_stuff')
+        ('Special Action', 'admin:tests_simple_special', 'can_do_special_stuff'),
+        admin.ViewTool(
+            'Even more special action',
+            'https://example.org',
+            html_class='addlink'
+        )
     ]
 
     def get_urls(self):

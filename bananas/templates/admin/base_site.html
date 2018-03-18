@@ -61,9 +61,9 @@
       <h2>{% trans 'Tools' %}</h2>
       {% if view_tools %}
       <ul class="object-tools view-tools">
-      {% for text, link in view_tools %}
+      {% for tool in view_tools %}
         <li>
-          <a href="{{ link }}">{{ text }}</a>
+          <a href="{{ tool.link }}" {{ tool.attrs }}>{{ tool.text }}</a>
         </li>
       {% endfor %}
       </ul>
@@ -172,9 +172,9 @@
   </div>
   {% if view_tools %}
   <ul class="object-tools">
-  {% for text, link in view_tools %}
+  {% for tool in view_tools %}
     <li>
-      <a href="{{ link }}">{{ text }}</a>
+      <a href="{{ tool.link }}" {{ tool.attrs }}>{{ tool.text }}</a>
     </li>
   {% endfor %}
   </ul>

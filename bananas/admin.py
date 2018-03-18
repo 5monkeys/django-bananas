@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import (
 from django.shortcuts import render
 from django.utils.encoding import force_text
 from django.utils.functional import cached_property
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
@@ -210,6 +211,30 @@ def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
     return wrapped(view)
 
 
+class ViewTool:
+    def __init__(self, text, link, perm=None, **attrs):
+        self.text = text
+        self._link = link
+        self.perm = perm
+
+        html_class = attrs.pop('html_class', None)
+        if html_class is not None:
+            attrs.setdefault('class', html_class)
+        self._attrs = attrs
+
+    @property
+    def attrs(self):
+        return mark_safe(
+            ' '.join('{}={}'.format(k, v) for k, v in self._attrs.items())
+        )
+
+    @property
+    def link(self):
+        if '/' not in self._link:
+            return compat.reverse(self._link)
+        return self._link
+
+
 class AdminView(View):
     admin = None  # type: ModelAdminView
     tools = None
@@ -244,16 +269,20 @@ class AdminView(View):
         tools = []
         if self.tools:
             for tool in self.tools:
-                perm = None
-                if len(tool) == 3:
-                    tool, perm = tool[:-1], tool[-1]
+                if isinstance(tool, (list, tuple)):
+                    perm = None
+                    if len(tool) == 3:
+                        tool, perm = tool[:-1], tool[-1]
+                    text, link = tool
+                    tool = ViewTool(text, link, perm=perm)
+                else:
+                    # Assume ViewTool
+                    perm = tool.perm
                 if perm and not self.has_permission(perm):
                     continue
 
-                text, link = tool
-                if '/' not in link:
-                    link = compat.reverse(link)
-                tools.append((text, link))
+                tools.append(tool)
+
         return tools
 
     def admin_view(self, view, perm=None, **initkwargs):

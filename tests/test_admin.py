@@ -148,12 +148,27 @@ class AdminTest(TestCase):
         self.assertIsNotNone(perm)
         staff_user.user_permissions.add(perm)
 
+        expected_view_tools = {'Even more special action'}
+
         response = self.client.get(self.custom_url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['context'], 'custom')
+        context = response.context
+        self.assertEqual(context['context'], 'custom')
+        self.assertEqual(len(context['view_tools']), 1)
+        self.assertEqual(
+            set(t.text for t in context['view_tools']),
+            expected_view_tools
+        )
+
         response = self.client.get(self.detail_url)
+        context = response.context
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['context'], 'get')
+        self.assertEqual(context['context'], 'get')
+        self.assertEqual(len(context['view_tools']), 1)
+        self.assertEqual(
+            set(t.text for t in context['view_tools']),
+            expected_view_tools
+        )
 
     def test_admin_view_with_permission(self):
         staff_user = self.login_user()
@@ -165,11 +180,17 @@ class AdminTest(TestCase):
             .first()
         self.assertIsNotNone(perm)
         staff_user.user_permissions.add(perm)
+        expected_view_tools = {'Special Action', 'Even more special action'}
 
         response = self.client.get(self.special_url)
+        context = response.context
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['context'], 'special')
-
+        self.assertEqual(context['context'], 'special')
+        self.assertEqual(len(context['view_tools']), 2)
+        self.assertEqual(
+            set(t.text for t in context['view_tools']),
+            expected_view_tools
+        )
         # No access to other views
         self.assert_unauthorized(self.custom_url)
         self.assert_unauthorized(self.detail_url)
