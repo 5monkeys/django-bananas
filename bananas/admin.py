@@ -265,10 +265,15 @@ class AdminView(View):
         """
         return None
 
+    def get_tools(self):
+        # Override point, self.request is available.
+        return self.tools
+
     def get_view_tools(self):
         tools = []
-        if self.tools:
-            for tool in self.tools:
+        all_tools = self.get_tools()
+        if all_tools:
+            for tool in all_tools:
                 if isinstance(tool, (list, tuple)):
                     perm = None
                     if len(tool) == 3:
