@@ -7,7 +7,9 @@ body:not(.popup) #header #object-tools {
 }
 
 #changelist-search {
+  height: 45px /* fallback */;
   height: var(--searchbar-height);
+  background: #417690 /* fallback */;
   background: var(--theme-color);
   display: inline;
 }
@@ -37,12 +39,15 @@ body:not(.popup) #header #object-tools {
 #changelist-search input[type="submit"] {
   display: inline;
   float: left;
+  width: 45px /* fallback */;
   width: var(--searchbar-height);
+  height: 45px /* fallback */;
   height: var(--searchbar-height);
   margin: 0;
   padding: 0;
   border-radius: 0;
   border: 0;
+  background: #417690 /* fallback */;
   background: var(--theme-color);
   background-image: url(/static/admin/bananas/img/search.svg), linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15));
   background-position: center center;
