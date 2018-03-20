@@ -52,7 +52,7 @@
 
 
 {% block nav-global %}
-  <div{% if cl.has_filters %} class="filtered"{% endif %}>
+  <div class="nav-global {% if cl.has_filters %} filtered{% endif %}">
     {# Only show searchbar, object-tools and filters on real changelists #}
     {% if cl.result_count is not None %}
     {% block search %}{% endblock search %}

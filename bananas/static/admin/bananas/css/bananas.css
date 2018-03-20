@@ -119,6 +119,10 @@ body.login #branding a:active {
   margin-right: 10px;
 }
 
+.nav-global {
+  overflow-y: scroll;
+}
+
 #header nav {
   height: calc(100% - 70px) /* fallback */;
   height: calc(100% - var(--topbar-height));
