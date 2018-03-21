@@ -22,6 +22,7 @@ See `scripts/build-css.js` for more information.
   --lighten-75: rgba(255, 255, 255, 0.75);
   --bg-lighten-25: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)) /* fallback */;
   --bg-lighten-25: linear-gradient(to bottom, var(--lighten-25), var(--lighten-25));
+  --bg-lighten-33: linear-gradient(to bottom, rgba(255, 255, 255, 0.33), rgba(255, 255, 255, 0.33)) /* fallback */;
   --bg-lighten-33: linear-gradient(to bottom, var(--lighten-33), var(--lighten-33));
   --bg-darken-25: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)) /* fallback */;
   --bg-darken-25: linear-gradient(to bottom, var(--darken-25), var(--darken-25));
@@ -119,6 +120,10 @@ body.login #branding a:active {
   margin-right: 10px;
 }
 
+.nav-global {
+  overflow-y: scroll;
+}
+
 #header nav {
   height: calc(100% - 70px) /* fallback */;
   height: calc(100% - var(--topbar-height));
@@ -149,7 +154,7 @@ body.login #branding a:active {
   display: block;
   padding-left: 15px;
   padding-right: 10px;
-  color: rgba(255, 255, 255, 0.50) /* fallback */;
+  color: rgba(255, 255, 255, 0.5) /* fallback */;
   color: var(--lighten-50);
   font-size: 12px;
   text-transform: uppercase;
@@ -315,6 +320,7 @@ body.popup #title .back-arrow {
   float: none;
   overflow: hidden;
   padding-bottom: 15px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.25) /* fallback */;
   border-bottom: 1px dashed var(--lighten-25);
 }
 
@@ -344,7 +350,7 @@ body.popup #title .back-arrow {
 #content .object-tools {
   position: fixed;
   z-index: 3000;
-  top: calc(70px / 2) [> fallback <];
+  top: calc(70px / 2) /* fallback */;
   top: calc(var(--topbar-height) / 2);
   right: 20px;
   transform: translateY(-50%);
@@ -358,7 +364,7 @@ body.popup #title .back-arrow {
 
 #content .object-tools a:link,
 #content .object-tools a:visited {
-  background-color: rgba(0, 0, 0, 0.25) [> fallback <];
+  background-color: rgba(0, 0, 0, 0.25) /* fallback */;
   background-color: var(--darken-25);
 }
 
@@ -369,7 +375,7 @@ body.popup #title .back-arrow {
 #content .object-tools a:hover,
 #content .object-tools a:focus,
 #content .object-tools a:active {
-  background-color: rgba(0, 0, 0, 0.33) [> fallback <];
+  background-color: rgba(0, 0, 0, 0.33) /* fallback */;
   background-color: var(--darken-33);
   filter: none;
 }
@@ -385,7 +391,9 @@ body.popup #title .back-arrow {
 
 .paginator .this-page {
   border-radius: 100px;
+  border: 1px solid #417690 /* fallback */;
   border: 1px solid var(--theme-color);
+  background: #417690 /* fallback */;
   background: var(--theme-color);
   padding: 2px 8px;
   color: #fff;
@@ -398,22 +406,26 @@ body.popup #title .back-arrow {
   border-radius: 100px;
   padding: 2px 8px;
   background: none;
+  color: #447e9b /* fallback */;
   color: var(--secondary-color);
 }
 
 .paginator a:focus,
 .paginator a:hover {
   background: #ccc;
+  border-color: #417690 /* fallback */;
   border-color: var(--theme-color);
 }
 
 .paginator a.showall {
   background: none;
+  color: #447e9b /* fallback */;
   color: var(--secondary-color);
 }
 
 .paginator a.showall:focus,
 .paginator a.showall:hover {
+  color: #447e9b /* fallback */;
   color: var(--secondary-color);
   filter: brightness(120%) saturate(75%);
 }
@@ -602,6 +614,7 @@ a.active.selector-clearall:hover {
   margin-top: 15px;
   background: transparent;
   clear: both;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.25) /* fallback */;
   border-bottom: 1px dashed var(--lighten-25);
 }
 
@@ -611,7 +624,7 @@ a.active.selector-clearall:hover {
   display: block;
   padding-left: 15px;
   padding-right: 10px;
-  color: rgba(255, 255, 255, 0.50) /* fallback */;
+  color: rgba(255, 255, 255, 0.5) /* fallback */;
   color: var(--lighten-50);
   font-size: 12px;
   text-transform: uppercase;
@@ -641,10 +654,12 @@ a.active.selector-clearall:hover {
   border-bottom: 0;
 }
 #header #changelist-filter li.selected {
+  border-left-color: rgba(0, 0, 0, 0.25) /* fallback */;
   border-left-color: var(--darken-25);
 }
 
 #header #changelist-filter li a {
+  color: rgba(255, 255, 255, 0.75) /* fallback */;
   color: var(--lighten-75);
 }
 
@@ -672,6 +687,7 @@ body:not(.popup) #changelist #toolbar {
 }
 
 .change-list #content-main {
+  padding-top: 45px /* fallback */;
   padding-top: var(--searchbar-height);
 }
 
@@ -686,10 +702,13 @@ body:not(.popup) #changelist #toolbar {
 
 #changelist .actions {
   position: absolute;
+  top: calc(-1 * 45px) /* fallback */;
   top: calc(-1 * var(--searchbar-height));
   left: 0;
   right: 0;
+  background: #417690 /* fallback */;
   background: var(--theme-color);
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.33), rgba(255, 255, 255, 0.33)) /* fallback */;
   background-image: var(--bg-lighten-33);
   color: #fff;
   line-height: 25px;
@@ -722,6 +741,7 @@ body:not(.popup) #changelist #toolbar {
   height: 25px;
   margin: 0 0 0 10px;
   vertical-align: top;
+  background: #417690 /* fallback */;
   background: var(--theme-color);
   box-shadow: none;
   border: 0;

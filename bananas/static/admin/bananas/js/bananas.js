@@ -93,11 +93,14 @@
       }
     });
 
-    $submit = $searchbars.siblings("[type=submit]");
+    var $submit = $searchbars.siblings("[type=submit]");
     var verbose_name_plural = $("#title").attr("title");
+    var objects = verbose_name_plural
+        ? ' ' + verbose_name_plural.toLowerCase()
+        : '';
     $searchbars.attr(
       'placeholder',
-      $submit.val() + ' ' + verbose_name_plural.toLowerCase() + ' ...'
+      $submit.val() + objects + ' ...'
     );
   }
 
