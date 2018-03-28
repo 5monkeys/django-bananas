@@ -54,16 +54,16 @@
 {% block nav-global %}
   <div class="nav-global {% if cl.has_filters %} filtered{% endif %}">
     {# Only show searchbar, object-tools and filters on real changelists #}
-    {% if cl.result_count is not None %}
+    {% if cl.result_count != None %}
     {% block search %}{% endblock search %}
     {% endif %}
     <div id="object-tools">
       <h2>{% trans 'Tools' %}</h2>
       {% if view_tools %}
       <ul class="object-tools view-tools">
-      {% for text, link in view_tools %}
+      {% for tool in view_tools %}
         <li>
-          <a href="{{ link }}">{{ text }}</a>
+          <a href="{{ tool.link }}" {{ tool.attrs }}>{{ tool.text }}</a>
         </li>
       {% endfor %}
       </ul>
@@ -172,9 +172,9 @@
   </div>
   {% if view_tools %}
   <ul class="object-tools">
-  {% for text, link in view_tools %}
+  {% for tool in view_tools %}
     <li>
-      <a href="{{ link }}">{{ text }}</a>
+      <a href="{{ tool.link }}" {{ tool.attrs }}>{{ tool.text }}</a>
     </li>
   {% endfor %}
   </ul>

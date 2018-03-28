@@ -103,7 +103,7 @@ Can be used to generate and store "safe" random bytes for authentication.
 URLSecretField
 ================================================================================
 
-An implementation of SecretField that generates an URL-safe base64 string 
+An implementation of SecretField that generates an URL-safe base64 string
 instead of a hex representation of the random bytes.
 
 
@@ -173,6 +173,29 @@ Custom django admin stylesheet.
         ...
         url(r'^admin/', include(admin.site.urls)),
     ]
+
+.. code-block:: py
+
+    # app/admin.py or something
+    from django.conf.urls import url
+    from bananas import admin
+
+    @admin.register
+    class MyAdminView(admin.AdminView):
+        def get_urls(self):
+            return [
+                url(r'^custom/$',
+                    self.admin_view(self.custom_view)),
+                    # ^^ Note that the view is wrapped in self.admin_view.
+                    # Needed for permissions and to prevent any
+                    # threading issues.
+            ]
+
+        def get(self, request):
+            return self.render('admin/template.html', {})
+
+        def custom_view(self, request):
+            return self.render('admin/custom.html', {})
 
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

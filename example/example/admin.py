@@ -7,6 +7,7 @@ from . import models
 @register
 class BananasAdmin(AdminView):
     verbose_name = _('Bananas')
+    permissions = (('foobar_permission', 'Can foo bars'),)
     tools = (
         (_('home'), 'admin:index', 'has_access'),
         ('superadmin only', 'https://foo.bar/', 'foobar_permission'),

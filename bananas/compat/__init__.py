@@ -1,23 +1,18 @@
-import sys
 import django
 
 __all__ = (
-    'urlsplit', 'parse_qs', 'get_resolver', 'reverse', 'URLPattern',
+    'get_resolver', 'reverse', 'reverse_lazy', 'URLPattern',
     'URLResolver', 'urlpatterns'
 )
 
-if sys.version_info < (3,):
-    from urlparse import urlsplit, parse_qs
-else:
-    from urllib.parse import urlsplit, parse_qs
-
-
 if django.VERSION < (2, 0):
-    from django.core.urlresolvers import get_resolver, reverse
+    from django.core.urlresolvers import get_resolver, reverse, reverse_lazy
     from django.conf.urls import RegexURLPattern as URLPattern, \
         RegexURLResolver as URLResolver
 else:
-    from django.urls import get_resolver, reverse, URLPattern, URLResolver
+    from django.urls import (
+        get_resolver, reverse, reverse_lazy, URLPattern, URLResolver
+    )
 
 
 def urlpatterns(*urls):

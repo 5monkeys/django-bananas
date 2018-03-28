@@ -1,6 +1,7 @@
 import django
 from django.core.management import call_command
 from django.test import TestCase
+
 from bananas.management.commands import show_urls
 
 
@@ -9,11 +10,11 @@ class CommandTests(TestCase):
         urls = show_urls.collect_urls()
 
         if django.VERSION < (1, 9):
-            n_urls = 13
+            n_urls = 23
         elif django.VERSION < (2, 0):
-            n_urls = 14
+            n_urls = 25
         else:
-            n_urls = 15
+            n_urls = 27
 
         self.assertEqual(len(urls), n_urls)
 

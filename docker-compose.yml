@@ -19,7 +19,7 @@ services:
     build:
       context: .
       args:
-        DJANGO: 2.0b1
+        DJANGO: 2.0.3
     command: ["runserver", "0.0.0.0:8000"]
     stdin_open: true
     tty: true
