@@ -120,7 +120,7 @@ body.login #branding a:active {
   margin-right: 10px;
 }
 
-.nav-global {
+DIV#header, DIV.nav-global {
   overflow-y: scroll;
 }
 
