@@ -128,7 +128,6 @@ body.login #branding a:active {
 #header nav {
   height: calc(100% - 70px) /* fallback */;
   height: calc(100% - var(--topbar-height));
-  overflow-y: auto;
 }
 
 #header nav li {
