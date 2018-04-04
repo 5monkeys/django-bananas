@@ -43,6 +43,8 @@ class ExtendedAdminSite(AdminSite):
             'DJANGO_ADMIN_LOGO', 'admin/bananas/img/django.svg'),
         'LOGO_ALIGN': env.get(
             'DJANGO_ADMIN_LOGO_ALIGN', 'middle'),
+        'LOGO_STYLE': env.get(
+            'DJANGO_ADMIN_LOGO_STYLE'),
     }
 
     def __init__(self, name='admin'):
