@@ -124,6 +124,7 @@ body.login #branding a:active {
   font-size: 0.725em;
   color: rgba(255, 255, 255, 0.5) /* fallback */;
   color: var(--lighten-50);
+  margin-left: 10px;
 }
 
 .nav-global {
