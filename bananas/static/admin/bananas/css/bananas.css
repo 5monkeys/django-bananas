@@ -82,7 +82,7 @@ body:not(.login) #header {
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)) /* fallback */;
   background-image: var(--bg-darken-25);
   padding: 0 15px;
-  font-size: 21px;
+  font-size: 18px;
   line-height: 70px /* fallback */;
   line-height: var(--topbar-height);
   white-space: nowrap;
@@ -118,6 +118,12 @@ body.login #branding a:active {
   vertical-align: middle /* fallback */;
   vertical-align: var(--logo-align);
   margin-right: 10px;
+}
+
+#branding a.logo .version {
+  font-size: 0.725em;
+  color: rgba(255, 255, 255, 0.5) /* fallback */;
+  color: var(--lighten-50);
 }
 
 .nav-global {

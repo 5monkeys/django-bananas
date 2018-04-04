@@ -47,6 +47,9 @@
 
   <a href="{% url 'admin:index' %}"{% if settings.LOGO %} class="logo"{% endif %}>
     {% if settings.LOGO %}<img src="{% static settings.LOGO %}">{% endif %}{{ site_header|default:_('Django administration') }}
+    {% if settings.SITE_VERSION %}
+      <span class="version">{{ settings.SITE_VERSION }}</span>
+    {% endif %}
   </a>
 {% endblock branding %}
 

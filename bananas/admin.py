@@ -1,6 +1,7 @@
 # coding=utf-8
 import re
 
+import django
 from django.apps import apps
 from django.db.models import Model
 from django.conf import settings as django_settings
@@ -30,6 +31,8 @@ class ExtendedAdminSite(AdminSite):
             'DJANGO_ADMIN_SITE_TITLE', AdminSite.site_title),
         'SITE_HEADER': env.get(
             'DJANGO_ADMIN_SITE_HEADER', 'admin'),
+        'SITE_VERSION': env.get(
+            'DJANGO_ADMIN_SITE_VERSION', django.__version__),
         'INDEX_TITLE': env.get(
             'DJANGO_ADMIN_INDEX_TITLE', AdminSite.index_title),
         'PRIMARY_COLOR': env.get(
