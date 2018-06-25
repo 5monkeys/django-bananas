@@ -129,7 +129,8 @@ body.login #branding a:active {
 
 .nav-global {
   overflow-y: scroll;
-  height: 100%;
+  height: calc(100% - 70px) /* fallback */;
+  height: calc(100% - var(--topbar-height));
 }
 
 #header nav {
