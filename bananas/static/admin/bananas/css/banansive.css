@@ -68,10 +68,16 @@ body:not(.popup) #header #object-tools {
   clear: left;
   float: right;
   text-align: right;
-  margin: 15px 15px 0 0;
-  line-height: 1em;
+  margin: 0;
+  line-height: 20px;
   text-align: right;
   color: #fff;
+  opacity: 0.666;
+  position: relative;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.333);
+  padding: 2px 10px 2px 20px;
+  border-radius: 0 0 0 30px;
 }
 
 #changelist-form .results {

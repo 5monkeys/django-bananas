@@ -128,14 +128,24 @@ body.login #branding a:active {
 }
 
 .nav-global {
-  overflow-y: scroll;
+  /*overflow-y: scroll;*/
   height: calc(100% - 70px) /* fallback */;
   height: calc(100% - var(--topbar-height));
 }
 
 #header nav {
-  height: calc(100% - 70px) /* fallback */;
-  height: calc(100% - var(--topbar-height));
+  position: relative;
+  height: calc(100% - 60px) /* fallback */;
+  height: calc(100% - var(--topbar-height) + 10px);
+  /*min-height: 180%;*/
+}
+#header nav > ul {
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 #header nav li {
@@ -151,6 +161,9 @@ body.login #branding a:active {
 
 #header nav > ul > li {
   margin-top: 15px;
+}
+#header .filtered-results nav > ul:first-of-type > li:first-of-type {
+  margin-top: 30px;
 }
 
 #header nav > ul > li > a,
@@ -175,7 +188,7 @@ body.login #branding a:active {
 }
 
 .filtered nav > ul > li > ul {
-  display: none;
+  /*display: none;*/
 }
 
 .filtered nav > ul > li:last-child > ul {
@@ -195,6 +208,11 @@ body.login #branding a:active {
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)) /* fallback */;
   background-image: var(--bg-darken-25);
   text-decoration: none;
+  outline: 0;
+}
+#header div:not(.searchable).filtered nav > ul > li > ul > li > a.is-selected {
+  border-top: 1px solid #417690 /* fallback */;
+  border-top: 1px solid var(--theme-color);
 }
 
 /* Add space for the top bar. */
@@ -620,11 +638,15 @@ a.active.selector-clearall:hover {
   width: auto;
   position: static;
   display: block;
-  margin-top: 15px;
-  background: transparent;
+  /*margin-top: 15px;*/
+  padding-top: 15px;
+  /*background: transparent;*/
+  background: rgba(0, 0, 0, 0.15);
   clear: both;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.25) /* fallback */;
-  border-bottom: 1px dashed var(--lighten-25);
+  /*border-bottom: 1px dashed rgba(255, 255, 255, 0.25) [> fallback <];*/
+  /*border-bottom: 1px dashed var(--lighten-25);*/
+  /*border-bottom: 1px solid rgba(0, 0, 0, 0.05);*/
+  border-bottom: 1px solid transparent;
 }
 
 #header #changelist-filter h2,
@@ -641,7 +663,7 @@ a.active.selector-clearall:hover {
   font-weight: normal;
   margin: 15px 0 0 0;
   line-height: 20px;
-  padding: 0 0 0 15px;
+  padding: 0 0 0 30px;
 }
 
 #header #changelist-filter h2 {
@@ -662,9 +684,14 @@ a.active.selector-clearall:hover {
   padding: 0 15px 0;
   border-bottom: 0;
 }
+#header #changelist-filter li {
+  padding-left: 30px;
+}
 #header #changelist-filter li.selected {
+  padding-left: 40px;
   border-left-color: rgba(0, 0, 0, 0.25) /* fallback */;
   border-left-color: var(--darken-25);
+  font-weight: bold;
 }
 
 #header #changelist-filter li a {
@@ -689,6 +716,10 @@ body:not(.popup) #changelist #toolbar {
 .filtered div.xfull,
 #changelist .actions {
   margin-right: 0;
+}
+
+.nav-global #toolbar form {
+  display: block;
 }
 
 .change-list #content {

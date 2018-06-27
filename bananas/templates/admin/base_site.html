@@ -52,7 +52,7 @@
 
 
 {% block nav-global %}
-  <div class="nav-global {% if cl.has_filters %} filtered{% endif %}">
+  <div class="nav-global {% if cl.has_filters %} filtered{% endif %}{% if cl.search_fields %} searchable{% endif %} {% if cl.result_count != cl.full_result_count %} filtered-results{% endif %}"> 
     {# Only show searchbar, object-tools and filters on real changelists #}
     {% if cl.result_count != None %}
     {% block search %}{% endblock search %}
@@ -70,7 +70,6 @@
       {% endif %}
       {% block object-tools %}{% endblock object-tools %}
     </div>
-    {% block filters %}{% endblock filters %}
     {% if has_permission %}
       <nav>
         <ul>
@@ -84,9 +83,16 @@
                   {% for model in app.models %}
                     <li>
                       {% if model.admin_url %}
-                        <a href="{{ model.admin_url }}">
+                        <!--<a href="{{ model.admin_url }}#{{ app.app_label }}.{{ model.name }}"-->
+                        <a href="{{ model.admin_url }}"
+                           {% if cl and app.app_label == cl.opts.app_label and model.object_name == cl.opts.object_name %}class="is-selected"{% endif %}
+                           {% if app.app_label == opts.app_label and model.object_name == opts.object_name %}class="is-selected"{% endif %}
+                           name="{{ app.app_label }}.{{ model.name }}">
                           {{ model.name }}
                         </a>
+                        {% if cl and app.app_label == cl.opts.app_label and model.object_name == cl.opts.object_name %}
+                          {% block filters %}{% endblock filters %}
+                        {% endif %}
                       {% else %}
                         <a>{{ model.name }}</a>
                       {% endif %}
@@ -120,6 +126,51 @@
               </li>
             </ul>
           </li>
+            <!--
+          <li>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        hej
+            </li>
+            -->
         </ul>
       </nav>
     {% endif %}
