@@ -66,6 +66,7 @@ body:not(.login) #header {
   background-color: var(--theme-color);
   color: white;
   outline: 0;
+  overflow: visible;
 }
 
 #branding {
@@ -129,15 +130,17 @@ body.login #branding a:active {
 
 .nav-global {
   /*overflow-y: scroll;*/
-  height: calc(100% - 70px) /* fallback */;
-  height: calc(100% - var(--topbar-height));
+  height: calc(100% - 70px - 15px) /* fallback */;
+  height: calc(100% - var(--topbar-height) - 15px);
 }
 
 #header nav {
   position: relative;
-  height: calc(100% - 60px) /* fallback */;
-  height: calc(100% - var(--topbar-height) + 10px);
-  /*min-height: 180%;*/
+  height: 100%;
+}
+#header .searchable nav {
+  height: calc(100% - 45px) /* fallback */;
+  height: calc(100% - var(--searchbar-height));
 }
 #header nav > ul {
   overflow-y: auto;
@@ -358,7 +361,7 @@ body.popup #title .back-arrow {
 #header .object-tools li {
   clear: left;
   height: auto;
-  margin-left: 0;
+  margin-left: 30px;
   overflow: visible;
 }
 
@@ -634,7 +637,8 @@ a.active.selector-clearall:hover {
   background-position: 0 -45px;
 }
 
-#header #changelist-filter {
+#header #changelist-filter,
+#header #object-tools {
   width: auto;
   position: static;
   display: block;
@@ -676,7 +680,7 @@ a.active.selector-clearall:hover {
 }
 
 #header #object-tools h2 {
-  margin: 15px 0 0 0;
+  margin: 0;
 }
 
 #header #changelist-filter ul {
@@ -710,6 +714,9 @@ body:not(.popup) #changelist #toolbar {
   display: none;
 }
 
+.change-list .filtered {
+  min-height: auto;
+}
 .change-list .filtered .results,
 .change-list .filtered .paginator,
 .filtered #toolbar,
