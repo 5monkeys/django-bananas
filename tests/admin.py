@@ -34,7 +34,7 @@ class SimpleAdminView(admin.AdminView):
 
     def custom_view(self, request):
         assert self.has_access()  # For coverage...
-        return self.render("simple.html", {"context": "custom"})
+        return self.render("simple.html", {"context": "custom", "searchbar": True})
 
     def special_permission_view(self, request):
         return self.render("simple.html", {"context": "special"})
