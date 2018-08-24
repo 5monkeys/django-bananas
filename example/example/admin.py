@@ -20,6 +20,7 @@ class BananasAdmin(AdminView):
 @admin.register(models.Monkey)
 class MonkeyAdmin(admin.ModelAdmin):
     list_display = ('id',)
+    list_filter = ('user__username',)
     raw_id_fields = ('user',)
     date_hierarchy = 'date_created'
     actions_on_top = True

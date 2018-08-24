@@ -138,6 +138,7 @@ class ModelAdminView(ModelAdmin):
             'model_name': force_text(opts.verbose_name_plural),
             'title': force_text(opts.verbose_name_plural),
             'cl': {'opts': opts},  # change_list.html requirement
+            'opts': opts,  # change_form.html requirement
             'media': self.media,
         })
         context.update(extra or {})

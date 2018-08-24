@@ -40,7 +40,13 @@
 
     if (matching.length > 0) {
       var bestMatchingLink = matching[0].element;
-      bestMatchingLink.className += " is-selected";
+      //bestMatchingLink.className += " is-selected";
+      //document.location.hash = bestMatchingLink.name;
+    }
+
+    var $filteredNavItem = $('.filtered nav a.is-selected')[0];
+    if ($filteredNavItem) {
+      document.location.hash = $filteredNavItem.name;
     }
   }
 
