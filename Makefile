@@ -55,11 +55,11 @@ all: clean test_all lint
 
 .PHONY: isort
 isort:
-	isort -rc bananas/
+	isort -rc bananas/ tests/ example/
 
 .PHONY: black
 black:
-	find bananas/ -name '*.py' | xargs black
+	find bananas/ tests/ example/ -name '*.py' | xargs black
 
 .PHONY: format
 format: black isort

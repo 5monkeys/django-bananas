@@ -147,7 +147,7 @@ class ModelAdminView(ModelAdmin):
                 {
                     "query": request.GET.get("q") or "",
                     "search_fields": (None,),
-                    "result_count": extra.get('result_count', 1),
+                    "result_count": extra.get("result_count", 1),
                     "full_result_count": 0,
                 }
             )
