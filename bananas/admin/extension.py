@@ -332,12 +332,9 @@ class AdminView(View):
         return self.has_permission(self.admin.access_permission)
 
     def get_context(self, **extra):
-        return self.admin.get_context(
-            self.request,
-            view_tools=self.get_view_tools(),
-            searchbar=self.searchbar,
-            **extra
-        )
+        context = {"view_tools": self.get_view_tools(), "searchbar": self.searchbar}
+        context.update(extra)
+        return self.admin.get_context(self.request, **context)
 
     def render(self, template, context=None):
         extra = context or {}
