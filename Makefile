@@ -47,3 +47,14 @@ clean:
 
 .PHONY: all			# runs clean, test_all, lint
 all: clean test_all lint
+
+.PHONY: isort
+isort:
+	isort -rc bananas/
+
+.PHONY: black
+black:
+	find bananas/ -name '*.py' | xargs black
+
+.PHONY: format
+format: black isort
