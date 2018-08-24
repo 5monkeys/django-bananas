@@ -201,7 +201,7 @@ class AdminTest(AdminBaseTest):
         response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, 200)
         context = response.context
-        self.assertFalse(context['searchbar'])
+        self.assertFalse(context["searchbar"])
         self.assertNotIn(b'id="searchbar"', response.content)
 
     def test_searchbar_enabled(self):
@@ -209,7 +209,7 @@ class AdminTest(AdminBaseTest):
         response = self.client.get(self.custom_url)
         self.assertEqual(response.status_code, 200)
         context = response.context
-        self.assertTrue(context['searchbar'])
+        self.assertTrue(context["searchbar"])
         self.assertIn(b'id="searchbar"', response.content)
 
 
