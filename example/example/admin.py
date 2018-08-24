@@ -8,13 +8,17 @@ from . import models
 class BananasAdmin(AdminView):
     verbose_name = _('Bananas')
     permissions = (('foobar_permission', 'Can foo bars'),)
+    searchbar = True
     tools = (
         (_('home'), 'admin:index', 'has_access'),
         ('superadmin only', 'https://foo.bar/', 'foobar_permission'),
     )
 
     def get(self, request):
-        return self.render('bananas.html')
+        context = {
+            'result_count': 123 if request.GET.get('q') else 0
+        }
+        return self.render('bananas.html', context)
 
 
 @admin.register(models.Monkey)
