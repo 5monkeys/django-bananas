@@ -5,15 +5,13 @@ from django.db.models.query import QuerySet
 
 from .models import ModelDict
 
-
 _log = logging.getLogger(__name__)
 
 
 class ModelDictIterable(object):
-
     def __init__(self, queryset):
         self.queryset = queryset
-        self.named_fields = self.queryset._hints.get('_named_fields')
+        self.named_fields = self.queryset._hints.get("_named_fields")
 
     def __iter__(self):
         queryset = self.queryset
@@ -42,6 +40,7 @@ class ModelDictQuerySetMixin:
     """
     Supported by Django >= 1.9
     """
+
     def dicts(self, *fields, **named_fields):
         if named_fields:
             fields += tuple(named_fields.values())
@@ -55,7 +54,7 @@ class ModelDictQuerySetMixin:
         # fine to set a custom key on this dict as it's a guaranteed
         # way that it'll be returned with the QuerySet instance
         # while leaving the queryset intact
-        clone._add_hints(**{'_named_fields': named_fields})
+        clone._add_hints(**{"_named_fields": named_fields})
 
         return clone
 
@@ -72,7 +71,6 @@ class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):
 
 
 class ModelDictManagerMixin:
-
     def dicts(self, *fields, **named_fields):
         return self.get_queryset().dicts(*fields, **named_fields)
 

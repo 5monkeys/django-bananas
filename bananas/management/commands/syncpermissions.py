@@ -19,22 +19,19 @@ class Command(BaseCommand):
         django_admin.autodiscover()
 
         for model, _ in admin.site._registry.items():
-            if issubclass(getattr(model, 'View', object), admin.AdminView):
+            if issubclass(getattr(model, "View", object), admin.AdminView):
                 meta = model._meta
 
                 ct, created = ContentType.objects.get_or_create(
-                    app_label=meta.app_label,
-                    model=meta.object_name.lower(),
+                    app_label=meta.app_label, model=meta.object_name.lower()
                 )
 
                 if created:
-                    print('Found new admin view: {} [{}]'.format(
-                        ct.name, ct.app_label
-                    ))
+                    print("Found new admin view: {} [{}]".format(ct.name, ct.app_label))
 
                 for codename, name in model._meta.permissions:
                     p, created = Permission.objects.get_or_create(
                         codename=codename, name=name, content_type=ct
                     )
                     if created:
-                        print('Created permission: {}'.format(name))
+                        print("Created permission: {}".format(name))

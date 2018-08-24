@@ -28,13 +28,14 @@ You can add your own by running ``register(scheme, module_name)`` before
 parsing.
 """
 from collections import namedtuple
-from urllib.parse import unquote_plus, urlsplit, parse_qs
+from urllib.parse import parse_qs, unquote_plus, urlsplit
 
 
 class Alias(object):
     """
     An alias object used to resolve aliases for engine names.
     """
+
     def __init__(self, target):
         self.target = target
 
@@ -43,17 +44,17 @@ class Alias(object):
 
 
 ENGINE_MAPPING = {
-    'pgsql': Alias('postgresql'),
-    'postgres': Alias('postgresql'),
-    'postgresql': 'django.db.backends.postgresql_psycopg2',
-    'mysql': 'django.db.backends.mysql',
-    'oracle': 'django.db.backends.oracle',
-    'sqlite': Alias('sqlite3'),
-    'sqlite3': 'django.db.backends.sqlite3',
-    'mysqlgis': 'django.contrib.gis.db.backends.mysql',
-    'oraclegis': 'django.contrib.gis.db.backends.oracle',
-    'postgis': 'django.contrib.gis.db.backends.postgis',
-    'spatialite': 'django.contrib.gis.db.backends.spatialite'
+    "pgsql": Alias("postgresql"),
+    "postgres": Alias("postgresql"),
+    "postgresql": "django.db.backends.postgresql_psycopg2",
+    "mysql": "django.db.backends.mysql",
+    "oracle": "django.db.backends.oracle",
+    "sqlite": Alias("sqlite3"),
+    "sqlite3": "django.db.backends.sqlite3",
+    "mysqlgis": "django.contrib.gis.db.backends.mysql",
+    "oraclegis": "django.contrib.gis.db.backends.oracle",
+    "postgis": "django.contrib.gis.db.backends.postgis",
+    "spatialite": "django.contrib.gis.db.backends.spatialite",
 }
 
 
@@ -85,7 +86,7 @@ def resolve(cursor, key):
 
         return result
     except KeyError:
-        raise KeyError('No matches for engine %s' % key)
+        raise KeyError("No matches for engine %s" % key)
 
 
 def get_engine(scheme):
@@ -96,7 +97,7 @@ def get_engine(scheme):
     i.e "postgres+psycopg" is OK, "postgres+psycopg2+postgis" is NOT OK.
     :return: Engine string
     """
-    path = scheme.split('+')
+    path = scheme.split("+")
     first, rest = path[0], path[1:]
 
     second = rest[0] if rest else None
@@ -107,7 +108,7 @@ def get_engine(scheme):
     if not isinstance(engine, list):
         # If second level engine was expected
         if second:
-            raise KeyError('%s has no sub-engines' % first)
+            raise KeyError("%s has no sub-engines" % first)
 
         return engine
 
@@ -115,32 +116,28 @@ def get_engine(scheme):
         engine, extra = engine
     except ValueError:
         # engine was not a list of length 2
-        raise ValueError('django-bananas.url\' engine '
-                         'configuration is invalid: %r' %
-                         ENGINE_MAPPING)
+        raise ValueError(
+            "django-bananas.url' engine "
+            "configuration is invalid: %r" % ENGINE_MAPPING
+        )
 
     # Get second-level engine
     if second is not None:
         engine = resolve(extra, second)
 
     # Sanity-check the value before returning
-    assert not isinstance(engine, (list, dict)), 'Only two levels of engines ' \
-                                                 'are allowed'
-    assert engine, 'The returned engine is not truthy'
+    assert not isinstance(
+        engine, (list, dict)
+    ), "Only two levels of engines " "are allowed"
+    assert engine, "The returned engine is not truthy"
 
     return engine
 
 
-DatabaseInfo = namedtuple('DatabaseInfo', [
-    'engine',
-    'name',
-    'schema',
-    'user',
-    'password',
-    'host',
-    'port',
-    'params'
-])
+DatabaseInfo = namedtuple(
+    "DatabaseInfo",
+    ["engine", "name", "schema", "user", "password", "host", "port", "params"],
+)
 
 
 def parse_path(path):
@@ -152,9 +149,9 @@ def parse_path(path):
     :return: tuple with (database or None, schema or None)
     """
     if path is None:
-        raise ValueError('path must be a string')
+        raise ValueError("path must be a string")
 
-    parts = path.strip('/').split('/')
+    parts = path.strip("/").split("/")
 
     database = unquote_plus(parts[0]) if len(parts) else None
     schema = parts[1] if len(parts) > 1 else None
@@ -183,8 +180,7 @@ def database_conf_from_url(url):
      ('SCHEMA', 'tweetschema'),
      ('USER', 'joar')]
     """
-    return {key.upper(): val
-            for key, val in parse_database_url(url)._asdict().items()}
+    return {key.upper(): val for key, val in parse_database_url(url)._asdict().items()}
 
 
 def parse_database_url(url):
@@ -208,9 +204,11 @@ def parse_database_url(url):
                  port=4242,
                  params={'hello': 'world'})
     """
-    if url == 'sqlite://:memory:':
-        raise Exception('Your url is "sqlite://:memory:", if you want '
-                        'an sqlite memory database, just use "sqlite://"')
+    if url == "sqlite://:memory:":
+        raise Exception(
+            'Your url is "sqlite://:memory:", if you want '
+            'an sqlite memory database, just use "sqlite://"'
+        )
     url_parts = urlsplit(url)
 
     engine = get_engine(url_parts.scheme)
@@ -231,5 +229,5 @@ def parse_database_url(url):
         password=password,
         host=host,
         port=port,
-        params=params
+        params=params,
     )

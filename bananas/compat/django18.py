@@ -8,11 +8,12 @@ class ExtendedValuesQuerySet(ValuesQuerySet):
     Extended `ValuesQuerySet` with support for renaming fields
     and choice of object class.
     """
+
     _values_class = dict
 
     @property
     def named_fields(self):
-        return getattr(self, '_named_fields')
+        return getattr(self, "_named_fields")
 
     def rename_fields(self, names):
         named_fields = {value: key for key, value in self.named_fields.items()}
@@ -34,20 +35,25 @@ class ExtendedValuesQuerySet(ValuesQuerySet):
             yield self._values_class(zip(names, row))
 
     def _clone(self, klass=None, setup=False, **kwargs):
-        kwargs.update(_named_fields=self.named_fields,
-                      _values_class=self._values_class,
-                      klass=klass,
-                      setup=setup)
+        kwargs.update(
+            _named_fields=self.named_fields,
+            _values_class=self._values_class,
+            klass=klass,
+            setup=setup,
+        )
 
         return super()._clone(**kwargs)
 
 
 class ModelDictQuerySetMixin:
-
     def dicts(self, *fields, **named_fields):
         if named_fields:
             fields += tuple(named_fields.values())
 
-        return self._clone(klass=ExtendedValuesQuerySet, setup=True,
-                           _fields=fields, _named_fields=named_fields,
-                           _values_class=ModelDict)
+        return self._clone(
+            klass=ExtendedValuesQuerySet,
+            setup=True,
+            _fields=fields,
+            _named_fields=named_fields,
+            _values_class=ModelDict,
+        )

@@ -3,14 +3,12 @@ import re
 
 import django
 from django.apps import apps
-from django.db.models import Model
 from django.conf import settings as django_settings
 from django.conf.urls import url
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.sites import site as django_admin_site
-from django.contrib.auth.decorators import (
-    user_passes_test, permission_required
-)
+from django.contrib.auth.decorators import permission_required, user_passes_test
+from django.db.models import Model
 from django.shortcuts import render
 from django.utils.encoding import force_text
 from django.utils.functional import cached_property
@@ -18,43 +16,35 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
-from .environment import env
 from . import compat
+from .environment import env
 
 
 class ExtendedAdminSite(AdminSite):
 
     default_settings = {
-        'INHERIT_REGISTERED_MODELS': env.get_bool(
-            'DJANGO_ADMIN_INHERIT_REGISTERED_MODELS', True),
-        'SITE_TITLE': env.get(
-            'DJANGO_ADMIN_SITE_TITLE', AdminSite.site_title),
-        'SITE_HEADER': env.get(
-            'DJANGO_ADMIN_SITE_HEADER', 'admin'),
-        'SITE_VERSION': env.get(
-            'DJANGO_ADMIN_SITE_VERSION', django.__version__),
-        'INDEX_TITLE': env.get(
-            'DJANGO_ADMIN_INDEX_TITLE', AdminSite.index_title),
-        'PRIMARY_COLOR': env.get(
-            'DJANGO_ADMIN_PRIMARY_COLOR', '#34A77B'),
-        'SECONDARY_COLOR': env.get(
-            'DJANGO_ADMIN_SECONDARY_COLOR', '#20AA76'),
-        'LOGO': env.get(
-            'DJANGO_ADMIN_LOGO', 'admin/bananas/img/django.svg'),
-        'LOGO_ALIGN': env.get(
-            'DJANGO_ADMIN_LOGO_ALIGN', 'middle'),
-        'LOGO_STYLE': env.get(
-            'DJANGO_ADMIN_LOGO_STYLE'),
+        "INHERIT_REGISTERED_MODELS": env.get_bool(
+            "DJANGO_ADMIN_INHERIT_REGISTERED_MODELS", True
+        ),
+        "SITE_TITLE": env.get("DJANGO_ADMIN_SITE_TITLE", AdminSite.site_title),
+        "SITE_HEADER": env.get("DJANGO_ADMIN_SITE_HEADER", "admin"),
+        "SITE_VERSION": env.get("DJANGO_ADMIN_SITE_VERSION", django.__version__),
+        "INDEX_TITLE": env.get("DJANGO_ADMIN_INDEX_TITLE", AdminSite.index_title),
+        "PRIMARY_COLOR": env.get("DJANGO_ADMIN_PRIMARY_COLOR", "#34A77B"),
+        "SECONDARY_COLOR": env.get("DJANGO_ADMIN_SECONDARY_COLOR", "#20AA76"),
+        "LOGO": env.get("DJANGO_ADMIN_LOGO", "admin/bananas/img/django.svg"),
+        "LOGO_ALIGN": env.get("DJANGO_ADMIN_LOGO_ALIGN", "middle"),
+        "LOGO_STYLE": env.get("DJANGO_ADMIN_LOGO_STYLE"),
     }
 
-    def __init__(self, name='admin'):
+    def __init__(self, name="admin"):
         super().__init__(name=name)
         self.settings = dict(self.default_settings)
-        self.settings.update(getattr(django_settings, 'ADMIN', {}))
+        self.settings.update(getattr(django_settings, "ADMIN", {}))
 
-        self.site_title = self.settings['SITE_TITLE']
-        self.site_header = self.settings['SITE_HEADER']
-        self.index_title = self.settings['INDEX_TITLE']
+        self.site_title = self.settings["SITE_TITLE"]
+        self.site_header = self.settings["SITE_HEADER"]
+        self.index_title = self.settings["INDEX_TITLE"]
 
     def each_context(self, request):
         context = super().each_context(request)
@@ -63,19 +53,18 @@ class ExtendedAdminSite(AdminSite):
 
     @property
     def urls(self):
-        if self.settings['INHERIT_REGISTERED_MODELS']:
+        if self.settings["INHERIT_REGISTERED_MODELS"]:
             for model, admin in list(django_admin_site._registry.items()):
                 # django_admin_site.unregister(model)
                 self._registry[model] = admin.__class__(model, self)
-        return self.get_urls(), 'admin', self.name
+        return self.get_urls(), "admin", self.name
 
 
 class ModelAdminView(ModelAdmin):
-
     @cached_property
     def access_permission(self):
         meta = self.model._meta
-        return '{app_label}.{codename}'.format(
+        return "{app_label}.{codename}".format(
             app_label=meta.app_label,
             codename=meta.permissions[0][0],  # First perm codename
         )
@@ -85,14 +74,18 @@ class ModelAdminView(ModelAdmin):
         View = self.model.View
         info = app_label, View.label
         urlpatterns = compat.urlpatterns(
-            url(r'^$',
+            url(
+                r"^$",
                 self.admin_view(View.as_view(admin=self)),
-                name='{}_{}'.format(*info)),
+                name="{}_{}".format(*info),
+            ),
             # We add the same url here with _changelist to make sure the
             # admin app index reverse urls to correct view.
-            url(r'^$',
+            url(
+                r"^$",
                 self.admin_view(View.as_view(admin=self)),
-                name='{}_{}_changelist'.format(*info)),
+                name="{}_{}_changelist".format(*info),
+            ),
         )
         extra_urls = self.model.View(admin=self).get_urls()
         if extra_urls:
@@ -105,17 +98,16 @@ class ModelAdminView(ModelAdmin):
         else:
             perm = self.access_permission
 
-        admin_login_url = compat.reverse_lazy('admin:login')
+        admin_login_url = compat.reverse_lazy("admin:login")
         view = user_passes_test(
-            lambda u: u.is_active and u.is_staff,
-            login_url=admin_login_url
+            lambda u: u.is_active and u.is_staff, login_url=admin_login_url
         )(view)
         view = permission_required(perm, login_url=admin_login_url)(view)
         return view
 
     def get_permission(self, perm):
-        if '.' not in perm:
-            perm = '{}.{}'.format(self.model._meta.app_label, perm)
+        if "." not in perm:
+            perm = "{}.{}".format(self.model._meta.app_label, perm)
         return perm
 
     def has_module_permission(self, request):
@@ -133,14 +125,16 @@ class ModelAdminView(ModelAdmin):
     def get_context(self, request, **extra):
         opts = self.model._meta
         context = self.admin_site.each_context(request)
-        context.update({
-            'app_label': opts.app_label,
-            'model_name': force_text(opts.verbose_name_plural),
-            'title': force_text(opts.verbose_name_plural),
-            'cl': {'opts': opts},  # change_list.html requirement
-            'opts': opts,  # change_form.html requirement
-            'media': self.media,
-        })
+        context.update(
+            {
+                "app_label": opts.app_label,
+                "model_name": force_text(opts.verbose_name_plural),
+                "title": force_text(opts.verbose_name_plural),
+                "cl": {"opts": opts},  # change_list.html requirement
+                "opts": opts,  # change_form.html requirement
+                "media": self.media,
+            }
+        )
         context.update(extra or {})
         return context
 
@@ -171,42 +165,50 @@ def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
 
     def wrapped(inner_view):
         module = inner_view.__module__
-        app_package = module[:module.index('.admin')]
+        app_package = module[: module.index(".admin")]
         app_config = apps.get_app_config(app_package)
 
-        label = getattr(inner_view, 'label', None)
+        label = getattr(inner_view, "label", None)
         if not label:
-            label = re.sub('(Admin)|(View)', '', inner_view.__name__).lower()
+            label = re.sub("(Admin)|(View)", "", inner_view.__name__).lower()
         inner_view.label = label
 
         model_name = label.capitalize()
-        verbose_name = getattr(inner_view, 'verbose_name', model_name)
+        verbose_name = getattr(inner_view, "verbose_name", model_name)
         inner_view.verbose_name = verbose_name
 
-        access_perm_codename = 'can_access_' + model_name.lower()
-        access_perm_name = _('Can access {verbose_name}').format(
+        access_perm_codename = "can_access_" + model_name.lower()
+        access_perm_name = _("Can access {verbose_name}").format(
             verbose_name=verbose_name
         )
         # The first permission here is expected to be
         # the general access permission.
         permissions = tuple(
-            [(access_perm_codename, access_perm_name)] +
-            list(getattr(inner_view, 'permissions', []))
+            [(access_perm_codename, access_perm_name)]
+            + list(getattr(inner_view, "permissions", []))
         )
 
-        model = type(model_name, (Model,), {
-            '__module__': module + '.__models__',  # Fake
-            'View': inner_view,
-            'app_config': app_config,
-            'Meta': type('Meta', (object,), dict(
-                managed=False,
-                abstract=True,
-                app_label=app_config.label,
-                verbose_name=verbose_name,
-                verbose_name_plural=verbose_name,
-                permissions=permissions,
-            )),
-        })
+        model = type(
+            model_name,
+            (Model,),
+            {
+                "__module__": module + ".__models__",  # Fake
+                "View": inner_view,
+                "app_config": app_config,
+                "Meta": type(
+                    "Meta",
+                    (object,),
+                    dict(
+                        managed=False,
+                        abstract=True,
+                        app_label=app_config.label,
+                        verbose_name=verbose_name,
+                        verbose_name_plural=verbose_name,
+                        permissions=permissions,
+                    ),
+                ),
+            },
+        )
 
         admin_site._registry[model] = admin_class(model, admin_site)
         return inner_view
@@ -223,20 +225,18 @@ class ViewTool:
         self._link = link
         self.perm = perm
 
-        html_class = attrs.pop('html_class', None)
+        html_class = attrs.pop("html_class", None)
         if html_class is not None:
-            attrs.setdefault('class', html_class)
+            attrs.setdefault("class", html_class)
         self._attrs = attrs
 
     @property
     def attrs(self):
-        return mark_safe(
-            ' '.join('{}={}'.format(k, v) for k, v in self._attrs.items())
-        )
+        return mark_safe(" ".join("{}={}".format(k, v) for k, v in self._attrs.items()))
 
     @property
     def link(self):
-        if '/' not in self._link:
+        if "/" not in self._link:
             return compat.reverse(self._link)
         return self._link
 
@@ -298,9 +298,7 @@ class AdminView(View):
 
     def admin_view(self, view, perm=None, **initkwargs):
         view = self.__class__.as_view(
-            action=view.__name__,
-            admin=self.admin,
-            **initkwargs
+            action=view.__name__, admin=self.admin, **initkwargs
         )
         return self.admin.admin_view(view, perm=perm)
 
@@ -316,18 +314,12 @@ class AdminView(View):
 
     def get_context(self, **extra):
         return self.admin.get_context(
-            self.request,
-            view_tools=self.get_view_tools(),
-            **extra
+            self.request, view_tools=self.get_view_tools(), **extra
         )
 
     def render(self, template, context=None):
         extra = context or {}
-        return render(
-            self.request,
-            template,
-            self.get_context(**extra)
-        )
+        return render(self.request, template, self.get_context(**extra))
 
 
 site = ExtendedAdminSite()
