@@ -18,6 +18,7 @@ from django.views.generic import View
 
 from .. import compat
 from ..environment import env
+from ..models import ModelDict
 
 __all__ = ["ModelAdminView", "ViewTool", "AdminView", "register", "site"]
 
@@ -126,18 +127,33 @@ class ModelAdminView(ModelAdmin):
 
     def get_context(self, request, **extra):
         opts = self.model._meta
+        changelist = ModelDict(opts=opts)
+
         context = self.admin_site.each_context(request)
         context.update(
             {
                 "app_label": opts.app_label,
                 "model_name": force_text(opts.verbose_name_plural),
                 "title": force_text(opts.verbose_name_plural),
-                "cl": {"opts": opts},  # change_list.html requirement
+                "cl": changelist,  # change_list.html requirement
                 "opts": opts,  # change_form.html requirement
                 "media": self.media,
             }
         )
-        context.update(extra or {})
+
+        # Fill fake ChangeList object with required data to show search form and count
+        if extra.get("searchbar"):
+            changelist.update(
+                {
+                    "query": request.GET.get("q") or "",
+                    "search_fields": (None,),
+                    "result_count": extra.get('result_count', 1),
+                    "full_result_count": 0,
+                }
+            )
+
+        context.update(extra)
+
         return context
 
 
@@ -247,6 +263,7 @@ class AdminView(View):
     admin = None  # type: ModelAdminView
     tools = None
     action = None
+    searchbar = False
 
     def dispatch(self, request, *args, **kwargs):
         # Try to fetch set action first.
@@ -316,7 +333,10 @@ class AdminView(View):
 
     def get_context(self, **extra):
         return self.admin.get_context(
-            self.request, view_tools=self.get_view_tools(), **extra
+            self.request,
+            view_tools=self.get_view_tools(),
+            searchbar=self.searchbar,
+            **extra
         )
 
     def render(self, template, context=None):
