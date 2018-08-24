@@ -27,7 +27,7 @@ django-bananas is on PyPI, so just run:
 
 Currently tested only for
 
--   Django 1.8-1.11b1 under Python 3.4-3.6
+-   Django 1.8-2.1 under Python 3.4-3.6
 
 pull requests welcome!
 
