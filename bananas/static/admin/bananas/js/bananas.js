@@ -46,7 +46,7 @@
 
     var $filteredNavItem = $('.filtered nav a.is-selected')[0];
     if ($filteredNavItem) {
-      document.location.hash = $filteredNavItem.name;
+      //document.location.hash = $filteredNavItem.name;
     }
   }
 
