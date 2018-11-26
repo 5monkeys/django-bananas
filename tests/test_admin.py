@@ -124,6 +124,16 @@ class AdminTest(AdminBaseTest):
         self.assertIsNotNone(model_admin)
         self.assertIsInstance(model_admin, SpecialModelAdmin)
 
+    @reset_admin_registry
+    def test_register_app_nested_in_package(self):
+        @admin.register
+        class MyAdminViewRegisteredInNestedApp(admin.AdminView):
+            __module__ = "somepackage.tests.admin"
+
+        model_admin = get_model_admin_from_registry(MyAdminViewRegisteredInNestedApp)
+        self.assertIsNotNone(model_admin)
+        self.assertIsInstance(model_admin, admin.ModelAdminView)
+
     def assert_unauthorized(self, url):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
