@@ -171,9 +171,6 @@ class LogoutAPI(BananasAPIViewSet):
     class Admin:
         verbose_name_plural = None
 
-    def list(self, request):
-        return self.create(request)
-
     def create(self, request):
         auth_logout(request)
         return Response(status=status.HTTP_202_ACCEPTED)
