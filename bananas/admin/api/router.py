@@ -25,10 +25,7 @@ class BananasRouter(DefaultRouter):
         list_name = self.routes[0].name
         for prefix, viewset, basename in self.registry:
             try:
-                api_root_dict[prefix] = (
-                    viewset,
-                    list_name.format(basename=basename),
-                )
+                api_root_dict[prefix] = (viewset, list_name.format(basename=basename))
 
             except AttributeError:
                 # TODO: log warning, extend bananas api
@@ -39,7 +36,8 @@ class BananasRouter(DefaultRouter):
 
 def register(view):
     meta = view.get_admin_meta()
-    router.register(meta.prefix, view, basename=meta.basename)
+    prefix = meta.basename.replace(".", "/")
+    router.register(prefix, view, basename=meta.basename)
 
 
 router = BananasRouter()

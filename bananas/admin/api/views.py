@@ -35,20 +35,17 @@ class BananasAPI(object):
 
         if meta is None:
             app_label, __, __ = cls.__module__.lower().partition(".")
-
+            basename = getattr(cls, "basename", cls.__name__.lower())
             name = getattr(cls, "name", None)
             if name is None:
                 name = cls().get_view_name()
 
-            basename = getattr(cls, "basename", cls.__name__.lower())
-
             meta = ModelDict(
                 app_label=app_label,
-                name=name,
                 basename=basename,
-                prefix=None,
-                verbose_name=name,
-                verbose_name_plural=UNDEFINED,
+                name=name,
+                # verbose_name=name,
+                # verbose_name_plural=UNDEFINED,
             )
 
             admin = getattr(cls, "Admin", None)
@@ -63,17 +60,15 @@ class BananasAPI(object):
                 )
 
             basename = "{}.{}".format(meta.app_label, meta.basename)
-            prefix = meta.prefix or basename.replace(".", "/")
-            verbose_name_plural = (
-                (meta.verbose_name + "s")
-                if meta.verbose_name_plural is UNDEFINED
-                else None
-            )
+            # verbose_name_plural = (
+            #     (meta.verbose_name + "s")
+            #     if meta.verbose_name_plural is UNDEFINED
+            #     else None
+            # )
             meta.update(
                 dict(
                     basename=basename,
-                    prefix=prefix,
-                    verbose_name_plural=verbose_name_plural,
+                    # verbose_name_plural=verbose_name_plural,
                 )
             )
             cls._admin_meta = meta
