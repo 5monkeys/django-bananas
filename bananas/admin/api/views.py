@@ -94,14 +94,25 @@ class NavigationAPIView(views.APIView):
     schema = None  # exclude from schema
     api_root_dict = None
 
+    def has_permission(self, viewset):
+        view = viewset()
+        for permission in view.get_permissions():
+            if not permission.has_permission(self.request, view):
+                return False
+        return True
+
     def get(self, request, *args, **kwargs):
         ret = []
         namespace = request.resolver_match.namespace
 
-        for key, (meta, url_name) in self.api_root_dict.items():
+        for key, (viewset, url_name) in self.api_root_dict.items():
+            if not self.has_permission(viewset):
+                continue
+
+            meta = viewset.get_admin_meta()
             if namespace:
                 url_name = namespace + ":" + url_name
-            print(url_name)
+
             try:
                 ret.append(
                     {
@@ -133,7 +144,7 @@ class LoginAPI(BananasAPIViewSet):
 
     name = "Login"
     basename = "login"
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAnonymous,)
 
     class Admin:
         verbose_name_plural = None
@@ -160,7 +171,7 @@ class LogoutAPI(BananasAPIViewSet):
 
     name = "Logout"
     basename = "logout"
-    permission_classes = (IsAnonymous,)
+    permission_classes = (IsAuthenticated,)
 
     class Admin:
         verbose_name_plural = None

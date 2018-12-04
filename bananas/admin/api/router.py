@@ -26,7 +26,7 @@ class BananasRouter(DefaultRouter):
         for prefix, viewset, basename in self.registry:
             try:
                 api_root_dict[prefix] = (
-                    viewset.get_admin_meta(),
+                    viewset,
                     list_name.format(basename=basename),
                 )
 
