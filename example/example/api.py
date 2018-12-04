@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers, viewsets
+from rest_framework.permissions import DjangoModelPermissions
 
 from bananas.admin.api.views import BananasAPI
 
@@ -27,6 +28,7 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
 
     name = "Users"
     basename = "users"
+    permission_classes = (DjangoModelPermissions,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
