@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     'example',
     'bananas',
+    'rest_framework',
 
     'django.contrib.admin',
 ]
