@@ -3,10 +3,12 @@ from itertools import groupby
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.urls.exceptions import NoReverseMatch
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status, views, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.utils import formatting
 
 from bananas.models import ModelDict
 
@@ -35,10 +37,16 @@ class BananasAPI(object):
 
         if meta is None:
             app_label, __, __ = cls.__module__.lower().partition(".")
-            basename = getattr(cls, "basename", cls.__name__.lower())
-            name = getattr(cls, "name", None)
-            if name is None:
-                name = cls().get_view_name()
+            name = cls.get_view_name(cls)
+
+            basename = getattr(cls, "basename", None)
+            if basename is None:
+                if type(name).__name__ == '__proxy__':
+                    # name is lazy, probably gettext, extract basename from class name
+                    basename = cls.get_view_name(cls, respect_name=False)
+                else:
+                    basename = name
+                basename = basename.replace(" ", "_").lower()
 
             meta = ModelDict(
                 app_label=app_label,
@@ -75,6 +83,36 @@ class BananasAPI(object):
 
         return meta
 
+    def get_view_name(self, respect_name=True):
+        """
+        Given a view instance, return a textual name to represent the view.
+        This name is used in the browsable API, and in OPTIONS responses.
+        This function is the default for the `VIEW_NAME_FUNCTION` setting.
+        """
+        if isinstance(self, type):
+            view = self
+        else:
+            view = self.__class__
+
+        # Name may be set by some Views, such as a ViewSet.
+        if respect_name:
+            name = getattr(view, 'name', None)
+            if name is not None:
+                return name
+
+        name = view.__name__
+        name = formatting.remove_trailing_string(name, 'View')
+        name = formatting.remove_trailing_string(name, 'ViewSet')
+        name = formatting.remove_trailing_string(name, 'API')
+        name = formatting.camelcase_to_spaces(name)
+
+        # Suffix may be set by some Views, such as a ViewSet.
+        suffix = getattr(view, 'suffix', None)
+        if suffix:
+            name += ' ' + suffix
+
+        return name
+
 
 class BananasAPIViewSet(BananasAPI, viewsets.ViewSet):
     pass
@@ -82,9 +120,10 @@ class BananasAPIViewSet(BananasAPI, viewsets.ViewSet):
 
 class NavigationAPIView(views.APIView):
     """
-    The root view for DefaultRouter
+    The root view for BananasRouter
     """
 
+    description = "The root view for BananasRouter, returning user specific endpoints"
     _ignore_model_permissions = True
     schema = None  # exclude from schema
     api_root_dict = None
@@ -137,7 +176,7 @@ class NavigationAPIView(views.APIView):
 
 class LoginAPI(BananasAPIViewSet):
 
-    name = "Login"
+    name = _("Log in")
     basename = "login"
     permission_classes = (IsAnonymous,)
 
@@ -164,7 +203,7 @@ class LoginAPI(BananasAPIViewSet):
 
 class LogoutAPI(BananasAPIViewSet):
 
-    name = "Logout"
+    name = _("Log out")
     basename = "logout"
     permission_classes = (IsAuthenticated,)
 
@@ -178,7 +217,7 @@ class LogoutAPI(BananasAPIViewSet):
 
 class ChangePasswordAPI(BananasAPIViewSet):
 
-    name = "Change password"
+    name = _("Change password")
     basename = "change_password"
     permission_classes = (IsAuthenticated,)
 
