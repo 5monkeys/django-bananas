@@ -34,3 +34,4 @@ services:
     environment:
       PYTHONUNBUFFERED: "1"
       PYTHONDONTWRITEBYTECODE: "True"
+      DJANGO_LANGUAGE_CODE: "sv-se"
