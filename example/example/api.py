@@ -1,8 +1,10 @@
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, viewsets
 from rest_framework.permissions import DjangoModelPermissions
 
 from bananas.admin.api.views import BananasAPI
+from bananas.lazy import lazy_title
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -26,8 +28,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class UserViewSet(BananasAPI, viewsets.ModelViewSet):
 
-    name = "Users"
-    basename = "users"
+    name = lazy_title(_("users"))
     permission_classes = (DjangoModelPermissions,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
