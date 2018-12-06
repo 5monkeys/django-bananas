@@ -1,3 +1,4 @@
+from django.urls.exceptions import NoReverseMatch
 from rest_framework import renderers
 from rest_framework.compat import urlparse
 
@@ -5,13 +6,24 @@ from .versioning import BananasVersioning
 
 
 class NamespacedJSONOpenAPIRenderer(renderers.JSONOpenAPIRenderer):
-    """
-    Temporary fix to support namespace versioning.
+    def get_operation(self, link, name, tag):
+        operation = super().get_operation(link, name, tag)
 
-    See: https://github.com/calvin620707/DRF-OpenApiRender-NestUrlPatterns/blob/master/demo/demo/urls.py
+        view = link._view  # FYI: Set in BananasSchema.get_link
+        meta = view.get_admin_meta()
 
-    # TODO: Remove when bug fixed in DRF
-    """
+        operation["summary"] = str(meta.name)
+        operation["operationId"] = meta.basename + ":" + name
+        operation["tags"] = ["app:{}".format(meta.app_label)]
+
+        if name == "list" or not hasattr(view, "list"):
+            try:
+                view.reverse_action("list")
+                operation["tags"] += ["navigation"]
+            except NoReverseMatch:
+                pass
+
+        return operation
 
     def get_structure(self, data):
         structure = super().get_structure(data)
@@ -19,6 +31,13 @@ class NamespacedJSONOpenAPIRenderer(renderers.JSONOpenAPIRenderer):
         return structure
 
     def get_paths(self, document):
+        """
+        Temporary fix to support namespace versioning.
+
+        See: https://github.com/calvin620707/DRF-OpenApiRender-NestUrlPatterns/blob/master/demo/demo/urls.py
+
+        # TODO: Remove when bug fixed in DRF
+        """
         paths = {}
 
         tag = None

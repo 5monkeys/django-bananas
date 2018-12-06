@@ -8,12 +8,12 @@ from rest_framework import serializers, status, views, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework.schemas.views import SchemaView
 from rest_framework.utils import formatting
 
 from bananas.models import ModelDict
 
 from .permissions import IsAnonymous
+from .schemas import BananasSchema
 from .versioning import BananasVersioning
 
 UNDEFINED = object()
@@ -22,12 +22,14 @@ UNDEFINED = object()
 class BananasAPI(object):
 
     versioning_class = BananasVersioning
+    schema = BananasSchema()  # TODO: Check if this should be instantiated
 
     @classmethod
     def get_admin_meta(cls):
         meta = getattr(cls, "_admin_meta", None)
 
         if meta is None:
+            # TODO: Get proper app_label, not only root package
             app_label, __, __ = cls.__module__.lower().partition(".")
             name = cls.get_view_name(cls)
 
@@ -74,6 +76,15 @@ class BananasAPI(object):
             cls._admin_meta = meta
 
         return meta
+
+    def reverse_action(self, url_name, *args, **kwargs):
+        """
+        Extended DRF with fallback to requested namespace if request.version is missing
+        """
+        if self.request and not self.request.version:
+            return reverse(self.get_url_name(url_name), *args, **kwargs)
+
+        return super().reverse_action(url_name, *args, **kwargs)
 
     def get_url_name(self, action_url_name="list"):
         """
@@ -173,27 +184,6 @@ class NavigationView(BananasAPI, views.APIView):
         }
 
         return Response(ret)
-
-
-class BananasSchemaView(SchemaView):
-
-    name = "{} Schema".format(NavigationView.name)
-
-    @classmethod
-    def as_view(cls, router):
-        generator = router.SchemaGenerator(
-            title=NavigationView.name,
-            description="API for django-bananas.js",
-            patterns=router.urls,
-        )
-
-        return super().as_view(
-            renderer_classes=router.default_schema_renderers,
-            schema_generator=generator,
-            public=False,
-            # authentication_classes=authentication_classes,
-            # permission_classes=permission_classes,
-        )
 
 
 class BananasAPIViewSet(BananasAPI, viewsets.ViewSet):

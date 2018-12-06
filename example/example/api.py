@@ -37,13 +37,13 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     @action(detail=False)
-    def foo(self, request):  # , **kwargs):
+    def foo(self, request):
         return Response("Just a simple extra list action")
 
     @action(detail=True)
-    def bar(self, request, pk):  # , **kwargs):
+    def bar(self, request, pk):
         url = reverse(
             "bananas:v1.0:example.user-bar",
-            kwargs={"version": request.version, "pk": pk},
+            kwargs={"pk": pk},
         )
         return Response(f"Just a simple extra detail action, url = {url}")
