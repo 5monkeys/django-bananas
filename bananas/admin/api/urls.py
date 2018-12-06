@@ -1,16 +1,16 @@
 from django.conf.urls import include, url
 
-from . import views
-from .router import register, router
-from .versioning import __version__
+from .versioning import __versions__
 
-register(views.LoginAPI)
-register(views.LogoutAPI)
-register(views.ChangePasswordAPI)
-
-urlpatterns = [
+apipatterns = [
     url(
-        r"^(?P<version>{version})/".format(version=__version__),
-        include((router.urls, "bananas"), namespace=__version__),
+        r"^(?P<version>{version})/".format(version=version.__version__),
+        include(
+            ("{package}.urls".format(package=version.__name__), "bananas"),
+            namespace=version.__version__,
+        ),
     )
+    for version in __versions__
 ]
+
+urlpatterns = [url(r"^", include((apipatterns, "bananas"), namespace="bananas"))]

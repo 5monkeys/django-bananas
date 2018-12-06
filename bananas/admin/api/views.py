@@ -8,6 +8,7 @@ from rest_framework import serializers, status, views, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.schemas.views import SchemaView
 from rest_framework.utils import formatting
 
 from bananas.models import ModelDict
@@ -22,15 +23,6 @@ class BananasAPI(object):
 
     versioning_class = BananasVersioning
 
-    def get_reverse_name(self, url_name="list"):
-        name = "{}-{}".format(self.basename, url_name)
-
-        namespace = self.request.resolver_match.namespace
-        if namespace:
-            name = "{}:{}".format(namespace, name)
-
-        return name
-
     @classmethod
     def get_admin_meta(cls):
         meta = getattr(cls, "_admin_meta", None)
@@ -41,7 +33,7 @@ class BananasAPI(object):
 
             basename = getattr(cls, "basename", None)
             if basename is None:
-                if type(name).__name__ == '__proxy__':
+                if type(name).__name__ == "__proxy__":
                     # name is lazy, probably gettext, extract basename from class name
                     basename = cls.get_view_name(cls, respect_name=False)
                 else:
@@ -83,11 +75,22 @@ class BananasAPI(object):
 
         return meta
 
+    def get_url_name(self, action_url_name="list"):
+        """
+        Get full namespaced url name to use for reverse()
+        """
+        url_name = "{}-{}".format(self.basename, action_url_name)
+
+        namespace = self.request.resolver_match.namespace
+        if namespace:
+            url_name = "{}:{}".format(namespace, url_name)
+
+        return url_name
+
     def get_view_name(self, respect_name=True):
         """
-        Given a view instance, return a textual name to represent the view.
-        This name is used in the browsable API, and in OPTIONS responses.
-        This function is the default for the `VIEW_NAME_FUNCTION` setting.
+        Get or generate human readable view name.
+        Extended version from DRF to support usage from both class and instance.
         """
         if isinstance(self, type):
             view = self
@@ -96,34 +99,27 @@ class BananasAPI(object):
 
         # Name may be set by some Views, such as a ViewSet.
         if respect_name:
-            name = getattr(view, 'name', None)
+            name = getattr(view, "name", None)
             if name is not None:
                 return name
 
         name = view.__name__
-        name = formatting.remove_trailing_string(name, 'View')
-        name = formatting.remove_trailing_string(name, 'ViewSet')
-        name = formatting.remove_trailing_string(name, 'API')
+        for suffix in ("View", "ViewSet", "API", "ApiView"):
+            name = formatting.remove_trailing_string(name, suffix)
         name = formatting.camelcase_to_spaces(name)
 
         # Suffix may be set by some Views, such as a ViewSet.
-        suffix = getattr(view, 'suffix', None)
+        suffix = getattr(view, "suffix", None)
         if suffix:
-            name += ' ' + suffix
+            name += " " + suffix
 
         return name
 
 
-class BananasAPIViewSet(BananasAPI, viewsets.ViewSet):
-    pass
+class NavigationView(views.APIView):
 
-
-class NavigationAPIView(views.APIView):
-    """
-    The root view for BananasRouter
-    """
-
-    description = "The root view for BananasRouter, returning user specific endpoints"
+    name = "Django Bananas Admin API"
+    description = "User specific navigation endpoints for Django Bananas Admin API."
     _ignore_model_permissions = True
     schema = None  # exclude from schema
     api_root_dict = None
@@ -144,17 +140,23 @@ class NavigationAPIView(views.APIView):
                 continue
 
             meta = viewset.get_admin_meta()
-            if namespace:
-                url_name = namespace + ":" + url_name
+
+            # TODO: Fix proper map between module and version
+            urlconf = "bananas.admin.api.{version}.urls".format(
+                version=kwargs["version"].replace(".", "_")
+            )
 
             try:
                 ret.append(
                     {
+                        "path": reverse(
+                            url_name, format=kwargs.get("format", None), urlconf=urlconf
+                        ),
                         "endpoint": reverse(
-                            url_name,
+                            "{}:{}".format(namespace, url_name),
                             args=args,
                             kwargs=kwargs,
-                            request=request,
+                            request=request,  # Make url absolute
                             format=kwargs.get("format", None),
                         ),
                         **meta,
@@ -172,6 +174,31 @@ class NavigationAPIView(views.APIView):
         }
 
         return Response(ret)
+
+
+class BananasSchemaView(SchemaView):
+
+    name = "{} Schema".format(NavigationView.name)
+
+    @classmethod
+    def as_view(cls, router):
+        generator = router.SchemaGenerator(
+            title=NavigationView.name,
+            description="API for django-bananas.js",
+            patterns=router.urls,
+        )
+
+        return super().as_view(
+            renderer_classes=router.default_schema_renderers,
+            schema_generator=generator,
+            public=False,
+            # authentication_classes=authentication_classes,
+            # permission_classes=permission_classes,
+        )
+
+
+class BananasAPIViewSet(BananasAPI, viewsets.ViewSet):
+    pass
 
 
 class LoginAPI(BananasAPIViewSet):
