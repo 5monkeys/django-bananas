@@ -116,7 +116,7 @@ class BananasAPI(object):
         return name
 
 
-class NavigationView(views.APIView):
+class NavigationView(BananasAPI, views.APIView):
 
     name = "Django Bananas Admin API"
     description = "User specific navigation endpoints for Django Bananas Admin API."
@@ -133,18 +133,17 @@ class NavigationView(views.APIView):
 
     def get(self, request, *args, **kwargs):
         ret = []
+
         namespace = request.resolver_match.namespace
+        urlconf = "{version_package}.urls".format(
+            version_package=BananasVersioning.version_map[request.version].__name__
+        )
 
         for key, (viewset, url_name) in self.api_root_dict.items():
             if not self.has_permission(viewset):
                 continue
 
             meta = viewset.get_admin_meta()
-
-            # TODO: Fix proper map between module and version
-            urlconf = "bananas.admin.api.{version}.urls".format(
-                version=kwargs["version"].replace(".", "_")
-            )
 
             try:
                 ret.append(
