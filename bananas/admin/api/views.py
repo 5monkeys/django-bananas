@@ -14,6 +14,7 @@ from bananas.models import ModelDict
 
 from .permissions import IsAnonymous
 from .schemas import BananasSchema
+from .serializers import AuthenticationSerializer, PasswordChangeSerializer
 from .versioning import BananasVersioning
 
 UNDEFINED = object()
@@ -186,26 +187,22 @@ class NavigationView(BananasAPI, views.APIView):
         return Response(ret)
 
 
-class BananasAPIViewSet(BananasAPI, viewsets.ViewSet):
-    pass
-
-
-class LoginAPI(BananasAPIViewSet):
+class LoginAPI(BananasAPI, viewsets.GenericViewSet):
 
     name = _("Log in")
     basename = "login"
     permission_classes = (IsAnonymous,)
+    serializer_class = AuthenticationSerializer  # Placeholder for schema
 
     class Admin:
         verbose_name_plural = None
 
     def create(self, request):
-        """
         # TODO: Decorate api with sensitive post parameters as Django admin do?
         # from django.utils.decorators import method_decorator
         # from django.views.decorators.debug import sensitive_post_parameters
         # sensitive_post_parameters_m = method_decorator(sensitive_post_parameters())
-        """
+
         login_form = AuthenticationForm(request, data=request.data)
 
         if not login_form.is_valid():
@@ -217,7 +214,7 @@ class LoginAPI(BananasAPIViewSet):
         return Response(status=status.HTTP_200_OK)
 
 
-class LogoutAPI(BananasAPIViewSet):
+class LogoutAPI(BananasAPI, viewsets.ViewSet):
 
     name = _("Log out")
     basename = "logout"
@@ -231,16 +228,19 @@ class LogoutAPI(BananasAPIViewSet):
         return Response(status=status.HTTP_202_ACCEPTED)
 
 
-class ChangePasswordAPI(BananasAPIViewSet):
+class ChangePasswordAPI(BananasAPI, viewsets.GenericViewSet):
 
     name = _("Change password")
     basename = "change_password"
     permission_classes = (IsAuthenticated,)
+    serializer_class = PasswordChangeSerializer  # Placeholder for schema
 
     class Admin:
         verbose_name_plural = None
 
     def create(self, request):
+        # TODO: Decorate api with sensitive post parameters as Django admin do?
+
         password_form = PasswordChangeForm(request.user, data=request.data)
 
         if not password_form.is_valid():
