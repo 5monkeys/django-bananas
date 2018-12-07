@@ -5,8 +5,8 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.schemas import SchemaGenerator
 
 from .renderers import NamespacedJSONOpenAPIRenderer
-from .views import BananasAPI, NavigationView
 from .schemas import BananasSchemaView
+from .views import BananasAPI, NavigationView
 
 __all__ = ["register"]
 

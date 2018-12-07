@@ -3,7 +3,6 @@ from rest_framework.schemas.views import SchemaView
 
 
 class BananasSchema(AutoSchema):
-
     def get_link(self, *args, **kwargs):
         link = super().get_link(*args, **kwargs)
         link._view = self.view  # Attach view instance for later use in renderer

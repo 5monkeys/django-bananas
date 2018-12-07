@@ -6,6 +6,13 @@ from .versioning import BananasVersioning
 
 
 class NamespacedJSONOpenAPIRenderer(renderers.JSONOpenAPIRenderer):
+    def render(self, data, *args, **kwargs):
+        """
+        Render using DRF JSONRenderer to get extra features like indent and encoding
+        """
+        structure = self.get_structure(data)
+        return renderers.JSONRenderer().render(structure, *args, **kwargs)
+
     def get_operation(self, link, name, tag):
         operation = super().get_operation(link, name, tag)
 
@@ -14,7 +21,7 @@ class NamespacedJSONOpenAPIRenderer(renderers.JSONOpenAPIRenderer):
 
         operation["summary"] = str(meta.name)
         operation["operationId"] = meta.basename + ":" + name
-        operation["tags"] = ["app:{}".format(meta.app_label)]
+        operation["tags"] = ["app:{label}".format(label=meta.app_label)]
 
         if name == "list" or not hasattr(view, "list"):
             try:
