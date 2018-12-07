@@ -1,4 +1,4 @@
-from django.contrib.auth import password_validation
+from django.contrib.auth.password_validation import password_validators_help_texts
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
@@ -12,7 +12,7 @@ class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(label=_("Old password"), write_only=True)
     new_password1 = serializers.CharField(
         label=_("New password"),
-        help_text=password_validation.password_validators_help_text_html(),
+        help_text=password_validators_help_texts(),
         write_only=True,
     )
     new_password2 = serializers.CharField(
