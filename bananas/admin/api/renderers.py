@@ -14,6 +14,27 @@ class NamespacedJSONOpenAPIRenderer(renderers.JSONOpenAPIRenderer):
         structure = self.get_structure(data)
         return renderers.JSONRenderer().render(structure, *args, **kwargs)
 
+    def get_parameters(self, link):
+        """
+        Copy of DRF to support field.location "form"
+        """
+        parameters = []
+        for field in link.fields:
+            if field.location not in ['path', 'query', 'form']:
+                continue
+            parameter = {
+                'name': field.name,
+                'in': field.location,
+            }
+            if field.required:
+                parameter['required'] = True
+            if field.description:
+                parameter['description'] = field.description
+            if field.schema:
+                parameter['schema'] = self.get_schema(field.schema)
+            parameters.append(parameter)
+        return parameters
+
     def get_operation(self, link, name, tag):
         operation = super().get_operation(link, name, tag)
 
