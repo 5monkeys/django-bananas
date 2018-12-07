@@ -1,6 +1,7 @@
 from django.urls.exceptions import NoReverseMatch
-from rest_framework import renderers
+from rest_framework import renderers, viewsets
 from rest_framework.compat import urlparse
+from rest_framework.schemas.generators import is_custom_action
 
 from .versioning import BananasVersioning
 
@@ -19,16 +20,27 @@ class NamespacedJSONOpenAPIRenderer(renderers.JSONOpenAPIRenderer):
         view = link._view  # FYI: Set in BananasSchema.get_link
         meta = view.get_admin_meta()
 
-        operation["summary"] = str(meta.name)
         operation["operationId"] = meta.basename + ":" + name
         operation["tags"] = ["app:{label}".format(label=meta.app_label)]
 
-        if name == "list" or not hasattr(view, "list"):
-            try:
+        try:
+            is_navigation = False
+            if name == "list" or not hasattr(view, "list"):
                 view.reverse_action("list")
-                operation["tags"] += ["navigation"]
-            except NoReverseMatch:
-                pass
+                is_navigation = True
+        except NoReverseMatch:
+            pass
+
+        if is_navigation:
+            operation["summary"] = str(meta.name)
+            operation["tags"].append("navigation")
+
+        if is_custom_action(view.action):
+            operation["tags"].append("action")
+        else:
+            operation["tags"].append(name)
+            if issubclass(view.__class__, viewsets.ModelViewSet):
+                operation["tags"].append("crud")
 
         return operation
 

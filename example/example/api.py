@@ -47,3 +47,7 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
             kwargs={"pk": pk},
         )
         return Response(f"Just a simple extra detail action, url = {url}")
+
+    @action(detail=True, methods=["post"], name=_("Send activation e-mail"))
+    def send_activation_email(self, request, pk):
+        return Response(f"Just another simple extra detail action")
