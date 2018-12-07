@@ -19,7 +19,7 @@ from django.views.generic import View
 from .. import compat
 from ..environment import env
 
-__all__ = ['ModelAdminView', 'ViewTool', 'AdminView', 'register', 'site']
+__all__ = ["ModelAdminView", "ViewTool", "AdminView", "register", "site"]
 
 
 class ExtendedAdminSite(AdminSite):
