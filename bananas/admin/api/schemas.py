@@ -36,8 +36,10 @@ class BananasSchema(AutoSchema):
 
 
 class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
-    def determine_path_prefix(self, paths):
-        return "/api/v1.0"
+
+    def get_paths(self, endpoints, components, request, public):
+        paths, prefix = super().get_paths(endpoints, components, request, public)
+        return paths, "/api/v1.0/"
 
 
 class BananasSwaggerSchema(SwaggerAutoSchema):
