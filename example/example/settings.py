@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'example',
     'bananas',
     'rest_framework',
+    'corsheaders',
 
     'django.contrib.admin',
 ]
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -129,3 +131,13 @@ STATIC_URL = '/static/'
 ADMIN = {
     'LOGO_STYLE': 'height: 25px;'
 }
+
+# CORS
+# https://github.com/OttoYiu/django-cors-headers
+
+CORS_ORIGIN_WHITELIST = (
+    'localhost:3000',
+)
+
+CORS_ALLOW_CREDENTIALS = True
+
