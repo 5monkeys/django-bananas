@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status, views, viewsets
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -22,6 +23,7 @@ UNDEFINED = object()
 
 class BananasAPI(object):
 
+    authentication_classes = (SessionAuthentication,)
     versioning_class = BananasVersioning
     schema = BananasSchema()  # TODO: Check if this should be instantiated
 
