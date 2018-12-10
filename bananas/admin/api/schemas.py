@@ -39,7 +39,8 @@ class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
 
     def get_paths(self, endpoints, components, request, public):
         paths, prefix = super().get_paths(endpoints, components, request, public)
-        return paths, "/api/v1.0/"
+        path = request._request.path
+        return path[:path.rfind("/")]
 
 
 class BananasSwaggerSchema(SwaggerAutoSchema):
