@@ -13,4 +13,5 @@ apipatterns = [
     for version in __versions__
 ]
 
+
 urlpatterns = [url(r"^", include((apipatterns, "bananas"), namespace="bananas"))]

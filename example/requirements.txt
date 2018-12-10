@@ -3,6 +3,7 @@ djangorestframework>=3.9.0,<4
 coreapi>=2.3.3,<2.4
 PyYAML==3.13
 django-cors-headers>=2.4.0,<3
+drf-yasg>=1.11.1,<1.12
 
 # Utils
 coverage>=4.4.0,<4.6

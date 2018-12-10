@@ -14,7 +14,7 @@ from rest_framework.utils import formatting
 from bananas.models import ModelDict
 
 from .permissions import IsAnonymous
-from .schemas import BananasSchema
+from .schemas import BananasSchema, BananasSwaggerSchema
 from .serializers import AuthenticationSerializer, PasswordChangeSerializer
 from .versioning import BananasVersioning
 
@@ -26,6 +26,7 @@ class BananasAPI(object):
     authentication_classes = (SessionAuthentication,)
     versioning_class = BananasVersioning
     schema = BananasSchema()  # TODO: Check if this should be instantiated
+    swagger_schema = BananasSwaggerSchema
 
     @classmethod
     def get_admin_meta(cls):

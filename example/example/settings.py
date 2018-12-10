@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'bananas',
     'rest_framework',
     'corsheaders',
+    'drf_yasg',
 
     'django.contrib.admin',
 ]
@@ -140,4 +141,3 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 CORS_ALLOW_CREDENTIALS = True
-
