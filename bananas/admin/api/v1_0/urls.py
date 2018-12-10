@@ -5,6 +5,7 @@ from rest_framework import permissions
 
 from .. import views
 from ..router import register, router
+from ..schemas import BananasOpenAPISchemaGenerator
 
 register(views.LoginAPI)
 register(views.LogoutAPI)
@@ -19,8 +20,10 @@ schema_view = get_schema_view(
         # terms_of_service="https://www.google.com/policies/terms/",
         # license=openapi.License(name="BSD License"),
     ),
+    # url="http://lundberg:8001/api/v1.0/",
     # validators=["flex", "ssv"],
     public=True,
+    generator_class=BananasOpenAPISchemaGenerator,
     permission_classes=(permissions.AllowAny,),
     patterns=router.urls,
 )

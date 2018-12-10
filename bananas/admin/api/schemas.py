@@ -1,5 +1,6 @@
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import ugettext as _
+from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.inspectors.view import SwaggerAutoSchema
 from rest_framework import viewsets
 from rest_framework.schemas.generators import is_custom_action
@@ -32,6 +33,11 @@ class BananasSchema(AutoSchema):
         link._title = self.get_title(path, method)
         link._view = self.view  # Attach view instance for later use in renderer
         return link
+
+
+class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
+    def determine_path_prefix(self, paths):
+        return "/api/v1.0"
 
 
 class BananasSwaggerSchema(SwaggerAutoSchema):
