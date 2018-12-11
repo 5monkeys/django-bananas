@@ -56,7 +56,6 @@ class LogoutAPI(BananasAPI, viewsets.ViewSet):
 
     name = _("Log out")
     basename = "logout"
-    permission_classes = (IsAdminUser,)
 
     class Admin:
         verbose_name_plural = None
@@ -74,7 +73,6 @@ class ChangePasswordAPI(BananasAdminAPI):
 
     name = _("Change password")
     basename = "change_password"
-    permission_classes = (IsAdminUser,)
     serializer_class = PasswordChangeSerializer  # Placeholder for schema
 
     class Admin:

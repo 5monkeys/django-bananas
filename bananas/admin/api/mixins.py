@@ -1,4 +1,5 @@
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAdminUser
 from rest_framework.reverse import reverse
 from rest_framework.utils import formatting
 
@@ -12,8 +13,9 @@ UNDEFINED = object()
 
 class BananasAPI(object):
 
-    authentication_classes = (SessionAuthentication,)
     versioning_class = BananasVersioning
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (IsAdminUser,)
     swagger_schema = BananasSchema  # for DRF: schema = BananasSchema()
 
     @classmethod
