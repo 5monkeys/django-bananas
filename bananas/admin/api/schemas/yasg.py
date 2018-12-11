@@ -1,19 +1,25 @@
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import ugettext as _
+from drf_yasg import openapi
 from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.inspectors.view import SwaggerAutoSchema
-from rest_framework import viewsets
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions, viewsets
+from rest_framework.routers import SimpleRouter
 from rest_framework.schemas.generators import is_custom_action
 
+from ..versioning import BananasVersioning
+from .base import BananasBaseRouter
 
-class BananasSchemaGenerator(OpenAPISchemaGenerator):
+
+class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
     def get_paths(self, endpoints, components, request, public):
         paths, prefix = super().get_paths(endpoints, components, request, public)
         path = request._request.path
         return paths, path[: path.rfind("/")]
 
 
-class BananasSchema(SwaggerAutoSchema):
+class BananasSwaggerSchema(SwaggerAutoSchema):
     def get_operation_id(self, operation_keys):
         name = operation_keys[-1]
         meta = self.view.get_admin_meta()
@@ -69,3 +75,21 @@ class BananasSchema(SwaggerAutoSchema):
                 pass
 
         return self._is_navigation
+
+
+class BananasSimpleRouter(BananasBaseRouter, SimpleRouter):
+    def get_schema_view(self):
+        return get_schema_view(
+            openapi.Info(
+                title="Django Bananas Admin API Schema",
+                default_version=BananasVersioning.default_version,
+                description="API for django-bananas.js",
+                # terms_of_service="https://www.google.com/policies/terms/",
+                # license=openapi.License(name="BSD License"),
+            ),
+            # validators=["flex", "ssv"],
+            public=False,
+            generator_class=BananasOpenAPISchemaGenerator,
+            permission_classes=(permissions.AllowAny,),
+            patterns=self.urls,
+        )

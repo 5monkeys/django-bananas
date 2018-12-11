@@ -1,14 +1,7 @@
-from rest_framework.routers import SimpleRouter
-
+from .schemas import BananasRouter
 from .views import BananasAPI
 
 __all__ = ["register"]
-
-
-class BananasRouter(SimpleRouter):
-
-    def get_default_basename(self, viewset):
-        return viewset.get_admin_meta().basename
 
 
 def register(view: BananasAPI):

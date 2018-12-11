@@ -1,5 +1,5 @@
 """
-DRF 3.9.0 generator, schema, router, views etc used before yasg
+DRF 3.9.0 generator, schema, router, views etc.
 TODO: Nuke when decided for yasg
 """
 from collections import OrderedDict
@@ -18,6 +18,7 @@ from rest_framework.schemas.generators import is_custom_action
 from rest_framework.schemas.inspectors import AutoSchema
 from rest_framework.schemas.views import SchemaView
 
+from .base import BananasBaseRouter
 from .versioning import BananasVersioning
 from .views import BananasAPI
 
@@ -55,7 +56,7 @@ class BananasSchemaView(SchemaView):
 
     @classmethod
     def as_view(cls, router):
-        generator = router.SchemaGenerator(
+        generator = SchemaGenerator(
             title=cls.name,
             description="API for django-bananas.js",
             patterns=router.urls,
@@ -222,18 +223,16 @@ class NamespacedJSONOpenAPIRenderer(renderers.JSONOpenAPIRenderer):
         return paths
 
 
-class BananasRouter(DefaultRouter):
+class BananasRouter(BananasBaseRouter, DefaultRouter):
 
     include_root_view = True
     include_format_suffixes = True
     root_view_name = "navigation"
     default_schema_renderers = [BrowsableAPIRenderer, NamespacedJSONOpenAPIRenderer]
     APIRootView = NavigationView
-    APISchemaView = BananasSchemaView
-    SchemaGenerator = SchemaGenerator
 
-    def get_default_basename(self, viewset):
-        return viewset.get_admin_meta().basename
+    def get_schema_view(self):
+        return BananasSchemaView.as_view(self)
 
     def get_api_root_view(self, api_urls=None):
         api_root_dict = OrderedDict()
