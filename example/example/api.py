@@ -9,11 +9,19 @@ from bananas.admin.api.views import BananasAPI
 from bananas.compat import reverse
 from bananas.lazy import lazy_title
 
+from drf_yasg.utils import swagger_auto_schema, swagger_serializer_method
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+
+class UserDetailsSerializer(serializers.HyperlinkedModelSerializer):
+    full_name = serializers.SerializerMethodField()
+
+    @swagger_serializer_method(serializer_or_field=serializers.CharField)
+    def get_full_name(self, obj):
+        return obj.get_full_name()
+
     class Meta:
         model = User
-        fields = ("url", "username", "email", "is_staff")
+        fields = ("url", "username", "full_name", "email", "is_staff")
 
     def build_url_field(self, field_name, model_class):
         """
@@ -29,6 +37,16 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return field, kwargs
 
 
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ("username", "first_name", "last_name", "email")
+
+
+class UserFilterSerializer(serializers.Serializer):
+    username = serializers.CharField(required=False)
+
+
 class UserViewSet(BananasAPI, viewsets.ModelViewSet):
 
     name = lazy_title(_("users"))
@@ -36,16 +54,34 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    @swagger_auto_schema(query_serializer=UserFilterSerializer)
+    def list(self, request):
+        return super().list(request)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        serializer = UserFilterSerializer(data=self.request.query_params)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data.get("username")
+        if username:
+            queryset = queryset.filter(username__contains=username)
+
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action in ("retrieve", "list"):
+            return UserDetailsSerializer
+        else:
+            return UserSerializer
+
     @action(detail=False)
     def foo(self, request):
         return Response("Just a simple extra list action")
 
     @action(detail=True)
     def bar(self, request, pk):
-        url = reverse(
-            "bananas:v1.0:example.user-bar",
-            kwargs={"pk": pk},
-        )
+        url = reverse("bananas:v1.0:example.user-bar", kwargs={"pk": pk})
         return Response(f"Just a simple extra detail action, url = {url}")
 
     @action(detail=True, methods=["post"], name=_("Send activation e-mail"))

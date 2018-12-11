@@ -1,10 +1,8 @@
-from itertools import groupby
-
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import ugettext_lazy as _
-from rest_framework import serializers, status, views, viewsets
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import serializers, status, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,8 +12,12 @@ from rest_framework.utils import formatting
 from bananas.models import ModelDict
 
 from .permissions import IsAnonymous
-from .schemas import BananasSchema, BananasSwaggerSchema
-from .serializers import AuthenticationSerializer, PasswordChangeSerializer
+from .schemas import BananasSchema
+from .serializers import (
+    AuthenticationSerializer,
+    PasswordChangeSerializer,
+    UserSerializer,
+)
 from .versioning import BananasVersioning
 
 UNDEFINED = object()
@@ -25,8 +27,8 @@ class BananasAPI(object):
 
     authentication_classes = (SessionAuthentication,)
     versioning_class = BananasVersioning
-    schema = BananasSchema()  # TODO: Check if this should be instantiated
-    swagger_schema = BananasSwaggerSchema
+    # schema = BananasSchema()  # TODO: DRF rendered, instantiated?
+    swagger_schema = BananasSchema
 
     @classmethod
     def get_admin_meta(cls):
@@ -131,65 +133,6 @@ class BananasAPI(object):
         return name
 
 
-class NavigationView(BananasAPI, views.APIView):
-
-    name = "Django Bananas Admin API"
-    description = "User specific navigation endpoints for Django Bananas Admin API."
-    _ignore_model_permissions = True
-    schema = None  # exclude from schema
-    api_root_dict = None
-
-    def has_permission(self, viewset):
-        view = viewset()
-        for permission in view.get_permissions():
-            if not permission.has_permission(self.request, view):
-                return False
-        return True
-
-    def get(self, request, *args, **kwargs):
-        ret = []
-
-        namespace = request.resolver_match.namespace
-        urlconf = "{version_package}.urls".format(
-            version_package=BananasVersioning.version_map[request.version].__name__
-        )
-
-        for key, (viewset, url_name) in self.api_root_dict.items():
-            if not self.has_permission(viewset):
-                continue
-
-            meta = viewset.get_admin_meta()
-
-            try:
-                ret.append(
-                    {
-                        "path": reverse(
-                            url_name, format=kwargs.get("format", None), urlconf=urlconf
-                        ),
-                        "endpoint": reverse(
-                            "{}:{}".format(namespace, url_name),
-                            args=args,
-                            kwargs=kwargs,
-                            request=request,  # Make url absolute
-                            format=kwargs.get("format", None),
-                        ),
-                        **meta,
-                    }
-                )
-            except NoReverseMatch:
-                # Don't bail out if eg. no list routes exist, only detail routes.
-                continue
-
-        # Sort and group by app_label
-        grouper = lambda item: item["app_label"]
-        ret = {
-            app_label: sorted(items, key=lambda item: item["name"])
-            for app_label, items in groupby(sorted(ret, key=grouper), grouper)
-        }
-
-        return Response(ret)
-
-
 class LoginAPI(BananasAPI, viewsets.GenericViewSet):
 
     name = _("Log in")
@@ -200,6 +143,7 @@ class LoginAPI(BananasAPI, viewsets.GenericViewSet):
     class Admin:
         verbose_name_plural = None
 
+    @swagger_auto_schema(responses={200: UserSerializer})
     def create(self, request):
         # TODO: Decorate api with sensitive post parameters as Django admin do?
         # from django.utils.decorators import method_decorator
@@ -226,9 +170,10 @@ class LogoutAPI(BananasAPI, viewsets.ViewSet):
     class Admin:
         verbose_name_plural = None
 
+    @swagger_auto_schema(responses={204: ""})
     def create(self, request):
         auth_logout(request)
-        return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ChangePasswordAPI(BananasAPI, viewsets.GenericViewSet):
@@ -241,6 +186,7 @@ class ChangePasswordAPI(BananasAPI, viewsets.GenericViewSet):
     class Admin:
         verbose_name_plural = None
 
+    @swagger_auto_schema(responses={204: ""})
     def create(self, request):
         # TODO: Decorate api with sensitive post parameters as Django admin do?
 
@@ -251,4 +197,4 @@ class ChangePasswordAPI(BananasAPI, viewsets.GenericViewSet):
 
         password_form.save()
 
-        return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(status=status.HTTP_204_ACCEPTED)

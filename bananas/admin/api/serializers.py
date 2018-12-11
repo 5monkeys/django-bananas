@@ -1,6 +1,16 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import password_validators_help_texts
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
+
+
+class UserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="get_username", read_only=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ("id", "username")
+        read_only_fields = fields
 
 
 class AuthenticationSerializer(serializers.Serializer):
