@@ -1,7 +1,6 @@
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.utils.translation import ugettext_lazy as _
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +11,7 @@ from rest_framework.utils import formatting
 from bananas.models import ModelDict
 
 from .permissions import IsAnonymous
-from .schemas import BananasSchema
+from .schemas import BananasSchema, schema
 from .serializers import (
     AuthenticationSerializer,
     PasswordChangeSerializer,
@@ -27,8 +26,7 @@ class BananasAPI(object):
 
     authentication_classes = (SessionAuthentication,)
     versioning_class = BananasVersioning
-    # schema = BananasSchema()  # TODO: DRF rendered, instantiated?
-    swagger_schema = BananasSchema
+    swagger_schema = BananasSchema  # for DRF: schema = BananasSchema()
 
     @classmethod
     def get_admin_meta(cls):
@@ -143,7 +141,7 @@ class LoginAPI(BananasAPI, viewsets.GenericViewSet):
     class Admin:
         verbose_name_plural = None
 
-    @swagger_auto_schema(responses={200: UserSerializer})
+    @schema(responses={200: UserSerializer})
     def create(self, request):
         # TODO: Decorate api with sensitive post parameters as Django admin do?
         # from django.utils.decorators import method_decorator
@@ -170,7 +168,7 @@ class LogoutAPI(BananasAPI, viewsets.ViewSet):
     class Admin:
         verbose_name_plural = None
 
-    @swagger_auto_schema(responses={204: ""})
+    @schema(responses={204: ""})
     def create(self, request):
         auth_logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -186,7 +184,7 @@ class ChangePasswordAPI(BananasAPI, viewsets.GenericViewSet):
     class Admin:
         verbose_name_plural = None
 
-    @swagger_auto_schema(responses={204: ""})
+    @schema(responses={204: ""})
     def create(self, request):
         # TODO: Decorate api with sensitive post parameters as Django admin do?
 

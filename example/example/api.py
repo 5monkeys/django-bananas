@@ -5,17 +5,16 @@ from rest_framework.decorators import action
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 
+from bananas.admin.api.schemas import schema, schema_serializer_method
 from bananas.admin.api.views import BananasAPI
 from bananas.compat import reverse
 from bananas.lazy import lazy_title
-
-from drf_yasg.utils import swagger_auto_schema, swagger_serializer_method
 
 
 class UserDetailsSerializer(serializers.HyperlinkedModelSerializer):
     full_name = serializers.SerializerMethodField()
 
-    @swagger_serializer_method(serializer_or_field=serializers.CharField)
+    @schema_serializer_method(serializer_or_field=serializers.CharField)
     def get_full_name(self, obj):
         return obj.get_full_name()
 
@@ -54,7 +53,7 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    @swagger_auto_schema(query_serializer=UserFilterSerializer)
+    @schema(query_serializer=UserFilterSerializer)
     def list(self, request):
         return super().list(request)
 
