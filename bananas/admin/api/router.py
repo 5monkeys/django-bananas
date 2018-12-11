@@ -1,5 +1,5 @@
+from .mixins import BananasAPI
 from .schemas import BananasRouter
-from .views import BananasAPI
 
 __all__ = ["register"]
 
