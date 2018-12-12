@@ -102,11 +102,11 @@ class NavigationView(BananasAPI, views.APIView):
 
             try:
                 ret.append(
-                    {
-                        "path": reverse(
+                    dict(
+                        path=reverse(
                             url_name, format=kwargs.get("format", None), urlconf=urlconf
                         ),
-                        "endpoint": reverse(
+                        endpoint=reverse(
                             "{}:{}".format(namespace, url_name),
                             args=args,
                             kwargs=kwargs,
@@ -114,7 +114,7 @@ class NavigationView(BananasAPI, views.APIView):
                             format=kwargs.get("format", None),
                         ),
                         **meta,
-                    }
+                    )
                 )
             except NoReverseMatch:
                 # Don't bail out if eg. no list routes exist, only detail routes.
