@@ -24,11 +24,6 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[],
-    tests_require=[
-        "detox",
-        "coverage",
-        "djangorestframework < 3.9.0",
-        "drf-yasg < 1.12",
-    ],
+    tests_require=["detox", "coverage"],
     test_suite="runtests.main",
 )
