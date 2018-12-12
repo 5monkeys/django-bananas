@@ -1,13 +1,14 @@
+import django
 from django.conf.urls import include, url
 
 from bananas import admin
-from bananas.admin import api
 
-from .admin_api import FooAPI
+urlpatterns = [url(r"^admin/", admin.site.urls)]
 
-api.register(FooAPI)
+if django.VERSION >= (1, 10):
+    from bananas.admin import api
+    from .admin_api import FooAPI
 
-urlpatterns = [
-    url(r"^api/", include("bananas.admin.api.urls")),
-    url(r"^admin/", admin.site.urls),
-]
+    api.register(FooAPI)
+
+    urlpatterns += [url(r"^api/", include("bananas.admin.api.urls"))]

@@ -1,6 +1,8 @@
 from contextlib import contextmanager
 from functools import wraps
+from unittest import skipIf
 
+import django
 from django.contrib.auth.models import AnonymousUser, Permission, User
 from django.core.management import call_command
 from django.test import TestCase
@@ -192,6 +194,7 @@ class AdminTest(AdminBaseTest):
         self.assert_unauthorized(self.detail_url)
 
 
+@skipIf(django.VERSION < (1, 10), "Django version < 1.10")
 class APITest(AdminBaseTest):
     def test_unautorized_schema(self):
         url = compat.reverse("bananas:v1.0:schema", kwargs={"format": ".json"})
