@@ -9,12 +9,16 @@ class CommandTests(TestCase):
     def test_show_urls(self):
         urls = show_urls.collect_urls()
 
+        admin_api_url_count = 0
+        if django.VERSION >= (1, 10):
+            admin_api_url_count = 8
+
         if django.VERSION < (1, 9):
-            n_urls = 23 + 8
+            n_urls = 23 + admin_api_url_count
         elif django.VERSION < (2, 0):
-            n_urls = 25 + 8
+            n_urls = 25 + admin_api_url_count
         else:
-            n_urls = 27 + 8
+            n_urls = 27 + admin_api_url_count
 
         self.assertEqual(len(urls), n_urls)
 
