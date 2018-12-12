@@ -10,8 +10,12 @@ register(views.ChangePasswordAPI)
 schema_view = router.get_schema_view()
 
 urlpatterns = [
-    url(r"^schema(?P<format>\.json|\.yaml)$", schema_view.without_ui(cache_timeout=0)),
-    url(r"^swagger$", schema_view.with_ui("swagger", cache_timeout=0)),
-    url(r"^$", schema_view.with_ui("redoc", cache_timeout=0)),
+    url(
+        r"^schema(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema",
+    ),
+    url(r"^swagger$", schema_view.with_ui("swagger", cache_timeout=0), name="swagger"),
+    url(r"^$", schema_view.with_ui("redoc", cache_timeout=0), name="root"),
     url(r"^", include(router.urls)),
 ]
