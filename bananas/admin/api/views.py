@@ -47,8 +47,9 @@ class LoginAPI(BananasAdminAPI):
 
         auth_login(request, login_form.get_user())
 
-        # TODO: Return user?
-        return Response(status=status.HTTP_200_OK)
+        serializer = UserSerializer(request.user)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class LogoutAPI(BananasAPI, viewsets.ViewSet):
@@ -80,7 +81,7 @@ class ChangePasswordAPI(BananasAdminAPI):
     @schema(responses={204: ""})
     def create(self, request):
         """
-        Change password for django staff user
+        Change password for logged in django staff user
         """
         # TODO: Decorate api with sensitive post parameters as Django admin do?
 
@@ -91,4 +92,4 @@ class ChangePasswordAPI(BananasAdminAPI):
 
         password_form.save()
 
-        return Response(status=status.HTTP_204_ACCEPTED)
+        return Response(status=status.HTTP_204_NO_CONTENT)
