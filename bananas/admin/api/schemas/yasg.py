@@ -5,6 +5,7 @@ from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.inspectors.view import SwaggerAutoSchema
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions, viewsets
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.routers import SimpleRouter
 from rest_framework.schemas.generators import is_custom_action
 
@@ -90,6 +91,7 @@ class BananasSimpleRouter(BananasBaseRouter, SimpleRouter):
             # validators=["flex", "ssv"],
             public=False,
             generator_class=BananasOpenAPISchemaGenerator,
+            authentication_classes=(SessionAuthentication,),
             permission_classes=(permissions.AllowAny,),
             patterns=self.urls,
         )
