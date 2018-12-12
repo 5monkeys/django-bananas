@@ -113,7 +113,7 @@ class NavigationView(BananasAPI, views.APIView):
                             request=request,  # Make url absolute
                             format=kwargs.get("format", None),
                         ),
-                        **meta,
+                        **meta
                     )
                 )
             except NoReverseMatch:
