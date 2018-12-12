@@ -109,7 +109,7 @@ class BananasAPI(object):
                 return name
 
         name = view.__name__
-        for suffix in ("View", "ViewSet", "API", "ApiView"):
+        for suffix in ("ViewSet", "View", "API", "Admin"):
             name = formatting.remove_trailing_string(name, suffix)
         name = formatting.camelcase_to_spaces(name)
 
