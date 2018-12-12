@@ -27,8 +27,8 @@ setup(
     tests_require=[
         "detox",
         "coverage",
-        "djangorestframework==3.8.2",
-        "drf-yasg>=1.11.1,<1.12",
+        "djangorestframework < 3.9.0",
+        "drf-yasg < 1.12",
     ],
     test_suite="runtests.main",
 )
