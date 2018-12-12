@@ -12,7 +12,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./bananas:/usr/src/django-bananas/bananas
+      - .:/usr/src/django-bananas
       - ./example:/app
     environment:
       PYTHONUNBUFFERED: "1"
@@ -29,7 +29,7 @@ services:
     ports:
       - "8001:8000"
     volumes:
-      - ./bananas:/usr/src/django-bananas/bananas
+      - .:/usr/src/django-bananas
       - ./example:/app
     environment:
       PYTHONUNBUFFERED: "1"
