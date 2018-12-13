@@ -3,13 +3,26 @@ from django.contrib.auth.password_validation import password_validators_help_tex
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
+from bananas.admin.api.schemas import schema_serializer_method
+
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="get_username", read_only=True)
+    is_superuser = serializers.BooleanField()
+    permissions = serializers.SerializerMethodField()
+    groups = serializers.SerializerMethodField()
+
+    @schema_serializer_method(serializer_or_field=serializers.ListField)
+    def get_permissions(self, obj):
+        return sorted(obj.get_all_permissions())
+
+    @schema_serializer_method(serializer_or_field=serializers.ListField)
+    def get_groups(self, obj):
+        return obj.groups.order_by("name").values_list("name", flat=True)
 
     class Meta:
         model = get_user_model()
-        fields = ("id", "username")
+        fields = ("id", "username", "is_superuser", "permissions", "groups")
         read_only_fields = fields
 
 

@@ -48,7 +48,6 @@ class LoginAPI(BananasAdminAPI):
         auth_login(request, login_form.get_user())
 
         serializer = UserSerializer(request.user)
-
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -67,6 +66,22 @@ class LogoutAPI(BananasAPI, viewsets.ViewSet):
         """
         auth_logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class MeAPI(BananasAdminAPI):
+
+    serializer_class = UserSerializer
+
+    class Admin:
+        navigation = False
+
+    @schema(responses={200: UserSerializer})
+    def list(self, request):
+        """
+        Retrieve logged in user info
+        """
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ChangePasswordAPI(BananasAdminAPI):

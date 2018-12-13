@@ -5,6 +5,7 @@ from ..router import register, router
 
 register(views.LoginAPI)
 register(views.LogoutAPI)
+register(views.MeAPI)
 register(views.ChangePasswordAPI)
 
 schema_view = router.get_schema_view()
