@@ -8,22 +8,49 @@ from bananas.admin.api.schemas import schema_serializer_method
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="get_username", read_only=True)
-    is_superuser = serializers.BooleanField()
+    full_name = serializers.SerializerMethodField()
+    is_superuser = serializers.BooleanField(read_only=True)
     permissions = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
 
-    @schema_serializer_method(serializer_or_field=serializers.ListField)
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "id",
+            "username",
+            "full_name",
+            "is_superuser",
+            "permissions",
+            "groups",
+        )
+        read_only_fields = fields
+
+    @schema_serializer_method(
+        serializer_or_field=serializers.CharField(
+            help_text="Falls back to username, if not implemented or empty"
+        )
+    )
+    def get_full_name(self, obj):
+        full_name = getattr(obj, "get_full_name", None)
+        if full_name is not None:
+            full_name = full_name()
+
+        if not full_name:
+            full_name = obj.get_username()
+
+        return full_name
+
+    @schema_serializer_method(
+        serializer_or_field=serializers.ListField(
+            help_text="Permissions that the user has, both through group and user permissions."
+        )
+    )
     def get_permissions(self, obj):
         return sorted(obj.get_all_permissions())
 
     @schema_serializer_method(serializer_or_field=serializers.ListField)
     def get_groups(self, obj):
         return obj.groups.order_by("name").values_list("name", flat=True)
-
-    class Meta:
-        model = get_user_model()
-        fields = ("id", "username", "is_superuser", "permissions", "groups")
-        read_only_fields = fields
 
 
 class AuthenticationSerializer(serializers.Serializer):
