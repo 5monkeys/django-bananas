@@ -47,21 +47,20 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         return title
 
     def get_tags(self, operation_keys):
-        operation = operation_keys[-1]
-
         view = self.view
         meta = self.view.get_admin_meta()
         tags = ["app:{label}".format(label=meta.app_label)]
 
-        if self.is_navigation():
+        if meta.navigation is not False and self.is_navigation():
             tags.append("navigation")
 
-        if is_custom_action(view.action):
-            tags.append("action")
-        else:
-            tags.append(operation)
-            if issubclass(view.__class__, viewsets.ModelViewSet):
-                tags.append("crud")
+        # if is_custom_action(view.action):
+            # tags.append("action")
+        # else:
+            # operation = operation_keys[-1]
+            # tags.append(operation)
+        if issubclass(view.__class__, viewsets.ModelViewSet):
+            tags.append("crud")
 
         return tags
 
