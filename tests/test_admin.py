@@ -3,7 +3,7 @@ from functools import wraps
 from unittest import skipIf
 
 import django
-from django.contrib.auth.models import AnonymousUser, Permission, User
+from django.contrib.auth.models import AnonymousUser, Group, Permission, User
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -222,6 +222,9 @@ class APITest(AdminBaseTest):
         self.assertEqual(action["summary"], "Log out")
         self.assertIn("navigation", action["tags"])
 
+        action = data["paths"]["/tests/ham/"]["post"]
+        self.assertIn("crud", action["tags"])
+
     def test_login(self):
         user = self.create_user()
         url = compat.reverse("bananas:v1.0:bananas.login-list")
@@ -246,6 +249,22 @@ class APITest(AdminBaseTest):
         response = self.client.post(url)
         self.assertEqual(response.status_code, 204)
         self.assertNotAuthorized()
+
+    def test_me(self):
+        user = self.login_user()
+        perm = Permission.objects.all().first()
+        group = Group.objects.create(name="spam")
+        user.user_permissions.add(perm)
+        user.groups.add(group)
+
+        url = compat.reverse("bananas:v1.0:bananas.me-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertEqual(data["username"], user.username)
+        self.assertIn("spam", data["groups"])
+        self.assertGreater(len(data["permissions"]), 0)
 
     def test_change_password(self):
         user = self.login_user()

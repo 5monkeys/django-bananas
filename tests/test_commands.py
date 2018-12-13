@@ -11,7 +11,7 @@ class CommandTests(TestCase):
 
         admin_api_url_count = 0
         if django.VERSION >= (1, 10):
-            admin_api_url_count = 8
+            admin_api_url_count = 11
 
         if django.VERSION < (1, 9):
             n_urls = 23 + admin_api_url_count
