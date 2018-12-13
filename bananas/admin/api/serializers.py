@@ -27,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     @schema_serializer_method(
         serializer_or_field=serializers.CharField(
-            help_text="Falls back to username, if not implemented or empty"
+            help_text=_("Falls back to username, if not implemented or empty")
         )
     )
     def get_full_name(self, obj):
@@ -42,7 +42,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     @schema_serializer_method(
         serializer_or_field=serializers.ListField(
-            help_text="Permissions that the user has, both through group and user permissions."
+            help_text=_(
+                "Permissions that the user has, both through group and user permissions."
+            )
         )
     )
     def get_permissions(self, obj):
