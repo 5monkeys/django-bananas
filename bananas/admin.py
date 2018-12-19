@@ -153,7 +153,7 @@ def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
 
     @register  # Or with args @register(admin_class=MyModelAdminSubclass)
     class MyAdminView(bananas.admin.AdminView):
-        def get(request):
+        def get(self, request):
             return self.render('template.html', {})
 
     # Also possible:
@@ -265,7 +265,7 @@ class AdminView(View):
         Example:
 
             return [
-                url(r'^custom/$,
+                url(r'^custom/$',
                     self.admin_view(self.custom_view))
             ]
         """
