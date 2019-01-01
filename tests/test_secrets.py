@@ -17,7 +17,13 @@ class SecretsTest(TestCase):
             secret = secrets.get_secret("hemlis")
         self.assertEqual(secret, "HEMLIS")
 
-    def test_get_non_existing_secret(self):
+    def test_get_non_existing_secret_with_no_default(self):
         with self.env:
             secret = secrets.get_secret("doesnotexist")
         self.assertIsNone(secret)
+
+    def test_get_non_existing_secret_with_default(self):
+        default = "defaultvalue"
+        with self.env:
+            secret = secrets.get_secret("doesnotexist", default)
+        self.assertEqual(secret, default)
