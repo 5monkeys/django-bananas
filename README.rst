@@ -335,7 +335,7 @@ bananas.secrets - Helpers for getting secrets from files
 Is useful for getting the content of secrets stored in files. One usecase is `docker secrets
 <https://docs.docker.com/engine/swarm/secrets/>`_.
 
-``BANANAS_SECRETS_DIR`` can be used to configure the directory that secrets live in. Defaults to ```/run/secrets/```.
+``BANANAS_SECRETS_DIR`` can be used to configure the directory that secrets live in. Defaults to ``/run/secrets/``.
 
 .. code-block:: py
 
