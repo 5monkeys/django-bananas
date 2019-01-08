@@ -40,7 +40,7 @@ class BananasAPI(object):
                 app_label=app_label,
                 basename=basename,
                 name=name,
-                navigation=None,
+                exclude_tags=[],
                 # verbose_name=name,
                 # verbose_name_plural=UNDEFINED,
             )

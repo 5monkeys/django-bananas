@@ -73,7 +73,7 @@ class MeAPI(BananasAdminAPI):
     serializer_class = UserSerializer
 
     class Admin:
-        navigation = False
+        exclude_tags = ["navigation"]
 
     @schema(responses={200: UserSerializer})
     def list(self, request):

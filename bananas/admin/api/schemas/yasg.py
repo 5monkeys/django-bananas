@@ -51,7 +51,7 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         meta = self.view.get_admin_meta()
         tags = ["app:{label}".format(label=meta.app_label)]
 
-        if meta.navigation is not False and self.is_navigation():
+        if self.is_navigation():
             tags.append("navigation")
 
         # if is_custom_action(view.action):
@@ -62,7 +62,7 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         if issubclass(view.__class__, viewsets.ModelViewSet):
             tags.append("crud")
 
-        return tags
+        return [tag for tag in tags if tag not in meta.exclude_tags]
 
     def is_navigation(self):
         if not hasattr(self, "_is_navigation"):

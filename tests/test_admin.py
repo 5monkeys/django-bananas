@@ -225,6 +225,9 @@ class APITest(AdminBaseTest):
         action = data["paths"]["/tests/ham/"]["post"]
         self.assertIn("crud", action["tags"])
 
+        action = data["paths"]["/bananas/me/"]["get"]
+        self.assertNotIn("navigation", action["tags"])
+
     def test_login(self):
         user = self.create_user()
         url = compat.reverse("bananas:v1.0:bananas.login-list")
