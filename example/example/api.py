@@ -20,7 +20,7 @@ class UserDetailsSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ("url", "username", "full_name", "email", "is_staff")
+        fields = ("id", "url", "username", "full_name", "email", "is_staff")
 
     def build_url_field(self, field_name, model_class):
         """
