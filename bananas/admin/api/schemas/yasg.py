@@ -17,7 +17,7 @@ class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
     def get_paths(self, endpoints, components, request, public):
         paths, prefix = super().get_paths(endpoints, components, request, public)
         path = request._request.path
-        return paths, path[: path.rfind("/")]
+        return paths, path[: path.rfind("/")] + prefix
 
 
 class BananasSwaggerSchema(SwaggerAutoSchema):
