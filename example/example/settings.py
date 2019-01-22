@@ -136,8 +136,5 @@ ADMIN = {
 # CORS
 # https://github.com/OttoYiu/django-cors-headers
 
-CORS_ORIGIN_WHITELIST = (
-    'localhost:3000',
-)
-
+CORS_ORIGIN_WHITELIST = env.get_list("CORS_ORIGIN_WHITELIST", ["localhost:3000"])
 CORS_ALLOW_CREDENTIALS = True
