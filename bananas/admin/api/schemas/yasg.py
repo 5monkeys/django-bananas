@@ -68,7 +68,9 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         if not hasattr(self, "_is_navigation"):
             self._is_navigation = False
             try:
-                if self.view.action == "list" or not hasattr(self.view, "list"):
+                if self.method == "GET" and (
+                    self.view.action == "list" or not hasattr(self.view, "list")
+                ):
                     self.view.reverse_action("list")
                     self._is_navigation = True
             except NoReverseMatch:
