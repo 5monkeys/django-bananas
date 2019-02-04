@@ -114,3 +114,20 @@ class BananasAPI(object):
             name += " " + suffix
 
         return name
+
+
+class SchemaSerializerMixin(object):
+
+    def get_serializer_class(self, status_code: int = None):
+        serializer_class = super().get_serializer_class()
+
+        action = getattr(self, self.action, None)
+        schema = getattr(action, "_swagger_auto_schema", None)
+        if schema:
+            responses = schema.get("responses")
+            if responses:
+                status_code = sorted(responses.keys())[0]
+                if status_code < 300:
+                    serializer_class = responses[status_code]
+
+        return serializer_class
