@@ -1,4 +1,5 @@
 SECRET_KEY = 'bananas'
+LANGUAGE_CODE = 'en'
 
 DATABASES = {
     'default': {

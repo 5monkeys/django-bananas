@@ -206,7 +206,7 @@ class APITest(AdminBaseTest):
         action = data["paths"]["/bananas/login/"]["post"]
         self.assertEqual(action["operationId"], "bananas.login:create")
         self.assertEqual(action["summary"], "Log in")
-        self.assertIn("navigation", action["tags"])
+        self.assertNotIn("navigation", action["tags"])
 
     def test_autorized_schema(self):
         self.login_user()
@@ -220,10 +220,11 @@ class APITest(AdminBaseTest):
         action = data["paths"]["/bananas/logout/"]["post"]
         self.assertEqual(action["operationId"], "bananas.logout:create")
         self.assertEqual(action["summary"], "Log out")
-        self.assertIn("navigation", action["tags"])
+        self.assertNotIn("navigation", action["tags"])
 
-        action = data["paths"]["/tests/ham/"]["post"]
+        action = data["paths"]["/tests/ham/"]["get"]
         self.assertIn("crud", action["tags"])
+        self.assertIn("navigation", action["tags"])
 
         action = data["paths"]["/bananas/me/"]["get"]
         self.assertNotIn("navigation", action["tags"])
