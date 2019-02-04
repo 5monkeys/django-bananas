@@ -9,6 +9,7 @@ from bananas.admin.api.schemas import schema_serializer_method
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="get_username", read_only=True)
     full_name = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
     is_superuser = serializers.BooleanField(read_only=True)
     permissions = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
@@ -19,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "full_name",
+            "email",
             "is_superuser",
             "permissions",
             "groups",
@@ -39,6 +41,12 @@ class UserSerializer(serializers.ModelSerializer):
             full_name = obj.get_username()
 
         return full_name
+
+    @schema_serializer_method(
+        serializer_or_field=serializers.CharField()
+    )
+    def get_email(self, obj):
+        return getattr(obj, obj.get_email_field_name(), None)
 
     @schema_serializer_method(
         serializer_or_field=serializers.ListField(
