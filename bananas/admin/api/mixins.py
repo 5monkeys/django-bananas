@@ -41,8 +41,8 @@ class BananasAPI(object):
                 basename=basename,
                 name=name,
                 exclude_tags=[],
-                # verbose_name=name,
-                # verbose_name_plural=UNDEFINED,
+                verbose_name=None,
+                verbose_name_plural=name,
             )
 
             admin = getattr(cls, "Admin", None)
@@ -57,15 +57,9 @@ class BananasAPI(object):
                 )
 
             basename = "{}.{}".format(meta.app_label, meta.basename)
-            # verbose_name_plural = (
-            #     (meta.verbose_name + "s")
-            #     if meta.verbose_name_plural is UNDEFINED
-            #     else None
-            # )
             meta.update(
                 dict(
                     basename=basename,
-                    # verbose_name_plural=verbose_name_plural,
                 )
             )
             cls._admin_meta = meta

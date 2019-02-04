@@ -53,6 +53,9 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    class Admin:
+        verbose_name = lazy_title(_("user"))
+
     @schema(query_serializer=UserFilterSerializer)
     def list(self, request):
         return super().list(request)

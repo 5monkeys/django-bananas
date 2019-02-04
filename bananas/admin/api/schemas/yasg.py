@@ -40,8 +40,18 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
             title = _(self.view.action.replace("_", " ")).capitalize()
 
         if not title:
-            if self.is_navigation():
-                meta = self.view.get_admin_meta()
+            meta = self.view.get_admin_meta()
+            if self.view.action in ["retrieve", "update", "partial_update"]:
+                title = str(meta.get("verbose_name") or meta.name)
+            elif self.view.action == "create":
+                title = meta.get("verbose_name")
+                if title:
+                    title = str(_("Add")) + " " + str(title).lower()
+                else:
+                    title = meta.name
+            elif self.view.action == "list":
+                title = str(meta.get("verbose_name_plural") or meta.name)
+            else:
                 title = str(meta.name)
 
         return title
