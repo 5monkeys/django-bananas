@@ -4,7 +4,7 @@ from os import environ
 
 from django.conf import global_settings
 
-__all__ = ["parse_bool", "parse_int", "parse_tuple", "parse_list", "parse_set"]
+__all__ = ["env", "parse_bool", "parse_int", "parse_tuple", "parse_list", "parse_set"]
 
 log = logging.getLogger(__name__)
 
