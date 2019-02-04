@@ -84,8 +84,16 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
     @action(detail=True)
     def bar(self, request, pk):
         url = reverse("bananas:v1.0:example.user-bar", kwargs={"pk": pk})
-        return Response(f"Just a simple extra detail action, url = {url}")
+        return Response(
+            "Just a simple extra detail action, url = {url}".format(url=url)
+        )
 
     @action(detail=True, methods=["post"], name=_("Send activation e-mail"))
     def send_activation_email(self, request, pk):
-        return Response(f"Just another simple extra detail action")
+        return Response("Just another simple extra detail action")
+
+    @action(detail=True, url_path="baz/(?P<x>.+)/ham/(?P<y>.+)")
+    def baz(self, request, pk, x, y):
+        return Response(
+            "Just a simple extra detail action, {pk}, {x}, {y}".format(pk=pk, x=x, y=y)
+        )
