@@ -2,10 +2,14 @@ ARG PYTHON=3
 FROM python:${PYTHON}
 
 # Install system dependencies
-ARG DJANGO=2.0.3
+ARG DJANGO=">=2.0.9,<2.1"
 RUN apt-get update && apt-get install -y \
         gettext && \
-    pip install --pre Django==${DJANGO}
+    pip install --pre "Django${DJANGO}"
+
+# Install requirements
+COPY example/requirements.txt /tmp/
+RUN pip install --pre -r /tmp/requirements.txt
 
 # Install bananas source
 WORKDIR /usr/src

@@ -27,7 +27,7 @@ django-bananas is on PyPI, so just run:
 
 Currently tested only for
 
--   Django 1.8-1.11b1 under Python 3.4-3.6
+-   Django 1.8-2.1 under Python 3.4-3.6
 
 pull requests welcome!
 
@@ -196,6 +196,53 @@ Custom django admin stylesheet.
 
         def custom_view(self, request):
             return self.render('admin/custom.html', {})
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Admin API
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Django admin API for use with django-bananas.js (react admin site)
+
+.. code-block:: py
+
+    # app/admin.py or something
+    from bananas.admin.api.mixins import BananasAPI
+    from bananas.admin.api.schemas import schema
+    from bananas.admin.api.views import BananasAdminAPI
+    from bananas.lazy import lazy_title
+    from django.utils.translation import ugettext_lazy as _
+    from rest_framework import viewsets
+
+    class CustomAdminAPI(BananasAdminAPI):
+
+        name = lazy_title(_("custom"))
+
+        @schema(query_serializer=SomeSerializer, responses={200: SomeSerializer})
+        def list(self, request):
+            return ...
+
+    class SomeModelAdminAPI(BananasAPI, viewsets.ModelViewSet)
+
+        serializer_class = SomeModelSerializer
+
+        def list(self, request):
+            return ...
+
+.. code-block:: py
+
+    # app/urls.py or something
+    from bananas.admin import api
+    from django.conf.urls import include, path
+
+    from .admin import CustomAdminAPI, SomeModelAdminAPI
+
+    api.register(CustomAdminAPI)
+    api.register(SomeModelAdminAPI)
+
+    urlpatterns = [
+        path(r"^api/", include("bananas.admin.api.urls"))
+    ]
 
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

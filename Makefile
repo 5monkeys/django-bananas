@@ -30,6 +30,11 @@ install:
 develop:
 	python setup.py develop
 
+CONTAINER ?= django2
+.PHONY: attach
+attach:
+	docker attach --detach-keys="ctrl-d" `docker-compose ps -q $(CONTAINER)`
+
 .PHONY: example		# starts example app using docker
 example:
 	@docker-compose up -d --build --force-recreate

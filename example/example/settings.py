@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from bananas.environment import env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,6 +40,9 @@ INSTALLED_APPS = [
 
     'example',
     'bananas',
+    'rest_framework',
+    'corsheaders',
+    'drf_yasg',
 
     'django.contrib.admin',
 ]
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -109,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = env.get('DJANGO_LANGUAGE_CODE', 'en-us')
 
 TIME_ZONE = 'UTC'
 
@@ -127,3 +132,9 @@ STATIC_URL = '/static/'
 ADMIN = {
     'LOGO_STYLE': 'height: 25px;'
 }
+
+# CORS
+# https://github.com/OttoYiu/django-cors-headers
+
+CORS_ORIGIN_WHITELIST = env.get_list("CORS_ORIGIN_WHITELIST", ["localhost:3000"])
+CORS_ALLOW_CREDENTIALS = True

@@ -13,9 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import include, url
+
 from bananas import admin
+from bananas.admin import api
+
+from .api import UserViewSet
+
+api.register(UserViewSet)
 
 urlpatterns = [
+    url(r'^api/', include('bananas.admin.api.urls')),
     url(r'^', admin.site.urls),
 ]

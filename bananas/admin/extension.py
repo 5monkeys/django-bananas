@@ -16,8 +16,10 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
-from . import compat
-from .environment import env
+from .. import compat
+from ..environment import env
+
+__all__ = ["ModelAdminView", "ViewTool", "AdminView", "register", "site"]
 
 
 class ExtendedAdminSite(AdminSite):
