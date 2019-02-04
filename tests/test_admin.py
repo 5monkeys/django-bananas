@@ -194,7 +194,7 @@ class AdminTest(AdminBaseTest):
         self.assert_unauthorized(self.detail_url)
 
 
-@skipIf(django.VERSION < (1, 10), "Django version < 1.10")
+@skipIf(django.VERSION < (1, 11), "Django version < 1.11")
 class APITest(AdminBaseTest):
     def test_unautorized_schema(self):
         url = compat.reverse("bananas:v1.0:schema", kwargs={"format": ".json"})
