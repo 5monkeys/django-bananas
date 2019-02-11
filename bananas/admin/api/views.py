@@ -1,4 +1,8 @@
-from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth import (
+    login as auth_login,
+    logout as auth_logout,
+    update_session_auth_hash,
+)
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status, viewsets
@@ -106,5 +110,6 @@ class ChangePasswordAPI(BananasAdminAPI):
             raise serializers.ValidationError(password_form.errors)
 
         password_form.save()
+        update_session_auth_hash(request, password_form.user)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
