@@ -14,6 +14,11 @@ from .base import BananasBaseRouter
 
 
 class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
+    def get_schema(self, *args, **kwargs):
+        schema = super().get_schema(*args, **kwargs)
+        schema["schemes"].append("https")
+        return schema
+
     def get_paths(self, endpoints, components, request, public):
         paths, prefix = super().get_paths(endpoints, components, request, public)
         path = request._request.path
