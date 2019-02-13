@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import ugettext as _
 from drf_yasg import openapi
@@ -16,7 +17,8 @@ from .base import BananasBaseRouter
 class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
     def get_schema(self, *args, **kwargs):
         schema = super().get_schema(*args, **kwargs)
-        schema["schemes"].append("https")
+        api_settings = getattr(settings, "ADMIN", {}).get("API", {})
+        schema["schemes"] = api_settings.get("SCHEMES", schema["schemes"])
         return schema
 
     def get_paths(self, endpoints, components, request, public):

@@ -244,6 +244,16 @@ Django admin API for use with django-bananas.js (react admin site)
         path(r"^api/", include("bananas.admin.api.urls"))
     ]
 
+.. code-block:: py
+
+   # setting.py
+   ADMIN = {
+      'API': {
+         # Optional: override the default OpenAPI schemes
+         'SCHEMES': ['https'],
+      }
+   }
+
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Database URLs
