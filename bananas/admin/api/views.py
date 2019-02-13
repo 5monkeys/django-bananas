@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status, viewsets
 from rest_framework.response import Response
 
+from .i18n import RawTranslationCatalog
 from .mixins import BananasAPI
 from .permissions import IsAnonymous
 from .schemas import schema
@@ -113,3 +114,19 @@ class ChangePasswordAPI(BananasAdminAPI):
         update_session_auth_hash(request, password_form.user)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TranslationAPI(BananasAdminAPI):
+
+    name = _("Translation catalog")
+    basename = "i18n"
+
+    class Admin:
+        exclude_tags = ["navigation"]
+
+    @schema(responses={200: ""})
+    def list(self, request):
+        """
+        Retrieve the translation catalog.
+        """
+        return Response(RawTranslationCatalog().get(request))

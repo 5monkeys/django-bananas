@@ -7,6 +7,7 @@ register(views.LoginAPI)
 register(views.LogoutAPI)
 register(views.MeAPI)
 register(views.ChangePasswordAPI)
+register(views.TranslationAPI)
 
 schema_view = router.get_schema_view()
 
