@@ -25,6 +25,10 @@ class FooAPI(BananasAdminAPI):
     def bar(self, request):
         return Response({"bar": "baz"})
 
+    @action(detail=False, methods=["get", "post"])
+    def baz(self, request):
+        return Response({"bar": "baz"})
+
 
 class HamAPI(BananasAPI, viewsets.ModelViewSet):
 

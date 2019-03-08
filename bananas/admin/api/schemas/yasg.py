@@ -29,7 +29,7 @@ class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
 
 class BananasSwaggerSchema(SwaggerAutoSchema):
     def get_operation_id(self, operation_keys):
-        name = operation_keys[-1]
+        name = ".".join(operation_keys[2:])
         meta = self.view.get_admin_meta()
         return meta.basename + ":" + name
 
@@ -71,11 +71,6 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         if self.is_navigation():
             tags.append("navigation")
 
-        # if is_custom_action(view.action):
-            # tags.append("action")
-        # else:
-            # operation = operation_keys[-1]
-            # tags.append(operation)
         if issubclass(view.__class__, viewsets.ModelViewSet):
             tags.append("crud")
 
