@@ -6,6 +6,7 @@ from django.contrib.auth import (
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, status, viewsets
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from .i18n import RawTranslationCatalog
@@ -120,6 +121,7 @@ class TranslationAPI(BananasAdminAPI):
 
     name = _("Translation catalog")
     basename = "i18n"
+    permission_classes = (AllowAny,)
 
     class Admin:
         exclude_tags = ["navigation"]
