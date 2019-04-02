@@ -33,6 +33,11 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         meta = self.view.get_admin_meta()
         return meta.basename + ":" + name
 
+    def get_summary_and_description(self):
+        summary = self.get_summary()
+        _, description = super().get_summary_and_description()
+        return summary, description
+
     def get_summary(self):
         title = None
 
