@@ -46,12 +46,35 @@ class UserFilterSerializer(serializers.Serializer):
     username = serializers.CharField(required=False)
 
 
+class FormSerializer(serializers.Serializer):
+    text = serializers.CharField()
+    integer = serializers.IntegerField()
+    date = serializers.DateField()
+    datetime = serializers.DateTimeField()
+    boolean = serializers.BooleanField(required=True)
+    choices = serializers.ChoiceField(
+        choices=(
+            ("se", "Sweden"),
+            ("no", "Norway"),
+            ("fi", "Finland"),
+            ("dk", "Denmark"),
+        )
+    )
+    multiple_choices = serializers.MultipleChoiceField(
+        choices=(
+            ("se", "Sweden"),
+            ("no", "Norway"),
+            ("fi", "Finland"),
+            ("dk", "Denmark"),
+        )
+    )
+
+
 class UserViewSet(BananasAPI, viewsets.ModelViewSet):
 
     name = lazy_title(_("users"))
     permission_classes = (DjangoModelPermissions,)
     queryset = User.objects.all()
-    serializer_class = UserSerializer
 
     class Admin:
         verbose_name = lazy_title(_("user"))
@@ -74,6 +97,8 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ("retrieve", "list"):
             return UserDetailsSerializer
+        elif self.action == "form":
+            return FormSerializer
         else:
             return UserSerializer
 
@@ -97,3 +122,11 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
         return Response(
             "Just a simple extra detail action, {pk}, {x}, {y}".format(pk=pk, x=x, y=y)
         )
+
+    @action(detail=False, methods=["get", "post"])
+    def form(self, request):
+        if request.method == "GET":
+            return Response({})
+        serializer = FormSerializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data)
