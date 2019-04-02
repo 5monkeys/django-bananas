@@ -35,5 +35,8 @@ class HamAPI(BananasAPI, viewsets.ModelViewSet):
     name = lazy_capitalize(_("ham"))
     serializer_class = HamSerializer
 
+    def get_queryset(self):
+        return None
+
     def list(self, request):
         pass
