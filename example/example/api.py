@@ -40,7 +40,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ("username", "first_name", "last_name", "email")
-        ref_name = "ExampleUserSerializer"
 
 
 class UserFilterSerializer(serializers.Serializer):
