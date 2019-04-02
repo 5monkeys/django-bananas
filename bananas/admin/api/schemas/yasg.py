@@ -34,11 +34,17 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         return meta.basename + ":" + name
 
     def get_summary_and_description(self):
+        """
+        Compat: drf-yasg 1.12+
+        """
         summary = self.get_summary()
         _, description = super().get_summary_and_description()
         return summary, description
 
     def get_summary(self):
+        """
+        Compat: drf-yasg 1.11
+        """
         title = None
 
         method_name = getattr(self.view, "action", self.method.lower())
