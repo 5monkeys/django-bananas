@@ -25,6 +25,7 @@ env:
     - TOXENV=py35-django111
     - TOXENV=py35-django20
     - TOXENV=py35-django21
+    - TOXENV=py35-django22
 
 matrix:
   include:
@@ -34,6 +35,8 @@ matrix:
       env: TOXENV=py36-django20
     - python: 3.6
       env: TOXENV=py36-django21
+    - python: 3.6
+      env: TOXENV=py36-django22
     - python: 3.4  # i.e. skip installing 3.5
       env: TOXENV=lint
     - python: 3.4
