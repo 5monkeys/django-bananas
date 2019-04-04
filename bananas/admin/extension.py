@@ -167,8 +167,8 @@ def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
 
     def wrapped(inner_view):
         module = inner_view.__module__
-        app_package = module[: module.index(".admin")]
-        app_config = apps.get_app_config(app_package)
+        app_label = re.search(r"\.?(\w+)\.admin", module).group(1)
+        app_config = apps.get_app_config(app_label)
 
         label = getattr(inner_view, "label", None)
         if not label:
