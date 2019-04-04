@@ -50,6 +50,10 @@ example:
 clean:
 	@rm -rf dist/ *.egg *.egg-info .coverage .coverage.* example/db.sqlite3
 
+.PHONY: publish
+publish: clean
+	@python setup.py sdist upload
+
 .PHONY: all			# runs clean, test_all, lint
 all: clean test_all lint
 
