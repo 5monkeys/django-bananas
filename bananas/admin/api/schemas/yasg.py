@@ -9,6 +9,7 @@ from rest_framework import permissions, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.routers import SimpleRouter
 from rest_framework.schemas.generators import is_custom_action
+from rest_framework.versioning import URLPathVersioning
 
 from ..versioning import BananasVersioning
 from .base import BananasBaseRouter
@@ -104,7 +105,7 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
 
 class BananasSimpleRouter(BananasBaseRouter, SimpleRouter):
     def get_schema_view(self):
-        return get_schema_view(
+        view = get_schema_view(
             openapi.Info(
                 title="Django Bananas Admin API Schema",
                 default_version=BananasVersioning.default_version,
@@ -119,3 +120,5 @@ class BananasSimpleRouter(BananasBaseRouter, SimpleRouter):
             permission_classes=(permissions.AllowAny,),
             patterns=self.urls,
         )
+        view.versioning_class = URLPathVersioning
+        return view
