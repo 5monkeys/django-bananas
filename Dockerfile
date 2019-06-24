@@ -2,7 +2,7 @@ ARG PYTHON=3
 FROM python:${PYTHON}
 
 # Install system dependencies
-ARG DJANGO=">=2.0.9,<2.1"
+ARG DJANGO=">=2.0.9,<2.3"
 RUN apt-get update && apt-get install -y \
         gettext && \
     pip install --pre "Django${DJANGO}"
