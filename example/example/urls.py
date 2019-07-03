@@ -18,8 +18,12 @@ from django.conf.urls import include, url
 from bananas import admin
 from bananas.admin import api
 
-from .api import UserViewSet
+from .api import AppleViewSet, BananaViewSet, PeachViewSet, PearViewSet, UserViewSet
 
+api.register(AppleViewSet)
+api.register(BananaViewSet)
+api.register(PeachViewSet)
+api.register(PearViewSet)
 api.register(UserViewSet)
 
 urlpatterns = [

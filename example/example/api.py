@@ -130,3 +130,47 @@ class UserViewSet(BananasAPI, viewsets.ModelViewSet):
         serializer = FormSerializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data)
+
+
+class AppleViewSet(BananasAPI, viewsets.ModelViewSet):
+
+    name = lazy_title(_("apple"))
+
+    def list(self, request):
+        return Response()
+
+    class Admin:
+        app_label = "fruit"
+
+
+class BananaViewSet(BananasAPI, viewsets.ModelViewSet):
+
+    name = lazy_title(_("banana"))
+
+    def list(self, request):
+        return Response()
+
+    class Admin:
+        app_label = "fruit"
+
+
+class PeachViewSet(BananasAPI, viewsets.ModelViewSet):
+
+    name = lazy_title(_("peach"))
+
+    def list(self, request):
+        return Response()
+
+    class Admin:
+        app_label = "fruit"
+
+
+class PearViewSet(BananasAPI, viewsets.ModelViewSet):
+
+    name = lazy_title(_("pear"))
+
+    def list(self, request):
+        return Response()
+
+    class Admin:
+        app_label = "fruit"
