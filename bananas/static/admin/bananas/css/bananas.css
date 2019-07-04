@@ -62,11 +62,16 @@ body:not(.login) #header {
 }
 
 #header {
+  display: block;
   background-color: #417690 /* fallback */;
   background-color: var(--theme-color);
   color: white;
   outline: 0;
   overflow: visible;
+}
+
+.login #header {
+  padding: 5px 16px;
 }
 
 #branding {
