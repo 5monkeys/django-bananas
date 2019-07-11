@@ -6,6 +6,7 @@ cache: pip
 # Tox cannot install pythons, so we set 3.5 as default, use 3.4 already
 # available in container and then include 3.6 in matrix.
 python:
+  - 3.4
   - 3.5
 
 env:
