@@ -44,9 +44,9 @@ matrix:
       env: TOXENV=py36-django20
     - python: 3.6
       env: TOXENV=py36-django21
-    - python: 3.4  # i.e. skip installing 3.5
+    - python: 3.5
       env: TOXENV=lint
-    - python: 3.4
+    - python: 3.5
       env: TOXENV=coverage  # run it after tests to collect reports from other jobs
 
 install:
