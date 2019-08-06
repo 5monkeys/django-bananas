@@ -2,20 +2,38 @@ from django.conf import settings
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import ugettext as _
 from drf_yasg import openapi
-from drf_yasg.generators import OpenAPISchemaGenerator
+from drf_yasg.generators import EndpointEnumerator, OpenAPISchemaGenerator
 from drf_yasg.inspectors.view import SwaggerAutoSchema
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.routers import SimpleRouter
 from rest_framework.schemas.generators import is_custom_action
-from rest_framework.versioning import URLPathVersioning
 
 from ..versioning import BananasVersioning
 from .base import BananasBaseRouter
 
 
+class BananasEndpointEnumerator(EndpointEnumerator):
+    def should_include_endpoint(
+        self, path, callback, app_name="", namespace="", url_name=None
+    ):
+        # Fall back to check namespace on the resolver match
+        request = self.request
+        if (
+            not namespace
+            and getattr(request, "version", None)
+            and getattr(request, "resolver_match", None)
+        ):
+            namespace = request.resolver_match.namespace or ""
+        return super().should_include_endpoint(
+            path, callback, app_name, namespace, url_name
+        )
+
+
 class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
+    endpoint_enumerator_class = BananasEndpointEnumerator
+
     def get_schema(self, *args, **kwargs):
         schema = super().get_schema(*args, **kwargs)
         api_settings = getattr(settings, "ADMIN", {}).get("API", {})
@@ -120,5 +138,6 @@ class BananasSimpleRouter(BananasBaseRouter, SimpleRouter):
             permission_classes=(permissions.AllowAny,),
             patterns=self.urls,
         )
-        view.versioning_class = URLPathVersioning
+        view.versioning_class = BananasVersioning
+
         return view
