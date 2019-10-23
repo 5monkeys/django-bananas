@@ -11,6 +11,8 @@ env:
     - TOXENV=py35-django111
     - TOXENV=py35-django20
     - TOXENV=py35-django21
+    - TOXENV=py35-django22
+    - TOXENV=py35-django30
 
 matrix:
   include:
@@ -23,8 +25,14 @@ matrix:
     - python: 3.6
       env: TOXENV=py36-django22
       dist: xenial
+    - python: 3.6
+      env: TOXENV=py36-django30
+      dist: xenial
 
     # Python 3.7 on Travis CI is only available on Ubuntu Xenial.
+    - python: 3.7
+      env: TOXENV=py37-django30
+      dist: xenial
     - python: 3.7
       env: TOXENV=py37-django22
       dist: xenial
