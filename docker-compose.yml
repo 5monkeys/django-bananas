@@ -27,7 +27,26 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - "8001:8000"
+      - "8002:8000"
+    volumes:
+      - .:/usr/src/django-bananas
+      - ./example:/app
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "True"
+      DJANGO_LANGUAGE_CODE: "sv-se"
+
+  django3:
+    build:
+      context: .
+      args:
+        DJANGO: "<3.1"
+        REQUIREMENTS: "requirements_django3.txt"
+    command: ["runserver", "0.0.0.0:8000"]
+    stdin_open: true
+    tty: true
+    ports:
+      - "8003:8000"
     volumes:
       - .:/usr/src/django-bananas
       - ./example:/app

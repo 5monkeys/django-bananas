@@ -274,7 +274,7 @@ class SettingsTest(TestCase):
         environ.update({
             'DJANGO_DEBUG': 'true',
             'DJANGO_INTERNAL_IPS': '127.0.0.1, 10.0.0.1',
-            'DJANGO_FILE_UPLOAD_PERMISSIONS': '0o644',
+            'DJANGO_FILE_UPLOAD_DIRECTORY_PERMISSIONS': '0o644',
             'DJANGO_SECRET_KEY': '123',
         })
 
@@ -286,8 +286,8 @@ class SettingsTest(TestCase):
             self.assertListEqual(settings.INTERNAL_IPS, ['127.0.0.1', '10.0.0.1'])
         else:
             self.assertTupleEqual(settings.INTERNAL_IPS, ('127.0.0.1', '10.0.0.1'))
-        self.assertIsNone(global_settings.FILE_UPLOAD_PERMISSIONS)
-        self.assertEqual(settings.FILE_UPLOAD_PERMISSIONS, 420)
+        self.assertIsNone(global_settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS)
+        self.assertEqual(settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS, 420)
 
     def test_get_settings(self):
         environ['DJANGO_ADMINS'] = 'foobar'
