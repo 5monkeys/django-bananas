@@ -14,11 +14,11 @@ class CommandTests(TestCase):
             admin_api_url_count = 13
 
         if django.VERSION < (1, 9):
-            n_urls = 23 + admin_api_url_count
-        elif django.VERSION < (2, 0):
-            n_urls = 25 + admin_api_url_count
-        else:
             n_urls = 27 + admin_api_url_count
+        elif django.VERSION < (2, 0):
+            n_urls = 29 + admin_api_url_count
+        else:
+            n_urls = 31 + admin_api_url_count
 
         self.assertEqual(len(urls), n_urls)
 

@@ -5,7 +5,7 @@ from unittest import skipIf
 import django
 from django.contrib.auth.models import AnonymousUser, Group, Permission, User
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from bananas import admin, compat
 
@@ -224,7 +224,9 @@ class APITest(AdminBaseTest):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        data = response.json()
+        self.check_valid_schema(response.json())
+
+    def check_valid_schema(self, data):
         self.assertNotIn("/bananas/login/", data["paths"])
         self.assertIn("/bananas/logout/", data["paths"])
         action = data["paths"]["/bananas/logout/"]["post"]
