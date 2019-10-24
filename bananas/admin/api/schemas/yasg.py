@@ -8,7 +8,8 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.routers import SimpleRouter
-from rest_framework.schemas.generators import is_custom_action
+
+from bananas.compat.drf import is_custom_action
 
 from ..versioning import BananasVersioning
 from .base import BananasBaseRouter

@@ -1,0 +1,10 @@
+# Django RestFramework
+coreapi>=2.3.3,<2.4
+PyYAML>=4.2b1
+
+# Utils
+six>=1.12,<1.13
+coverage>=4.4.0,<4.6
+flake8>=3,<4
+black>=18,<19
+git+https://github.com/timothycrosley/isort@fcd80d4#egg=isort
