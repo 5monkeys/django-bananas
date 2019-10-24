@@ -52,7 +52,8 @@ clean:
 
 .PHONY: publish
 publish: clean
-	@python setup.py sdist upload
+	python setup.py sdist bdist_wheel
+	python -m twine upload dist/*
 
 .PHONY: all			# runs clean, test_all, lint
 all: clean test_all lint
