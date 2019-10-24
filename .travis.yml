@@ -16,12 +16,30 @@ env:
 
 matrix:
   include:
+    # NOTES:
+    #
     # Django 2.2 requires SQLite 3.8.3+ which is not available on Ubuntu Trusty
     # which is the default Ubuntu version on Travis CI. Run all Django 2.2+
     # tests on Ubuntu Xenial instead.
+    #
+    # Python 3.7 on Travis CI is only available on Ubuntu Xenial.
+
+    - python: 3.5
+      env: TOXENV=py35-django111
+    - python: 3.5
+      env: TOXENV=py35-django20
+    - python: 3.5
+      env: TOXENV=py35-django21
     - python: 3.5
       env: TOXENV=py35-django22
       dist: xenial
+
+    - python: 3.6
+      env: TOXENV=py36-django111
+    - python: 3.6
+      env: TOXENV=py36-django20
+    - python: 3.6
+      env: TOXENV=py36-django21
     - python: 3.6
       env: TOXENV=py36-django22
       dist: xenial
@@ -29,13 +47,6 @@ matrix:
       env: TOXENV=py36-django30
       dist: xenial
 
-    # Python 3.7 on Travis CI is only available on Ubuntu Xenial.
-    - python: 3.7
-      env: TOXENV=py37-django30
-      dist: xenial
-    - python: 3.7
-      env: TOXENV=py37-django22
-      dist: xenial
     - python: 3.7
       env: TOXENV=py37-django111
       dist: xenial
@@ -45,13 +56,13 @@ matrix:
     - python: 3.7
       env: TOXENV=py37-django21
       dist: xenial
+    - python: 3.7
+      env: TOXENV=py37-django22
+      dist: xenial
+    - python: 3.7
+      env: TOXENV=py37-django30
+      dist: xenial
 
-    - python: 3.6
-      env: TOXENV=py36-django111
-    - python: 3.6
-      env: TOXENV=py36-django20
-    - python: 3.6
-      env: TOXENV=py36-django21
     - python: 3.5
       env: TOXENV=lint
     - python: 3.5
