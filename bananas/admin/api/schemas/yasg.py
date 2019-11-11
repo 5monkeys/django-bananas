@@ -97,13 +97,20 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
     def get_tags(self, operation_keys):
         view = self.view
         meta = self.view.get_admin_meta()
-        tags = ["app:{label}".format(label=meta.app_label)]
+        tags = {"app:{label}".format(label=meta.app_label)}
 
         if self.is_navigation():
-            tags.append("navigation")
+            tags.add("navigation")
 
         if issubclass(view.__class__, viewsets.ModelViewSet):
-            tags.append("crud")
+            tags.add("crud")
+
+        view_method = getattr(view, view.action, None)
+        if view_method:
+            include_tags = set(getattr(view_method, "include_tags", None) or [])
+            exclude_tags = set(getattr(view_method, "exclude_tags", None) or [])
+            tags |= include_tags
+            tags -= exclude_tags
 
         return [tag for tag in tags if tag not in meta.exclude_tags]
 
@@ -111,10 +118,14 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         if not hasattr(self, "_is_navigation"):
             self._is_navigation = False
             try:
+                view_method = getattr(self.view, self.view.action, None)
+                is_custom_list_route = is_custom_action(self.view.action) and view_method and not view_method.detail
+                allows_navigation = getattr(view_method, "navigation", False)
+                url_name = view_method.url_name if is_custom_list_route else self.view.action
                 if self.method == "GET" and (
-                    self.view.action == "list" or not hasattr(self.view, "list")
+                    self.view.action == "list" or not hasattr(self.view, "list") or (is_custom_list_route and allows_navigation)
                 ):
-                    self.view.reverse_action("list")
+                    self.view.reverse_action(url_name)
                     self._is_navigation = True
             except NoReverseMatch:
                 pass
