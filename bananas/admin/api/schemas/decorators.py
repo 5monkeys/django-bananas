@@ -1,5 +1,6 @@
 from functools import wraps
 
+
 def navigation(view):
     @wraps(view)
     def wrapper(*args, **kwargs):
