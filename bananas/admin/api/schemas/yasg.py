@@ -97,13 +97,20 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
     def get_tags(self, operation_keys):
         view = self.view
         meta = self.view.get_admin_meta()
-        tags = ["app:{label}".format(label=meta.app_label)]
+        tags = {"app:{label}".format(label=meta.app_label)}
 
         if self.is_navigation():
-            tags.append("navigation")
+            tags.add("navigation")
 
         if issubclass(view.__class__, viewsets.ModelViewSet):
-            tags.append("crud")
+            tags.add("crud")
+
+        view_method = getattr(view, view.action, None)
+        if view_method:
+            include_tags = set(getattr(view_method, "include_tags", None) or [])
+            exclude_tags = set(getattr(view_method, "exclude_tags", None) or [])
+            tags |= include_tags
+            tags -= exclude_tags
 
         return [tag for tag in tags if tag not in meta.exclude_tags]
 

@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from bananas.admin.api.mixins import BananasAPI
+from bananas.admin.api.schemas.decorators import tags
 from bananas.admin.api.views import BananasAdminAPI
 from bananas.lazy import lazy_capitalize, lazy_title
 
@@ -23,11 +24,12 @@ class FooAPI(BananasAdminAPI):
 
     @action(detail=False)
     def bar(self, request):
-        return Response({"bar": "baz"})
+        return Response({"bar": True})
 
+    @tags(include=["navigation"])
     @action(detail=False, methods=["get", "post"])
     def baz(self, request):
-        return Response({"bar": "baz"})
+        return Response({"baz": True})
 
 
 class HamAPI(BananasAPI, viewsets.ModelViewSet):
@@ -38,5 +40,6 @@ class HamAPI(BananasAPI, viewsets.ModelViewSet):
     def get_queryset(self):
         return None
 
+    @tags(exclude=["navigation"])
     def list(self, request):
         pass

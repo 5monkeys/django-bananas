@@ -236,14 +236,23 @@ class APITest(AdminBaseTest):
 
         action = data["paths"]["/tests/ham/"]["get"]
         self.assertIn("crud", action["tags"])
-        self.assertIn("navigation", action["tags"])
+        self.assertNotIn("navigation", action["tags"])
 
         action = data["paths"]["/bananas/me/"]["get"]
         self.assertNotIn("navigation", action["tags"])
 
-        action = data["paths"]["/tests/foo/baz/"]
-        self.assertEqual(action["get"]["operationId"], "tests.foo:baz.read")
-        self.assertEqual(action["post"]["operationId"], "tests.foo:baz.create")
+        action = data["paths"]["/tests/foo/"]["get"]
+        self.assertNotIn("crud", action["tags"])
+        self.assertIn("navigation", action["tags"])
+
+        bar_endpoint = data["paths"]["/tests/foo/bar/"]
+        self.assertEqual(bar_endpoint["get"]["operationId"], "tests.foo:bar")
+        self.assertNotIn("navigation", bar_endpoint["get"]["tags"])
+
+        baz_endpoint = data["paths"]["/tests/foo/baz/"]
+        self.assertEqual(baz_endpoint["get"]["operationId"], "tests.foo:baz.read")
+        self.assertEqual(baz_endpoint["post"]["operationId"], "tests.foo:baz.create")
+        self.assertIn("navigation", baz_endpoint["get"]["tags"])
 
     def test_login(self):
         user = self.create_user()
@@ -326,3 +335,12 @@ class APITest(AdminBaseTest):
 
         self.client.login(username=user.username, password="foobar123")
         self.assertAuthorized()
+
+    def test_tags_decorated_action(self):
+        self.login_user()
+        url = compat.reverse("bananas:v1.0:tests.foo-bar")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertEqual(data["bar"], True)

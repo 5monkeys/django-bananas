@@ -43,9 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         return full_name
 
-    @schema_serializer_method(
-        serializer_or_field=serializers.CharField()
-    )
+    @schema_serializer_method(serializer_or_field=serializers.CharField())
     def get_email(self, obj):
         return getattr(obj, obj.get_email_field_name(), None)
 

@@ -6,6 +6,7 @@ from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 
 from bananas.admin.api.schemas import schema, schema_serializer_method
+from bananas.admin.api.schemas.decorators import tags
 from bananas.admin.api.views import BananasAPI
 from bananas.compat import reverse
 from bananas.lazy import lazy_title
@@ -136,7 +137,18 @@ class AppleViewSet(BananasAPI, viewsets.ModelViewSet):
 
     name = lazy_title(_("apple"))
 
+    @tags(exclude=["navigation"])
     def list(self, request):
+        return Response()
+
+    @tags(["navigation"])
+    @action(detail=False)
+    def red_delicious(self, request):
+        return Response()
+
+    @tags(include=["navigation"])
+    @action(detail=False)
+    def granny_smith(self, request):
         return Response()
 
     class Admin:
