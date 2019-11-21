@@ -57,11 +57,7 @@ class BananasAPI(object):
                 )
 
             basename = "{}.{}".format(meta.app_label, meta.basename)
-            meta.update(
-                dict(
-                    basename=basename,
-                )
-            )
+            meta.update(dict(basename=basename))
             cls._admin_meta = meta
 
         return meta
@@ -117,7 +113,6 @@ class BananasAPI(object):
 
 
 class SchemaSerializerMixin(object):
-
     def get_serializer_class(self, status_code: int = None):
         serializer_class = super().get_serializer_class()
 
