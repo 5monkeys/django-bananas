@@ -118,14 +118,10 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         if not hasattr(self, "_is_navigation"):
             self._is_navigation = False
             try:
-                view_method = getattr(self.view, self.view.action, None)
-                is_custom_list_route = is_custom_action(self.view.action) and view_method and not view_method.detail
-                allows_navigation = getattr(view_method, "navigation", False)
-                url_name = view_method.url_name if is_custom_list_route else self.view.action
                 if self.method == "GET" and (
-                    self.view.action == "list" or not hasattr(self.view, "list") or (is_custom_list_route and allows_navigation)
+                    self.view.action == "list" or not hasattr(self.view, "list")
                 ):
-                    self.view.reverse_action(url_name)
+                    self.view.reverse_action("list")
                     self._is_navigation = True
             except NoReverseMatch:
                 pass
