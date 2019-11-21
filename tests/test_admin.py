@@ -335,3 +335,12 @@ class APITest(AdminBaseTest):
 
         self.client.login(username=user.username, password="foobar123")
         self.assertAuthorized()
+
+    def test_tags_decorated_action(self):
+        self.login_user()
+        url = compat.reverse("bananas:v1.0:tests.foo-bar")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertEqual(data["bar"], True)

@@ -24,12 +24,12 @@ class FooAPI(BananasAdminAPI):
 
     @action(detail=False)
     def bar(self, request):
-        return Response({"bar": "baz"})
+        return Response({"bar": True})
 
     @tags(include=["navigation"])
     @action(detail=False, methods=["get", "post"])
     def baz(self, request):
-        return Response({"bar": "baz"})
+        return Response({"baz": True})
 
 
 class HamAPI(BananasAPI, viewsets.ModelViewSet):
