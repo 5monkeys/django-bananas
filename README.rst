@@ -212,7 +212,7 @@ Django admin API for use with django-bananas.js (react admin site)
     from bananas.admin.api.schemas import schema
     from bananas.admin.api.views import BananasAdminAPI
     from bananas.lazy import lazy_title
-    from django.utils.translation import ugettext_lazy as _
+    from django.utils.translation import gettext_lazy as _
     from rest_framework import viewsets
 
     class CustomAdminAPI(BananasAdminAPI):

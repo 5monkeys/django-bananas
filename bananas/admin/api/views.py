@@ -4,7 +4,7 @@ from django.contrib.auth import (
     update_session_auth_hash,
 )
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
