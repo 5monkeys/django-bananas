@@ -23,7 +23,7 @@ setup(
     packages=find_packages(exclude=["tests", "_*", "example"]),
     include_package_data=True,
     zip_safe=False,
-    install_requires=[],
+    install_requires=["typing-extensions"],
     tests_require=["detox", "coverage"],
     test_suite="runtests.main",
 )
