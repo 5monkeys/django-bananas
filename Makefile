@@ -18,9 +18,15 @@ coverage:
 	coverage combine || true
 	coverage report
 
-.PHONY: lint		# runs flake8
+.PHONY: lint
 lint:
-	@flake8 bananas && echo "OK"
+	@flake8 bananas && echo "flake8 OK"
+	black --check bananas
+	isort --check -rc bananas
+
+.PHONY: type-check
+type-check:
+	mypy
 
 .PHONY: install
 install:
@@ -50,21 +56,29 @@ example:
 clean:
 	@rm -rf dist/ *.egg *.egg-info .coverage .coverage.* example/db.sqlite3
 
+.PHONY: build
+build: clean
+	python3 -m pip install --upgrade wheel twine setuptools
+	python3 setup.py sdist bdist_wheel
+
 .PHONY: publish
-publish: clean
-	python setup.py sdist bdist_wheel
-	python -m twine upload dist/*
+publish: build
+	python3 -m twine upload dist/*
+
+.PHONY: test-publish
+test-publish: build
+	python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 .PHONY: all			# runs clean, test_all, lint
-all: clean test_all lint
+all: clean test_all lint type-check
 
 .PHONY: isort
 isort:
-	isort -rc bananas/
+	isort -rc bananas
 
 .PHONY: black
 black:
-	find bananas/ -name '*.py' | xargs black
+	black bananas
 
 .PHONY: format
 format: black isort
