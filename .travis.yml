@@ -27,7 +27,7 @@ matrix:
       env: TOXENV=py38-django30
 
     - python: 3.8
-      env: TOXENV=lint
+      env: TOXENV=checks
     - python: 3.8
       env: TOXENV=coverage  # Runs after tests to collect reports from other jobs
 
