@@ -18,7 +18,7 @@ coverage:
 	coverage combine || true
 	coverage report
 
-.PHONY: lint
+.PHONY: lint                # runs flake8, black and isort checks
 lint:
 	@flake8 bananas && echo "flake8 OK"
 	black --check bananas
@@ -69,7 +69,7 @@ publish: build
 test-publish: build
 	python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
-.PHONY: all			# runs clean, test_all, lint
+.PHONY: all			# runs clean, test_all, lint, type-check
 all: clean test_all lint type-check
 
 .PHONY: isort
