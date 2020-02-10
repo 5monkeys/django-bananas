@@ -1,9 +1,9 @@
-from django.conf.urls import include, url
+from django.conf.urls import include, re_path
 
 from .versioning import __versions__
 
 apipatterns = [
-    url(
+    re_path(
         r"^{version}/".format(version=version.__version__),
         include(
             ("{package}.urls".format(package=version.__name__), "bananas"),
@@ -14,4 +14,4 @@ apipatterns = [
 ]
 
 
-urlpatterns = [url(r"^", include((apipatterns, "bananas"), namespace="bananas"))]
+urlpatterns = [re_path(r"^", include((apipatterns, "bananas"), namespace="bananas"))]

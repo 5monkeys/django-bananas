@@ -1,9 +1,9 @@
 import django
-from django.conf.urls import include, url
+from django.conf.urls import include, re_path
 
 from bananas import admin
 
-urlpatterns = [url(r"^admin/", admin.site.urls)]
+urlpatterns = [re_path(r"^admin/", admin.site.urls)]
 
 if django.VERSION >= (1, 10):
     from bananas.admin import api
@@ -14,6 +14,6 @@ if django.VERSION >= (1, 10):
     api.register(HamAPI)
 
     urlpatterns += [
-        url(r"^api/bananas", include("bananas.admin.api.urls")),
-        url(r"^api/separate", include(separate_api)),
+        re_path(r"^api/bananas", include("bananas.admin.api.urls")),
+        re_path(r"^api/separate", include(separate_api)),
     ]

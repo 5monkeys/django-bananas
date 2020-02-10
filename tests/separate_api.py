@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.conf.urls import include, re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework.viewsets import ViewSet
 
@@ -11,4 +11,4 @@ class SomeThingAPI(ViewSet):
 separate_router = DefaultRouter()
 separate_router.register(r"some-thing", SomeThingAPI, "some-thing")
 
-urlpatterns = [url("", include(separate_router.urls))]
+urlpatterns = [re_path("", include(separate_router.urls))]

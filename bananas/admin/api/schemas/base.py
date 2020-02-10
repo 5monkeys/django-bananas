@@ -1,4 +1,4 @@
-class BananasBaseRouter(object):
+class BananasBaseRouter:
     def get_default_basename(self, viewset):
         return viewset.get_admin_meta().basename
 

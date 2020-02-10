@@ -2,11 +2,8 @@
 :banana: Django Bananas - Django extensions the monkey way
 ================================================================================
 
-.. image:: https://api.travis-ci.org/5monkeys/django-bananas.svg?branch=master
-  :target: https://travis-ci.org/5monkeys/django-bananas?branch=master
-
-.. image:: https://coveralls.io/repos/5monkeys/django-bananas/badge.svg?branch=master&service=github
-  :target: https://coveralls.io/github/5monkeys/django-bananas?branch=master
+.. image:: https://github.com/5monkeys/django-bananas/workflows/main/badge.svg
+  :target: https://github.com/5monkeys/django-bananas/actions
 
 .. image:: https://img.shields.io/pypi/v/django-bananas.svg
   :target: https://pypi.python.org/pypi/django-bananas/
@@ -27,10 +24,11 @@ django-bananas is on PyPI, so just run:
 
 Currently tested only for
 
--   Django 1.11-2.2 under Python 3.5-3.7
--   Django 3.0 under Python 3.6-3.7
+-   Django 2.2 under Python 3.6-3.9
+-   Django 3.0 under Python 3.6-3.9
+-   Django 3.1 under Python 3.6-3.9
 
-pull requests welcome!
+Pull requests welcome!
 
 --------------------------------------------------------------------------------
  Examples

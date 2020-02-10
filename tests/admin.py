@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import re_path
 
 from bananas import admin
 
@@ -19,15 +19,18 @@ class SimpleAdminView(admin.AdminView):
 
     def get_urls(self):
         return [
-            url(r'^custom/$',
+            re_path(
+                r'^custom/$',
                 self.admin_view(self.custom_view),
-                name='tests_simple_custom'),
-            url(r'^special/$',
+                name='tests_simple_custom',
+            ),
+            re_path(
+                r'^special/$',
                 self.admin_view(
-                    self.special_permission_view,
-                    perm='can_do_special_stuff'
+                    self.special_permission_view, perm='can_do_special_stuff'
                 ),
-                name='tests_simple_special'),
+                name='tests_simple_special',
+            ),
         ]
 
     def get(self, request):
