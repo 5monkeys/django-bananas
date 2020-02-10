@@ -144,7 +144,7 @@ def get_settings():
     return settings
 
 
-class EnvironWrapper(object):
+class EnvironWrapper:
     """
     Wrapper around os environ with type conversion support.
     """

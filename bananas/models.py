@@ -194,7 +194,7 @@ class SecretField(models.CharField):
             defaults["editable"] = False
             defaults["blank"] = True
 
-        super(SecretField, self).__init__(verbose_name, **defaults)
+        super().__init__(verbose_name, **defaults)
 
     @staticmethod
     def get_field_length(num_bytes):
@@ -212,7 +212,7 @@ class SecretField(models.CharField):
             setattr(model_instance, self.attname, value)
             return value
         else:
-            return super(SecretField, self).pre_save(model_instance, add)
+            return super().pre_save(model_instance, add)
 
     def get_random_str(self):
         random = self.get_random_bytes()

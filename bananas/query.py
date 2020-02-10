@@ -8,7 +8,7 @@ from .models import ModelDict
 _log = logging.getLogger(__name__)
 
 
-class ModelDictIterable(object):
+class ModelDictIterable:
     def __init__(self, queryset):
         self.queryset = queryset
         self.named_fields = self.queryset._hints.get("_named_fields")
