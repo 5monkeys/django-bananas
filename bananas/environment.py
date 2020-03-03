@@ -275,13 +275,12 @@ class SafeEnvironWrapper:
 
     @staticmethod
     def take(type_, key, default=UNDEFINED):
-        parser = get_parser(type_)
         value = environ.get(key, default)
         if isinstance(value, Undefined):
             raise AttributeError(
                 f"No env var named {key} found, and no default provided"
             )
-        return parser(value)
+        return get_parser(type_)(value)
 
 
 safe_env: Final = SafeEnvironWrapper()
