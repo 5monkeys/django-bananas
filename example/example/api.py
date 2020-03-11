@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import DjangoModelPermissions

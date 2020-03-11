@@ -10,7 +10,7 @@ from django.contrib.admin.sites import site as django_admin_site
 from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.db.models import Model
 from django.shortcuts import render
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -130,8 +130,8 @@ class ModelAdminView(ModelAdmin):
         context.update(
             {
                 "app_label": opts.app_label,
-                "model_name": force_text(opts.verbose_name_plural),
-                "title": force_text(opts.verbose_name_plural),
+                "model_name": force_str(opts.verbose_name_plural),
+                "title": force_str(opts.verbose_name_plural),
                 "cl": {"opts": opts},  # change_list.html requirement
                 "opts": opts,  # change_form.html requirement
                 "media": self.media,
