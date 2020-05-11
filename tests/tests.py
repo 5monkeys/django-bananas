@@ -226,6 +226,7 @@ class EnvTest(TestCase):
         self.assertEqual(environment.parse_int('123'), 123)
         self.assertEqual(environment.parse_int('0644'), 420)
         self.assertEqual(environment.parse_int('0o644'), 420)
+        self.assertEqual(environment.parse_int('0'), 0)
 
     def test_parse_tuple(self):
         self.assertTupleEqual(environment.parse_tuple('a'), ('a',))

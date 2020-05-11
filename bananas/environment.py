@@ -62,7 +62,7 @@ def parse_int(value):
     :return int:
     """
     value = parse_str(value=value)
-    if value.startswith("0"):
+    if value != "0" and value.startswith("0"):
         return int(value.lstrip("0o"), 8)
     else:
         return int(value)
