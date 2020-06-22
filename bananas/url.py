@@ -126,9 +126,9 @@ def get_engine(scheme):
         engine = resolve(extra, second)
 
     # Sanity-check the value before returning
-    assert not isinstance(
-        engine, (list, dict)
-    ), "Only two levels of engines " "are allowed"
+    assert not isinstance(engine, (list, dict)), (
+        "Only two levels of engines " "are allowed"
+    )
     assert engine, "The returned engine is not truthy"
 
     return engine
