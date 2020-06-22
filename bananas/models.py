@@ -148,6 +148,13 @@ class TimeStampedModel(models.Model):
     class Meta:
         abstract = True
 
+    def save(self, *args, **kwargs):
+        if "update_fields" in kwargs and "date_modified" not in kwargs["update_fields"]:
+            update_fields = list(kwargs["update_fields"])
+            update_fields.append("date_modified")
+            kwargs["update_fields"] = update_fields
+        super(TimeStampedModel, self).save(*args, **kwargs)
+
 
 class UUIDModel(models.Model):
     """
