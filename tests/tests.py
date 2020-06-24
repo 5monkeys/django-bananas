@@ -299,3 +299,28 @@ class SettingsTest(TestCase):
         environ['DJANGO_DATABASES'] = 'foobar'
         self.assertRaises(NotImplementedError, environment.get_settings)
         del environ['DJANGO_DATABASES']
+
+
+class TimeStampedModelTest(TestCase):
+
+    def test_date_modified(self):
+        parent = Parent.objects.create(name="foo")
+        self.assertIsNotNone(parent.date_created)
+        self.assertIsNotNone(parent.date_modified)
+
+        pre_date_modified = parent.date_modified
+        parent.name = "bar"
+        parent.save()
+        parent.refresh_from_db()
+        self.assertNotEqual(parent.date_modified, pre_date_modified)
+        self.assertEqual(parent.name, "bar")
+
+        pre_date_modified = parent.date_modified
+        parent.name = "baz"
+        parent.save(update_fields=["name"])
+        parent.refresh_from_db()
+        self.assertNotEqual(parent.date_modified, pre_date_modified)
+        self.assertEqual(parent.name, "baz")
+
+        parent.save(update_fields={"name"})
+        parent.save(update_fields=("name",))
