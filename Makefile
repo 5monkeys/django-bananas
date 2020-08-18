@@ -8,9 +8,9 @@ help:
 test:
 	coverage run runtests.py
 
-.PHONY: test_all		# runs tests using detox, combines coverage and reports it
+.PHONY: test_all		# runs tests using tox, combines coverage and reports it
 test_all:
-	detox
+	tox
 	make coverage
 
 .PHONY: coverage		# combines coverage and reports it
