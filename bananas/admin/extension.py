@@ -23,7 +23,7 @@ __all__ = ["ModelAdminView", "ViewTool", "AdminView", "register", "site"]
 
 
 class ExtendedAdminSite(AdminSite):
-
+    enable_nav_sidebar = False
     default_settings = {
         "INHERIT_REGISTERED_MODELS": env.get_bool(
             "DJANGO_ADMIN_INHERIT_REGISTERED_MODELS", True
