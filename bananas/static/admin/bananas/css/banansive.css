@@ -35,6 +35,7 @@ body:not(.popup) #header #object-tools {
   color: #999;
 }
 
+#toolbar form input[type="submit"],
 #changelist #toolbar form input[type="submit"],
 #changelist-search input[type="submit"] {
   display: inline;
@@ -49,7 +50,7 @@ body:not(.popup) #header #object-tools {
   border: 0;
   background: #417690 /* fallback */;
   background: var(--theme-color);
-  background-image: url(/static/admin/bananas/img/search.svg), linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15));
+  background-image: url(../../img/search.svg), linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15));
   background-position: center center;
   background-repeat: no-repeat;
   box-shadow: none;
@@ -57,7 +58,7 @@ body:not(.popup) #header #object-tools {
 }
 
 #header #changelist-search input[type="submit"]:hover {
-  background-image: url(/static/admin/bananas/img/search.svg), linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35));
+  background-image: url(../../img/search.svg), linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35));
 }
 
 #changelist-search > div {

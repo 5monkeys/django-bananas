@@ -63,3 +63,9 @@ target/
 
 # Database
 *.sqlite3
+
+# Emacs
+*~
+\#*\#
+\.#*
+.#*.*
