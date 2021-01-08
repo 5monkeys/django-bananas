@@ -9,18 +9,8 @@ class CommandTests(TestCase):
     def test_show_urls(self):
         urls = show_urls.collect_urls()
 
-        admin_api_url_count = 0
-        if django.VERSION >= (1, 10):
-            admin_api_url_count = 13
-
-        if django.VERSION < (1, 9):
-            n_urls = 27 + admin_api_url_count
-        elif django.VERSION < (2, 0):
-            n_urls = 29 + admin_api_url_count
-        else:
-            n_urls = 31 + admin_api_url_count
-
-        self.assertEqual(len(urls), n_urls)
+        admin_api_url_count = 44
+        self.assertEqual(len(urls), admin_api_url_count)
 
         class FakeSys:
             class stdout:
@@ -33,6 +23,6 @@ class CommandTests(TestCase):
         show_urls.sys = FakeSys
         show_urls.show_urls()
 
-        self.assertEqual(len(FakeSys.stdout.lines), n_urls)
+        self.assertEqual(len(FakeSys.stdout.lines), admin_api_url_count)
 
         call_command("show_urls")

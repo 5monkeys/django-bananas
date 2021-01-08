@@ -1,6 +1,5 @@
 import logging
 
-import django
 from django.db.models.query import QuerySet
 
 from .models import ModelDict
@@ -37,10 +36,6 @@ class ModelDictIterable:
 
 
 class ModelDictQuerySetMixin:
-    """
-    Supported by Django >= 1.9
-    """
-
     def dicts(self, *fields, **named_fields):
         if named_fields:
             fields += tuple(named_fields.values())
@@ -57,13 +52,6 @@ class ModelDictQuerySetMixin:
         clone._add_hints(**{"_named_fields": named_fields})
 
         return clone
-
-
-if django.VERSION < (1, 9):
-    """
-    Patch ModelDictQuerySetMixin for old Django compatibility
-    """
-    from .compat.django18 import ModelDictQuerySetMixin  # noqa
 
 
 class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):

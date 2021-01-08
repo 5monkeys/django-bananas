@@ -283,10 +283,7 @@ class SettingsTest(TestCase):
 
         self.assertEqual(global_settings.DEBUG, False)
         self.assertEqual(settings.DEBUG, True)
-        if django.VERSION[:2] >= (1, 9):
-            self.assertListEqual(settings.INTERNAL_IPS, ['127.0.0.1', '10.0.0.1'])
-        else:
-            self.assertTupleEqual(settings.INTERNAL_IPS, ('127.0.0.1', '10.0.0.1'))
+        self.assertListEqual(settings.INTERNAL_IPS, ['127.0.0.1', '10.0.0.1'])
         self.assertIsNone(global_settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS)
         self.assertEqual(settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS, 420)
 

@@ -66,7 +66,7 @@ class DBURLTest(TestCase):
         self.assertRaisesMessage(KeyError, 'postgres has no sub-engines',
                                  url.get_engine, 'postgres+psycopg2+postgis')
         url.register_engine('a', ['b'])
-        self.assertRaisesRegex(ValueError, '^django-bananas\.url',
+        self.assertRaisesRegex(ValueError, r'^django-bananas\.url',
                                url.get_engine, 'a')
         url.register_engine('a', ['a', {'b': 'c'}])
         self.assertEqual(url.get_engine('a+b'), 'c')
