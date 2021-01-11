@@ -31,7 +31,7 @@ from collections import namedtuple
 from urllib.parse import parse_qs, unquote_plus, urlsplit
 
 
-class Alias(object):
+class Alias:
     """
     An alias object used to resolve aliases for engine names.
     """
@@ -126,9 +126,9 @@ def get_engine(scheme):
         engine = resolve(extra, second)
 
     # Sanity-check the value before returning
-    assert not isinstance(engine, (list, dict)), (
-        "Only two levels of engines " "are allowed"
-    )
+    assert not isinstance(
+        engine, (list, dict)
+    ), "Only two levels of engines are allowed"
     assert engine, "The returned engine is not truthy"
 
     return engine

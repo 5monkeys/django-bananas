@@ -1,42 +1,25 @@
 import sys
 from collections import OrderedDict
 
-import django
 from django.core.management import BaseCommand
-
-from ... import compat
+from django.urls import URLPattern, URLResolver, get_resolver
 
 
 def collect_urls(urls=None, namespace=None, prefix=None):
     if urls is None:
-        urls = compat.get_resolver(urlconf=None)
+        urls = get_resolver(urlconf=None)
     prefix = prefix or []
-    if isinstance(urls, compat.URLResolver):
+    if isinstance(urls, URLResolver):
         res = []
-        if django.VERSION < (2, 0):
-            pattern = urls.regex.pattern
-        else:
-            pattern = urls.pattern.regex.pattern
+        pattern = urls.pattern.regex.pattern
         for x in urls.url_patterns:
             res += collect_urls(
                 x, namespace=urls.namespace or namespace, prefix=prefix + [pattern]
             )
         return res
-    elif isinstance(urls, compat.URLPattern):
-        if django.VERSION < (1, 10):
-            callback = urls._callback
-            lookup_str = callback.__module__ + "."
-            if hasattr(callback, "__name__"):
-                lookup_str += callback.__name__
-            else:
-                lookup_str += callback.__class__.__name__
-        else:  # pragma: no cover
-            lookup_str = urls.lookup_str
-
-        if django.VERSION < (2, 0):
-            pattern = urls.regex.pattern
-        else:
-            pattern = urls.pattern.regex.pattern
+    elif isinstance(urls, URLPattern):
+        lookup_str = urls.lookup_str
+        pattern = urls.pattern.regex.pattern
         return [
             OrderedDict(
                 [

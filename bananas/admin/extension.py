@@ -4,19 +4,18 @@ import re
 import django
 from django.apps import apps
 from django.conf import settings as django_settings
-from django.conf.urls import url
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.sites import site as django_admin_site
 from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.db.models import Model
 from django.shortcuts import render
+from django.urls import re_path, reverse, reverse_lazy
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
-from .. import compat
 from ..environment import env
 
 __all__ = ["ModelAdminView", "ViewTool", "AdminView", "register", "site"]
@@ -75,20 +74,20 @@ class ModelAdminView(ModelAdmin):
         app_label = self.model._meta.app_label
         View = self.model.View
         info = app_label, View.label
-        urlpatterns = compat.urlpatterns(
-            url(
+        urlpatterns = [
+            re_path(
                 r"^$",
                 self.admin_view(View.as_view(admin=self)),
                 name="{}_{}".format(*info),
             ),
             # We add the same url here with _changelist to make sure the
             # admin app index reverse urls to correct view.
-            url(
+            re_path(
                 r"^$",
                 self.admin_view(View.as_view(admin=self)),
                 name="{}_{}_changelist".format(*info),
             ),
-        )
+        ]
         extra_urls = self.model.View(admin=self).get_urls()
         if extra_urls:
             urlpatterns += extra_urls
@@ -100,7 +99,7 @@ class ModelAdminView(ModelAdmin):
         else:
             perm = self.access_permission
 
-        admin_login_url = compat.reverse_lazy("admin:login")
+        admin_login_url = reverse_lazy("admin:login")
         view = user_passes_test(
             lambda u: u.is_active and u.is_staff, login_url=admin_login_url
         )(view)
@@ -239,7 +238,7 @@ class ViewTool:
     @property
     def link(self):
         if "/" not in self._link:
-            return compat.reverse(self._link)
+            return reverse(self._link)
         return self._link
 
 
@@ -259,7 +258,7 @@ class AdminView(View):
         return handler(request, *args, **kwargs)
 
     def get_urls(self):
-        """ Should return a list of urls
+        """Should return a list of urls
         Views should be wrapped in `self.admin_view` if the view isn't
         supposed to be accessible for non admin users.
         Omitting this can cause threading issues.

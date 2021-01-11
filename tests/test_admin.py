@@ -6,8 +6,9 @@ import django
 from django.contrib.auth.models import AnonymousUser, Group, Permission, User
 from django.core.management import call_command
 from django.test import TestCase, override_settings
+from django.urls import reverse
 
-from bananas import admin, compat
+from bananas import admin
 
 
 @contextmanager
@@ -57,12 +58,12 @@ class AdminBaseTest(TestCase):
         return user
 
     def assertAuthorized(self):
-        url = compat.reverse("admin:index")
+        url = reverse("admin:index")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def assertNotAuthorized(self):
-        url = compat.reverse("admin:index")
+        url = reverse("admin:index")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)  # Redirect to login
 
@@ -70,9 +71,9 @@ class AdminBaseTest(TestCase):
 class AdminTest(AdminBaseTest):
     def setUp(self):
         super().setUp()
-        self.detail_url = compat.reverse("admin:tests_simple")
-        self.custom_url = compat.reverse("admin:tests_simple_custom")
-        self.special_url = compat.reverse("admin:tests_simple_special")
+        self.detail_url = reverse("admin:tests_simple")
+        self.custom_url = reverse("admin:tests_simple_custom")
+        self.special_url = reverse("admin:tests_simple_special")
 
     @reset_admin_registry
     def test_admin(self):
@@ -139,7 +140,7 @@ class AdminTest(AdminBaseTest):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
             response,
-            "{}?next={}".format(compat.reverse("admin:login"), url),
+            "{}?next={}".format(reverse("admin:login"), url),
             fetch_redirect_response=False,
         )
 
@@ -204,10 +205,9 @@ class AdminTest(AdminBaseTest):
         self.assert_unauthorized(self.detail_url)
 
 
-@skipIf(django.VERSION < (1, 11), "Django version < 1.11")
 class APITest(AdminBaseTest):
     def test_unautorized_schema(self):
-        url = compat.reverse("bananas:v1.0:schema", kwargs={"format": ".json"})
+        url = reverse("bananas:v1.0:schema", kwargs={"format": ".json"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -220,7 +220,7 @@ class APITest(AdminBaseTest):
 
     def test_autorized_schema(self):
         self.login_user()
-        url = compat.reverse("bananas:v1.0:schema", kwargs={"format": ".json"})
+        url = reverse("bananas:v1.0:schema", kwargs={"format": ".json"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -256,7 +256,7 @@ class APITest(AdminBaseTest):
 
     def test_login(self):
         user = self.create_user()
-        url = compat.reverse("bananas:v1.0:bananas.login-list")
+        url = reverse("bananas:v1.0:bananas.login-list")
 
         # Fail
         response = self.client.post(
@@ -274,7 +274,7 @@ class APITest(AdminBaseTest):
 
     def test_logout(self):
         self.login_user()
-        url = compat.reverse("bananas:v1.0:bananas.logout-list")
+        url = reverse("bananas:v1.0:bananas.logout-list")
         response = self.client.post(url)
         self.assertEqual(response.status_code, 204)
         self.assertNotAuthorized()
@@ -286,7 +286,7 @@ class APITest(AdminBaseTest):
         user.user_permissions.add(perm)
         user.groups.add(group)
 
-        url = compat.reverse("bananas:v1.0:bananas.me-list")
+        url = reverse("bananas:v1.0:bananas.me-list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -297,7 +297,7 @@ class APITest(AdminBaseTest):
 
     def test_change_password(self):
         user = self.login_user()
-        url = compat.reverse("bananas:v1.0:bananas.change_password-list")
+        url = reverse("bananas:v1.0:bananas.change_password-list")
 
         response = self.client.post(
             url,
@@ -338,7 +338,7 @@ class APITest(AdminBaseTest):
 
     def test_tags_decorated_action(self):
         self.login_user()
-        url = compat.reverse("bananas:v1.0:tests.foo-bar")
+        url = reverse("bananas:v1.0:tests.foo-bar")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 

@@ -11,7 +11,7 @@ from .versioning import BananasVersioning
 UNDEFINED = object()
 
 
-class BananasAPI(object):
+class BananasAPI:
 
     versioning_class = BananasVersioning
     authentication_classes = (SessionAuthentication,)
@@ -112,7 +112,7 @@ class BananasAPI(object):
         return name
 
 
-class SchemaSerializerMixin(object):
+class SchemaSerializerMixin:
     def get_serializer_class(self, status_code: int = None):
         serializer_class = super().get_serializer_class()
 
