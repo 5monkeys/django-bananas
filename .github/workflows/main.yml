@@ -38,11 +38,14 @@ jobs:
         run: "TOXENV=coverage python -m tox"
       - name: Report coverage
         if: matrix.python-version == 3.9 && github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize')
-        uses: 5monkeys/cobertura-action@v5
+        uses: 5monkeys/cobertura-action@master
         with:
           path: coverage.xml
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           minimum_coverage: 85
+          show_line: true
+          show_branch: true
+          show_missing: true
 
   lint:
     name: Checks
