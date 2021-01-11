@@ -2,7 +2,7 @@
 :banana: Django Bananas - Django extensions the monkey way
 ================================================================================
 
-.. image:: https://github.com/5monkeys/django-bananas/workflows/main/badge.svg
+.. image:: https://github.com/5monkeys/django-bananas/workflows/CI/badge.svg
   :target: https://github.com/5monkeys/django-bananas/actions
 
 .. image:: https://img.shields.io/pypi/v/django-bananas.svg
