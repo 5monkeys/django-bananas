@@ -50,3 +50,6 @@ REST_FRAMEWORK = {
     "DEFAULT_VERSION": 1.0,
     "ALLOWED_VERSIONS": [1.0],
 }
+
+# TODO: Document requirement
+USE_TZ = True
