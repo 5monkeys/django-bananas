@@ -44,6 +44,9 @@ class Fence(abc.ABC, Generic[InstanceType, TokenType]):
     def check(self, request: Request, instance: InstanceType) -> bool:
         version = self._get_version(instance)
         if version is None:
+            # We might want to expose control of this behavior. For if-unmodified-since
+            # it makes sense to return true here, but it might not for
+            # if-modified-since other conditionals.
             return True
         return self._compare(version, self._get_token(request))
 
@@ -62,7 +65,7 @@ class FencedUpdateModelMixin(abc.ABC):
         assert isinstance(serializer, ModelSerializer)
         if not self.fence.check(self.request, serializer.instance):
             raise errors.PreconditionFailed(
-                "The resource has been concurrently modified"
+                "The resource does not fulfill the given preconditions"
             )
         super().perform_update(serializer)  # type: ignore[misc]
 

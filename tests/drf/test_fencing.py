@@ -3,11 +3,11 @@ import operator
 from unittest import TestCase
 
 from django.utils.http import http_date
-from rest_framework.exceptions import ValidationError
 
 from bananas.drf.errors import BadRequest
 from bananas.drf.fencing import (
     Fence,
+    as_set,
     header_date_parser,
     header_etag_parser,
     parse_date_modified,
@@ -72,6 +72,17 @@ class TestFence(TestCase):
 
         self.assertIs(fence.check(FakeRequest.fake(), "a"), False)
 
+    def test_check_returns_true_for_missing_version(self):
+        def get_token(_request):
+            return "a"
+
+        def get_version(_instance):
+            return None
+
+        fence = Fence(get_token=get_token, compare=operator.eq, get_version=get_version)
+
+        self.assertIs(fence.check(FakeRequest.fake(), "a"), True)
+
 
 class TestHeaderDateParser(TestCase):
     def test_raises_bad_request_for_header_error(self):
@@ -87,7 +98,7 @@ class TestHeaderDateParser(TestCase):
         self.assertEqual(parsed, dt)
 
 
-class TestDateModifiedGetter(TestCase):
+class TestParseDateModified(TestCase):
     def test_replaces_microsecond(self):
         class A(TimeStampedModel):
             date_modified = datetime.datetime(
@@ -128,3 +139,13 @@ class TestHeaderEtagParser(TestCase):
         with self.assertRaises(BadRequest) as exc_info:
             parser(request)
         self.assertEqual(exc_info.exception.detail.code, "invalid_header")
+
+
+class TestAsSet(TestCase):
+    def test_returns_single_item_set(self):
+        result = as_set(lambda x: x)(1)
+        self.assertIsInstance(result, frozenset)
+        self.assertSetEqual(result, {1})
+
+    def test_passes_through_none(self):
+        self.assertIsNone(as_set(lambda _: None)(1))
