@@ -5,6 +5,7 @@ from unittest import TestCase
 from django.utils.http import http_date
 from rest_framework.exceptions import ValidationError
 
+from bananas.drf.errors import BadRequest
 from bananas.drf.fencing import (
     Fence,
     header_date_parser,
@@ -73,11 +74,11 @@ class TestFence(TestCase):
 
 
 class TestHeaderDateParser(TestCase):
-    def test_reraises_value_error_as_validation_error(self):
+    def test_raises_bad_request_for_header_error(self):
         get_header = header_date_parser("header")
-        with self.assertRaises(ValidationError) as exc_info:
+        with self.assertRaises(BadRequest) as exc_info:
             get_header(FakeRequest.fake())
-        self.assertEqual(exc_info.exception.detail[0].code, "missing_header")
+        self.assertEqual(exc_info.exception.detail.code, "missing_header")
 
     def test_can_get_parsed_header_datetime(self):
         dt = datetime.datetime(2021, 1, 14, 17, 30, 1, tzinfo=datetime.timezone.utc)
@@ -87,11 +88,22 @@ class TestHeaderDateParser(TestCase):
 
 
 class TestDateModifiedGetter(TestCase):
-    def test_can_get_date_modified(self):
+    def test_replaces_microsecond(self):
         class A(TimeStampedModel):
-            date_modified = "value"
+            date_modified = datetime.datetime(
+                2021, 1, 14, 17, 30, 1, 1, tzinfo=datetime.timezone.utc
+            )
 
-        self.assertEqual(parse_date_modified(A()), "value")
+        self.assertEqual(
+            parse_date_modified(A()),
+            datetime.datetime(2021, 1, 14, 17, 30, 1, tzinfo=datetime.timezone.utc),
+        )
+
+    def test_can_get_none(self):
+        class A(TimeStampedModel):
+            date_modified = None
+
+        self.assertIsNone(parse_date_modified(A()))
 
 
 class TestHeaderEtagParser(TestCase):
@@ -103,16 +115,16 @@ class TestHeaderEtagParser(TestCase):
         request = FakeRequest.fake(headers={"If-Match": '"a"'})
         self.assertSetEqual(header_etag_parser("If-Match")(request), {"a"})
 
-    def test_raises_validation_error_for_missing_header(self):
+    def test_raises_bad_request_error_for_missing_header(self):
         request = FakeRequest.fake()
         parser = header_etag_parser("If-Match")
-        with self.assertRaises(ValidationError) as exc_info:
+        with self.assertRaises(BadRequest) as exc_info:
             parser(request)
-        self.assertEqual(exc_info.exception.detail[0].code, "missing_header")
+        self.assertEqual(exc_info.exception.detail.code, "missing_header")
 
-    def test_raises_validation_error_for_invalid_header(self):
+    def test_raises_bad_request_for_invalid_header(self):
         request = FakeRequest.fake(headers={"If-Match": ""})
         parser = header_etag_parser("If-Match")
-        with self.assertRaises(ValidationError) as exc_info:
+        with self.assertRaises(BadRequest) as exc_info:
             parser(request)
-        self.assertEqual(exc_info.exception.detail[0].code, "invalid_header")
+        self.assertEqual(exc_info.exception.detail.code, "invalid_header")
