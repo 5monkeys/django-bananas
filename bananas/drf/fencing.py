@@ -7,6 +7,7 @@ from typing import Callable, FrozenSet, Generic, Optional, TypeVar
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework import mixins
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.request import Request
 from rest_framework.serializers import BaseSerializer, ModelSerializer
 from rest_framework.viewsets import GenericViewSet
@@ -53,7 +54,7 @@ class Fence(abc.ABC, Generic[InstanceType, TokenType]):
         return self._compare(version, self._get_token(request))
 
 
-class FencedUpdateModelMixin(abc.ABC):
+class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
     @property
     @abc.abstractmethod
     def fence(self) -> Fence:
@@ -63,13 +64,12 @@ class FencedUpdateModelMixin(abc.ABC):
         # mypy's advanced self types don't work with super calls so we use an assertion
         # here instead.
         assert isinstance(self, GenericViewSet)
-        assert isinstance(self, mixins.UpdateModelMixin)
         assert isinstance(serializer, ModelSerializer)
         if not self.fence.check(self.request, serializer.instance):
             raise errors.PreconditionFailed(
                 "The resource does not fulfill the given preconditions"
             )
-        super().perform_update(serializer)  # type: ignore[misc]
+        super().perform_update(serializer)
 
 
 def header_date_parser(header: str) -> Callable[[Request], datetime.datetime]:

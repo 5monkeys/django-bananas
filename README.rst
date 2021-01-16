@@ -334,6 +334,7 @@ provides:
 
 
 :get_bool:
+
     returns ``True`` if the environment variable value is any of,
     case-insensitive:
 
@@ -399,3 +400,44 @@ Is useful for getting the content of secrets stored in files. One usecase is `do
 
     >>> secrets.get_secret("hemlis")
     "topsecret"
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+bananas.drf.fencing - Fence DRF views with HTTP conditional headers
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Microframework for guarding DRF views with HTTP conditionals. Built to work well
+in conjunction with ``BananasAdminAPI`` and ``TimeStampedModel``.
+
+``allow_if_unmodified_since``
+=============================
+
+Make a view-set for a ``TimeStampedModel`` only accept updates when
+``If-Unmodified-Since`` specifies a date before the ``date_modified`` of the
+updated instance.
+
+Due to comparing datetime instances, using ``allow_if_unmodified_since``
+requires running Django with timezone support enabled, ``USE_TZ = TRUE``.
+
+.. code-block:: python
+
+    from bananas.drf.fencing import FencedUpdateModelMixin, allow_if_unmodified_since
+
+    class ItemAPI(FencedUpdateModelMixin, GenericViewSet):
+        fence = allow_if_unmodified_since()
+        serializer_class = ItemSerializer
+
+
+``allow_if_match``
+==================
+
+Make a view-set that requires passing a version string in ``If-Match`` and
+rejects requests when the given version does not match the ``version`` attribute
+of the updated instance.
+
+.. code-block:: python
+
+    from bananas.drf.fencing import FencedUpdateModelMixin, allow_if_match
+
+    class ItemAPI(FencedUpdateModelMixin, GenericViewSet):
+        fence = allow_if_match(operator.attrgetter("version"))
+        serializer_class = ItemSerializer

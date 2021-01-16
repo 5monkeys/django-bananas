@@ -20,9 +20,7 @@ class SimpleSerializer(ModelSerializer):
         fields = ("name",)
 
 
-class AllowIfUnmodifiedSinceAPI(
-    FencedUpdateModelMixin, UpdateModelMixin, GenericViewSet
-):
+class AllowIfUnmodifiedSinceAPI(FencedUpdateModelMixin, GenericViewSet):
     fence = allow_if_unmodified_since()
     serializer_class = SimpleSerializer
 
@@ -30,7 +28,7 @@ class AllowIfUnmodifiedSinceAPI(
         return Parent.objects.all()
 
 
-class AllowIfMatchAPI(FencedUpdateModelMixin, UpdateModelMixin, GenericViewSet):
+class AllowIfMatchAPI(FencedUpdateModelMixin, GenericViewSet):
     fence = allow_if_match(operator.attrgetter("version"))
     serializer_class = SimpleSerializer
 
