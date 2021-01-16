@@ -1,6 +1,5 @@
 from os import environ
 
-import django
 from django.conf import global_settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
