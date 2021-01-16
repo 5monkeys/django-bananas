@@ -6,7 +6,6 @@ from typing import Callable, FrozenSet, Generic, Optional, TypeVar
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from rest_framework import mixins
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.request import Request
 from rest_framework.serializers import BaseSerializer, ModelSerializer
