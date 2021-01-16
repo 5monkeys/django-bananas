@@ -23,7 +23,7 @@ class SimpleSerializer(ModelSerializer):
 class AllowIfUnmodifiedSinceAPI(
     FencedUpdateModelMixin, UpdateModelMixin, GenericViewSet
 ):
-    fence = allow_if_unmodified_since
+    fence = allow_if_unmodified_since()
     serializer_class = SimpleSerializer
 
     def get_queryset(self):

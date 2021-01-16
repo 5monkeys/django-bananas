@@ -4,6 +4,8 @@ import operator
 from functools import wraps
 from typing import Callable, FrozenSet, Generic, Optional, TypeVar
 
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from rest_framework import mixins
 from rest_framework.request import Request
 from rest_framework.serializers import BaseSerializer, ModelSerializer
@@ -88,11 +90,18 @@ def parse_date_modified(instance: TimeStampedModel) -> Optional[datetime.datetim
     )
 
 
-allow_if_unmodified_since: Final = Fence[TimeStampedModel, datetime.datetime](
-    get_token=header_date_parser("If-Unmodified-Since"),
-    compare=operator.le,
-    get_version=parse_date_modified,
-)
+def allow_if_unmodified_since() -> Fence[TimeStampedModel, datetime.datetime]:
+    if not settings.USE_TZ:
+        raise ImproperlyConfigured(
+            "{} does not support settings.USE_TZ=False.".format(
+                allow_if_unmodified_since.__name__
+            )
+        )
+    return Fence(
+        get_token=header_date_parser("If-Unmodified-Since"),
+        compare=operator.le,
+        get_version=parse_date_modified,
+    )
 
 
 def header_etag_parser(header: str) -> Callable[[Request], FrozenSet[str]]:

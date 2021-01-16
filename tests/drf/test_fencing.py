@@ -2,11 +2,14 @@ import datetime
 import operator
 from unittest import TestCase
 
+from django.core.exceptions import ImproperlyConfigured
+from django.test import override_settings
 from django.utils.http import http_date
 
 from bananas.drf.errors import BadRequest
 from bananas.drf.fencing import (
     Fence,
+    allow_if_unmodified_since,
     as_set,
     header_date_parser,
     header_etag_parser,
@@ -115,6 +118,13 @@ class TestParseDateModified(TestCase):
             date_modified = None
 
         self.assertIsNone(parse_date_modified(A()))
+
+
+class TestAllowIfUnmodifiedSince(TestCase):
+    @override_settings(USE_TZ=False)
+    def test_raises_improperly_configured_for_naive_django_config(self):
+        with self.assertRaises(ImproperlyConfigured):
+            allow_if_unmodified_since()
 
 
 class TestHeaderEtagParser(TestCase):
