@@ -5,6 +5,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generic,
     Iterable,
     List,
     Optional,
@@ -89,12 +90,16 @@ def parse_int(value: str) -> int:
         return int(value)
 
 
-I = TypeVar("I", covariant=True)
+Q = TypeVar("Q", covariant=True)
 
 
-class _InstantiableIterable(Iterable[I], Protocol[I]):
-    def __init__(self, value: Iterable[I]) -> None:
+class _Instantiable(Protocol[Q]):
+    def __init__(self, value: Iterable[Q]) -> None:
         ...
+
+
+class _InstantiableIterable(Iterable[Q], _Instantiable[Q], Generic[Q]):
+    ...
 
 
 T = TypeVar("T", bound=_InstantiableIterable)
@@ -241,7 +246,7 @@ class EnvironWrapper:
             return parser(value)
         except ValueError:
             log.warning(
-                ("Unable to parse environment variable " "{key}={value}").format(
+                "Unable to parse environment variable {key}={value}".format(
                     key=key, value=value
                 )
             )
