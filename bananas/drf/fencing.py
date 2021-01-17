@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from drf_yasg import openapi
 from drf_yasg.inspectors import SwaggerAutoSchema
-from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.utils import merge_params, swagger_auto_schema
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -66,12 +66,15 @@ class FenceAwareSwaggerAutoSchema(SwaggerAutoSchema):
         self, parameters: List[openapi.Parameter]
     ) -> List[openapi.Parameter]:
         parameters = super().add_manual_parameters(parameters)
-        if (
-            isinstance(self.view, FencedUpdateModelMixin)
-            and self.method in self.update_methods
-        ):
-            return parameters + [self.view.fence.openapi_parameter]
-        return parameters
+        fence_params = (
+            [self.view.fence.openapi_parameter]
+            if (
+                isinstance(self.view, FencedUpdateModelMixin)
+                and self.method in self.update_methods
+            )
+            else []
+        )
+        return merge_params(fence_params, parameters)
 
 
 class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
@@ -129,6 +132,8 @@ def allow_if_unmodified_since() -> Fence[TimeStampedModel, datetime.datetime]:
             in_=openapi.IN_HEADER,
             name="If-Unmodified-Since",
             type=openapi.TYPE_STRING,
+            required=True,
+            description="Time of last edit of the resource known to the client.",
         ),
     )
 
@@ -168,5 +173,10 @@ def allow_if_match(
             in_=openapi.IN_HEADER,
             name="If-Match",
             type=openapi.TYPE_STRING,
+            required=True,
+            description=(
+                "Version or list of versions of the clients representation of the "
+                "resource."
+            ),
         ),
     )
