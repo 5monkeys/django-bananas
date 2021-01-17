@@ -12,9 +12,10 @@ class Command(BaseCommand):
         return self.handle_noargs(**options)
 
     def handle_noargs(self, *args, **options):
-        from bananas import admin
         from django.contrib import admin as django_admin
         from django.contrib.contenttypes.models import ContentType
+
+        from bananas import admin
 
         django_admin.autodiscover()
 
