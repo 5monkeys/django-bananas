@@ -2,12 +2,16 @@ import abc
 import datetime
 import operator
 from functools import wraps
-from typing import Callable, FrozenSet, Generic, Optional, TypeVar
+from typing import Any, Callable, FrozenSet, Generic, List, Optional, TypeVar
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from drf_yasg import openapi
+from drf_yasg.inspectors import SwaggerAutoSchema
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer, ModelSerializer
 from rest_framework.viewsets import GenericViewSet
 from typing_extensions import Final, final
@@ -38,10 +42,12 @@ class Fence(abc.ABC, Generic[InstanceType, TokenType]):
         get_token: Callable[[Request], TokenType],
         compare: Callable[[TokenType, TokenType], bool],
         get_version: Callable[[InstanceType], Optional[TokenType]],
+        openapi_parameter: openapi.Parameter,
     ) -> None:
         self._get_token: Final = get_token
         self._compare: Final = compare
         self._get_version: Final = get_version
+        self.openapi_parameter: Final = openapi_parameter
 
     def check(self, request: Request, instance: InstanceType) -> bool:
         version = self._get_version(instance)
@@ -51,6 +57,21 @@ class Fence(abc.ABC, Generic[InstanceType, TokenType]):
             # if-modified-since other conditionals.
             return True
         return self._compare(version, self._get_token(request))
+
+
+class FenceAwareSwaggerAutoSchema(SwaggerAutoSchema):
+    update_methods = ("PUT", "PATCH")
+
+    def add_manual_parameters(
+        self, parameters: List[openapi.Parameter]
+    ) -> List[openapi.Parameter]:
+        parameters = super().add_manual_parameters(parameters)
+        if (
+            isinstance(self.view, FencedUpdateModelMixin)
+            and self.method in self.update_methods
+        ):
+            return parameters + [self.view.fence.openapi_parameter]
+        return parameters
 
 
 class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
@@ -69,6 +90,10 @@ class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
                 "The resource does not fulfill the given preconditions"
             )
         super().perform_update(serializer)
+
+    @swagger_auto_schema(auto_schema=FenceAwareSwaggerAutoSchema)
+    def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().update(request, *args, **kwargs)
 
 
 def header_date_parser(header: str) -> Callable[[Request], datetime.datetime]:
@@ -100,6 +125,11 @@ def allow_if_unmodified_since() -> Fence[TimeStampedModel, datetime.datetime]:
         get_token=header_date_parser("If-Unmodified-Since"),
         compare=operator.le,
         get_version=parse_date_modified,
+        openapi_parameter=openapi.Parameter(
+            in_=openapi.IN_HEADER,
+            name="If-Unmodified-Since",
+            type=openapi.TYPE_STRING,
+        ),
     )
 
 
@@ -134,4 +164,9 @@ def allow_if_match(
         get_token=header_etag_parser("If-Match"),
         compare=operator.le,
         get_version=as_set(version_getter),
+        openapi_parameter=openapi.Parameter(
+            in_=openapi.IN_HEADER,
+            name="If-Match",
+            type=openapi.TYPE_STRING,
+        ),
     )

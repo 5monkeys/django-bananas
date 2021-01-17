@@ -5,6 +5,7 @@ from unittest import TestCase
 from django.core.exceptions import ImproperlyConfigured
 from django.test import override_settings
 from django.utils.http import http_date
+from drf_yasg import openapi
 
 from bananas.drf.errors import BadRequest
 from bananas.drf.fencing import (
@@ -21,6 +22,12 @@ from .request import FakeRequest
 
 
 class TestFence(TestCase):
+    openapi_parameter = openapi.Parameter(
+        in_=openapi.IN_HEADER,
+        name="foo",
+        type=openapi.TYPE_STRING,
+    )
+
     def test_check_propagates_error_from_get_token(self):
         error = RuntimeError()
 
@@ -30,7 +37,12 @@ class TestFence(TestCase):
         def get_version(_instance):
             return "a"
 
-        fence = Fence(get_token=get_token, compare=operator.eq, get_version=get_version)
+        fence = Fence(
+            get_token=get_token,
+            compare=operator.eq,
+            get_version=get_version,
+            openapi_parameter=self.openapi_parameter,
+        )
 
         with self.assertRaises(RuntimeError) as exc_info:
             fence.check(FakeRequest.fake(), "a")
@@ -46,7 +58,12 @@ class TestFence(TestCase):
         def get_version(_instance):
             raise error
 
-        fence = Fence(get_token=get_token, compare=operator.eq, get_version=get_version)
+        fence = Fence(
+            get_token=get_token,
+            compare=operator.eq,
+            get_version=get_version,
+            openapi_parameter=self.openapi_parameter,
+        )
 
         with self.assertRaises(RuntimeError) as exc_info:
             fence.check(FakeRequest.fake(), "a")
@@ -60,7 +77,12 @@ class TestFence(TestCase):
         def get_version(_instance):
             return "a"
 
-        fence = Fence(get_token=get_token, compare=operator.eq, get_version=get_version)
+        fence = Fence(
+            get_token=get_token,
+            compare=operator.eq,
+            get_version=get_version,
+            openapi_parameter=self.openapi_parameter,
+        )
 
         self.assertIs(fence.check(FakeRequest.fake(), "a"), True)
 
@@ -71,7 +93,12 @@ class TestFence(TestCase):
         def get_version(_instance):
             return "b"
 
-        fence = Fence(get_token=get_token, compare=operator.eq, get_version=get_version)
+        fence = Fence(
+            get_token=get_token,
+            compare=operator.eq,
+            get_version=get_version,
+            openapi_parameter=self.openapi_parameter,
+        )
 
         self.assertIs(fence.check(FakeRequest.fake(), "a"), False)
 
@@ -82,7 +109,12 @@ class TestFence(TestCase):
         def get_version(_instance):
             return None
 
-        fence = Fence(get_token=get_token, compare=operator.eq, get_version=get_version)
+        fence = Fence(
+            get_token=get_token,
+            compare=operator.eq,
+            get_version=get_version,
+            openapi_parameter=self.openapi_parameter,
+        )
 
         self.assertIs(fence.check(FakeRequest.fake(), "a"), True)
 

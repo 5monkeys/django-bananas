@@ -51,9 +51,10 @@ def parse_header_datetime(request: Request, header: str) -> datetime.datetime:
 
 # This can be inlined with a walrus expression but we need to keep support for pre 3.8.
 def clean_tags(tags: Iterable[str]) -> Iterable[str]:
-    for tag in (tag.strip().strip('"') for tag in tags):
-        if tag:
-            yield tag
+    for tag in tags:
+        cleaned = tag.strip().strip('"')
+        if cleaned:
+            yield cleaned
 
 
 def parse_header_etags(request: Request, header: str) -> FrozenSet[str]:
