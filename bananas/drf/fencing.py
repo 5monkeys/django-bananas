@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from drf_yasg import openapi
 from drf_yasg.inspectors import SwaggerAutoSchema
-from drf_yasg.utils import merge_params, swagger_auto_schema
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.request import Request
 from rest_framework.response import Response
