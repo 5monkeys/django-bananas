@@ -133,7 +133,9 @@ def allow_if_unmodified_since() -> Fence[TimeStampedModel, datetime.datetime]:
             name="If-Unmodified-Since",
             type=openapi.TYPE_STRING,
             required=True,
-            description="Time of last edit of the resource known to the client.",
+            description=(
+                "Time of last edit of the client's representation of the resource."
+            ),
         ),
     )
 
