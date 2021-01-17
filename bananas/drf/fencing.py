@@ -66,15 +66,12 @@ class FenceAwareSwaggerAutoSchema(SwaggerAutoSchema):
         self, parameters: List[openapi.Parameter]
     ) -> List[openapi.Parameter]:
         parameters = super().add_manual_parameters(parameters)
-        fence_params = (
-            [self.view.fence.openapi_parameter]
-            if (
-                isinstance(self.view, FencedUpdateModelMixin)
-                and self.method in self.update_methods
-            )
-            else []
-        )
-        return merge_params(fence_params, parameters)
+        if (
+            isinstance(self.view, FencedUpdateModelMixin)
+            and self.method in self.update_methods
+        ):
+            return parameters + [self.view.fence.openapi_parameter]
+        return parameters
 
 
 class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
