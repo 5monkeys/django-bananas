@@ -399,3 +399,43 @@ Is useful for getting the content of secrets stored in files. One usecase is `do
 
     >>> secrets.get_secret("hemlis")
     "topsecret"
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Contributing
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Contributing is welcome in the form of PRs and issues. If you want to add a
+bigger feature or contribute with a large change in current behaviour it's
+always a good idea to start a discussion with an issue before getting started.
+
+New additions will be expected to have 100% test coverage as well as type hints
+and documentation to be considered to be merged.
+
+Development
+===========
+
+Testing and development requirements can be installed using package extras
+``test`` and ``dev`` respectively.
+
+To get started, setup a virtualenv and then install test requirements and run
+tests and checks on Python 3.9/Django 3.1 with:
+
+.. code-block:: bash
+
+    python3 -m pip install -e .[test]
+    TOXENV=py39-django31,checks python3 -m tox
+
+You can install development requirements into your virtualenv and run
+autoformatters with:
+
+.. code-block:: bash
+
+    python3 -m pip install -e .[dev]
+    make format
+
+After installing ``dev`` you can also run tests without tox for rapid iteration
+and select specific tests with ``test`` argument to ``make test``:
+
+.. code-block:: bash
+
+    make test test='tests.test_admin.APITest.test_logout'

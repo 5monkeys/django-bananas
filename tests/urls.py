@@ -2,8 +2,9 @@ from django.conf.urls import include, re_path
 
 from bananas import admin
 from bananas.admin import api
-from .admin_api import FooAPI, HamAPI
+
 from . import separate_api
+from .admin_api import FooAPI, HamAPI
 
 urlpatterns = [re_path(r"^admin/", admin.site.urls)]
 
