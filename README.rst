@@ -16,7 +16,15 @@ django-bananas is on PyPI, so just run:
 
 .. code-block:: bash
 
-    pip install django-bananas
+    python3 -m pip install django-bananas
+
+Using the admin feature requires djangorestframework and drf-yasg and it's
+recommended to install django-bananas with the `drf` extra to keep those in
+sync:
+
+.. code-block:: bash
+
+    python3 -m pip install django-bananas[drf]
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Compatibility
@@ -201,7 +209,8 @@ Custom django admin stylesheet.
  Admin API
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Django admin API for use with django-bananas.js (react admin site)
+Django admin API for use with django-bananas.js (react admin site). This feature
+requires installation with the `drf` extra.
 
 .. code-block:: py
 
@@ -441,3 +450,44 @@ of the updated instance.
     class ItemAPI(FencedUpdateModelMixin, GenericViewSet):
         fence = allow_if_match(operator.attrgetter("version"))
         serializer_class = ItemSerializer
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Contributing
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Contributing is welcome in the form of PRs and issues. If you want to add a
+bigger feature or contribute with a large change in current behaviour it's
+always a good idea to start a discussion with an issue before getting started.
+
+New additions will be expected to have 100% test coverage as well as type hints
+and documentation to be considered to be merged.
+
+Development
+===========
+
+Testing and development requirements can be installed using package extras
+``test`` and ``dev`` respectively. You'll most likely always want to install the
+``drf`` extra when installing ``dev``.
+
+To get started, setup a virtualenv and then install test requirements and run
+tests and checks on Python 3.9/Django 3.1 with:
+
+.. code-block:: bash
+
+    python3 -m pip install -e .[test]
+    TOXENV=py39-django31,checks python3 -m tox
+
+You can install development requirements into your virtualenv and run
+autoformatters with:
+
+.. code-block:: bash
+
+    python3 -m pip install -e .[dev,drf]
+    make format
+
+After installing ``dev`` you can also run tests without tox for rapid iteration
+and select specific tests with ``test`` argument to ``make test``:
+
+.. code-block:: bash
+
+    make test test='tests.test_admin.APITest.test_logout'

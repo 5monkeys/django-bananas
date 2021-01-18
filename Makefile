@@ -24,9 +24,9 @@ coverage-xml:
 
 .PHONY: lint                # runs flake8, black and isort checks
 lint:
-	@flake8 bananas && echo "flake8 OK"
-	black --check bananas
-	isort --check -rc bananas
+	@flake8 bananas tests && echo "flake8 OK"
+	black --check bananas tests
+	isort --check bananas tests
 
 .PHONY: type-check
 type-check:
@@ -78,11 +78,20 @@ all: clean test_all lint type-check
 
 .PHONY: isort
 isort:
-	isort -rc bananas
+	isort bananas tests
 
 .PHONY: black
 black:
-	black bananas
+	black bananas tests
+
+.PHONY: autoflake
+autoflake:
+	autoflake \
+		--recursive \
+		--in-place \
+		--remove-all-unused-imports \
+		--ignore-init-module-imports \
+		bananas tests
 
 .PHONY: format
-format: black isort
+format: black isort autoflake

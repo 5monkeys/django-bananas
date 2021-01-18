@@ -1,12 +1,12 @@
 import os
-
 from test.support import EnvironmentVarGuard
+
 from django.test import TestCase
+
 from bananas import secrets
 
 
 class SecretsTest(TestCase):
-
     def setUp(self):
         secrets_dir = os.path.join(os.path.dirname(__file__), "files")
         self.env = EnvironmentVarGuard()

@@ -1,17 +1,16 @@
 import operator
 
 from django.urls import include, re_path
-from rest_framework.mixins import UpdateModelMixin
 from rest_framework.routers import DefaultRouter
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import GenericViewSet
-from tests.models import Parent
 
 from bananas.drf.fencing import (
     FencedUpdateModelMixin,
     allow_if_match,
     allow_if_unmodified_since,
 )
+from tests.models import Parent
 
 
 class SimpleSerializer(ModelSerializer):

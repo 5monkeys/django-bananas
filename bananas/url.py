@@ -27,8 +27,10 @@ Currently supported engines are:
 You can add your own by running ``register(scheme, module_name)`` before
 parsing.
 """
-from collections import namedtuple
+from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Tuple, Union
 from urllib.parse import parse_qs, unquote_plus, urlsplit
+
+from typing_extensions import Final
 
 
 class Alias:
@@ -36,14 +38,15 @@ class Alias:
     An alias object used to resolve aliases for engine names.
     """
 
-    def __init__(self, target):
+    def __init__(self, target: str) -> None:
         self.target = target
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<Alias to "{}">'.format(self.target)
 
 
-ENGINE_MAPPING = {
+_EngineReference = Union[Alias, str, List[Union[str, Dict[str, str]]]]
+ENGINE_MAPPING: Final[Dict[str, _EngineReference]] = {
     "pgsql": Alias("postgresql"),
     "postgres": Alias("postgresql"),
     "postgresql": "django.db.backends.postgresql_psycopg2",
@@ -58,7 +61,10 @@ ENGINE_MAPPING = {
 }
 
 
-def register_engine(scheme, module):
+def register_engine(
+    scheme: str,
+    module: Union[Alias, str, List[Union[str, Dict[str, str]]]],
+) -> None:
     """
     Register a new engine.
 
@@ -69,7 +75,9 @@ def register_engine(scheme, module):
     ENGINE_MAPPING.update({scheme: module})
 
 
-def resolve(cursor, key):
+def resolve(
+    cursor: Mapping[str, _EngineReference], key: str
+) -> Union[List[Union[str, Dict[str, str]]], str]:
     """
     Get engine or raise exception, resolves Alias-instances to a sibling target.
 
@@ -84,14 +92,18 @@ def resolve(cursor, key):
         if isinstance(result, Alias):
             result = cursor[result.target]
 
+        assert not isinstance(
+            result, Alias
+        ), "Multiple levels of aliases are not supported"
+
         return result
     except KeyError:
         raise KeyError("No matches for engine %s" % key)
 
 
-def get_engine(scheme):
+def get_engine(scheme: str) -> str:
     """
-    Perform a lookup in _ENGINE_MAPPING using engine_string.
+    Perform a lookup in ENGINE_MAPPING using engine_string.
 
     :param scheme: '+'-separated string Maximum of 2 parts,
     i.e "postgres+psycopg" is OK, "postgres+psycopg2+postgis" is NOT OK.
@@ -101,6 +113,8 @@ def get_engine(scheme):
     first, rest = path[0], path[1:]
 
     second = rest[0] if rest else None
+
+    engine: Union[str, List[Union[str, Dict[str, str]]], Dict[str, str]]
 
     engine = resolve(ENGINE_MAPPING, first)
 
@@ -121,6 +135,10 @@ def get_engine(scheme):
             "configuration is invalid: %r" % ENGINE_MAPPING
         )
 
+    assert isinstance(
+        extra, Mapping
+    ), "The second element in an engine configuration must be a mapping"
+
     # Get second-level engine
     if second is not None:
         engine = resolve(extra, second)
@@ -134,13 +152,18 @@ def get_engine(scheme):
     return engine
 
 
-DatabaseInfo = namedtuple(
-    "DatabaseInfo",
-    ["engine", "name", "schema", "user", "password", "host", "port", "params"],
-)
+class DatabaseInfo(NamedTuple):
+    engine: str
+    name: Optional[str]
+    schema: Optional[str]
+    user: Optional[str]
+    password: Optional[str]
+    host: Optional[str]
+    port: Optional[int]
+    params: Dict[str, str]
 
 
-def parse_path(path):
+def parse_path(path: str) -> Tuple[Optional[str], Optional[str]]:
     """
     Get database name and database schema from path.
 
@@ -159,7 +182,7 @@ def parse_path(path):
     return database, schema
 
 
-def database_conf_from_url(url):
+def database_conf_from_url(url: str) -> Dict[str, Any]:
     """
     Return a django-style database configuration based on ``url``.
 
@@ -183,7 +206,7 @@ def database_conf_from_url(url):
     return {key.upper(): val for key, val in parse_database_url(url)._asdict().items()}
 
 
-def parse_database_url(url):
+def parse_database_url(url: str) -> DatabaseInfo:
     """
     Parse a database URL and return a DatabaseInfo named tuple.
 
