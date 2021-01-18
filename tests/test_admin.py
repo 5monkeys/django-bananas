@@ -1,11 +1,9 @@
 from contextlib import contextmanager
 from functools import wraps
-from unittest import skipIf
 
-import django
 from django.contrib.auth.models import AnonymousUser, Group, Permission, User
 from django.core.management import call_command
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
 
 from bananas import admin
