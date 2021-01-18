@@ -1,14 +1,36 @@
 import logging
 from functools import partial
 from os import environ
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    Iterable,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from django.conf import global_settings
+from typing_extensions import Final, Protocol, overload
 
 __all__ = ["env", "parse_bool", "parse_int", "parse_tuple", "parse_list", "parse_set"]
 
+
 log = logging.getLogger(__name__)
 
-UNDEFINED = object()
+
+class Undefined:
+    ...
+
+
+UNDEFINED: Final = Undefined()
 
 UNSUPPORTED_ENV_SETTINGS = (
     "ADMINS",
@@ -19,7 +41,7 @@ UNSUPPORTED_ENV_SETTINGS = (
     "TEMPLATES",
 )
 
-SETTINGS_TYPES = {
+SETTINGS_TYPES: Dict[str, type] = {
     "LANGUAGE_COOKIE_AGE": int,
     "EMAIL_TIMEOUT": int,
     "FILE_UPLOAD_PERMISSIONS": int,
@@ -27,7 +49,7 @@ SETTINGS_TYPES = {
 }
 
 
-def parse_str(value):
+def parse_str(value: str) -> str:
     """
     Clean string.
 
@@ -37,7 +59,7 @@ def parse_str(value):
     return value.strip()
 
 
-def parse_bool(value):
+def parse_bool(value: str) -> bool:
     """
     Parse string to bool.
 
@@ -54,7 +76,7 @@ def parse_bool(value):
         raise ValueError('Unable to parse boolean value "{}"'.format(value))
 
 
-def parse_int(value):
+def parse_int(value: str) -> int:
     """
     Parse numeric string to int. Supports oct formatted string.
 
@@ -68,7 +90,22 @@ def parse_int(value):
         return int(value)
 
 
-def parse_iterable(typ, value):
+Q = TypeVar("Q", covariant=True)
+
+
+class _Instantiable(Protocol[Q]):
+    def __init__(self, value: Iterable[Q]) -> None:
+        ...
+
+
+class _InstantiableIterable(Iterable[Q], _Instantiable[Q], Generic[Q]):
+    ...
+
+
+T = TypeVar("T", bound=_InstantiableIterable)
+
+
+def parse_iterable(typ: Type[T], value: str) -> T:
     """
     Parse comma separated string into typed iterable.
 
@@ -79,12 +116,37 @@ def parse_iterable(typ, value):
     return typ(parse_str(v) for v in value.split(","))
 
 
-parse_tuple = partial(parse_iterable, tuple)
-parse_list = partial(parse_iterable, list)
-parse_set = partial(parse_iterable, set)
+parse_tuple = cast(Callable[[str], Tuple[str, ...]], partial(parse_iterable, tuple))
+parse_list = cast(Callable[[str], List[str]], partial(parse_iterable, list))
+parse_set = cast(Callable[[str], Set[str]], partial(parse_iterable, set))
 
 
-def get_parser(typ):
+Builtin = Union[str, bool, int]
+B = TypeVar("B", bound=Builtin)
+P = TypeVar("P", bound=Union[Builtin, tuple, list, set])
+
+
+@overload
+def get_parser(typ: Type[B]) -> Callable[[str], B]:
+    ...
+
+
+@overload
+def get_parser(typ: Type[tuple]) -> Callable[[str], Tuple[str, ...]]:
+    ...
+
+
+@overload
+def get_parser(typ: Type[list]) -> Callable[[str], List[str]]:
+    ...
+
+
+@overload
+def get_parser(typ: Type[set]) -> Callable[[str], Set[str]]:
+    ...
+
+
+def get_parser(typ: Type[P]) -> Callable[[str], P]:
     """
     Return appropriate parser for given type.
 
@@ -92,19 +154,22 @@ def get_parser(typ):
     :return function: Parser
     """
     try:
-        return {
-            str: parse_str,
-            bool: parse_bool,
-            int: parse_int,
-            tuple: parse_tuple,
-            list: parse_list,
-            set: parse_set,
-        }[typ]
+        return cast(
+            Callable[[str], P],
+            {
+                str: parse_str,
+                bool: parse_bool,
+                int: parse_int,
+                tuple: parse_tuple,
+                list: parse_list,
+                set: parse_set,
+            }[typ],
+        )
     except KeyError:
         raise NotImplementedError("Unsupported setting type: %r", typ)
 
 
-def get_settings():
+def get_settings() -> Dict[str, Any]:
     """
     Get and parse prefixed django settings from env.
 
@@ -117,6 +182,7 @@ def get_settings():
     """
     settings = {}
     prefix = environ.get("DJANGO_SETTINGS_PREFIX", "DJANGO_")
+    parse: Callable[[str], object]
 
     for key, value in environ.items():
         _, _, key = key.partition(prefix)
@@ -144,6 +210,9 @@ def get_settings():
     return settings
 
 
+S = TypeVar("S")
+
+
 class EnvironWrapper:
     """
     Wrapper around os environ with type conversion support.
@@ -154,36 +223,94 @@ class EnvironWrapper:
     __setitem__ = environ.__setitem__
     __contains__ = environ.__contains__
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> object:
         return getattr(environ, item)
 
-    def parse(self, parser, key, default=None):
-        value = environ.get(key, UNDEFINED)
-        if value is UNDEFINED:
+    get: Callable[..., str]
+
+    @overload
+    def parse(self, parser: Callable[[str], S], key: str, default: None) -> Optional[S]:
+        ...
+
+    @overload
+    def parse(self, parser: Callable[[str], S], key: str, default: S) -> S:
+        ...
+
+    def parse(
+        self, parser: Callable[[str], S], key: str, default: Optional[S] = None
+    ) -> Optional[S]:
+        value: Union[str, Undefined] = environ.get(key, UNDEFINED)
+        if isinstance(value, Undefined):
             return default
         try:
             return parser(value)
         except ValueError:
             log.warning(
-                ("Unable to parse environment variable " "{key}={value}").format(
+                "Unable to parse environment variable {key}={value}".format(
                     key=key, value=value
                 )
             )
             return default
 
-    def get_bool(self, key, default=None):
+    @overload
+    def get_bool(self, key: str) -> Optional[bool]:
+        ...
+
+    @overload
+    def get_bool(self, key: str, default: bool) -> bool:
+        ...
+
+    def get_bool(self, key: str, default: Optional[bool] = None) -> Optional[bool]:
         return self.parse(parse_bool, key, default=default)
 
-    def get_int(self, key, default=None):
+    @overload
+    def get_int(self, key: str) -> Optional[int]:
+        ...
+
+    @overload
+    def get_int(self, key: str, default: int) -> int:
+        ...
+
+    def get_int(self, key: str, default: Optional[int] = None) -> Optional[int]:
         return self.parse(parse_int, key, default=default)
 
-    def get_tuple(self, key, default=None):
+    @overload
+    def get_tuple(self, key: str) -> Optional[Tuple[str, ...]]:
+        ...
+
+    @overload
+    def get_tuple(self, key: str, default: Tuple[str, ...]) -> Tuple[str, ...]:
+        ...
+
+    def get_tuple(
+        self, key: str, default: Optional[Tuple[str, ...]] = None
+    ) -> Optional[Tuple[str, ...]]:
         return self.parse(parse_tuple, key, default=default)
 
-    def get_list(self, key, default=None):
+    @overload
+    def get_list(self, key: str) -> Optional[List[str]]:
+        ...
+
+    @overload
+    def get_list(self, key: str, default: List[str]) -> List[str]:
+        ...
+
+    def get_list(
+        self, key: str, default: Optional[List[str]] = None
+    ) -> Optional[List[str]]:
         return self.parse(parse_list, key, default=default)
 
-    def get_set(self, key, default=None):
+    @overload
+    def get_set(self, key: str) -> Optional[Set[str]]:
+        ...
+
+    @overload
+    def get_set(self, key: str, default: Set[str]) -> Set[str]:
+        ...
+
+    def get_set(
+        self, key: str, default: Optional[Set[str]] = None
+    ) -> Optional[Set[str]]:
         return self.parse(parse_set, key, default=default)
 
 

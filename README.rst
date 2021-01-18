@@ -16,7 +16,15 @@ django-bananas is on PyPI, so just run:
 
 .. code-block:: bash
 
-    pip install django-bananas
+    python3 -m pip install django-bananas
+
+Using the admin feature requires djangorestframework and drf-yasg and it's
+recommended to install django-bananas with the `drf` extra to keep those in
+sync:
+
+.. code-block:: bash
+
+    python3 -m pip install django-bananas[drf]
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Compatibility
@@ -201,7 +209,8 @@ Custom django admin stylesheet.
  Admin API
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Django admin API for use with django-bananas.js (react admin site)
+Django admin API for use with django-bananas.js (react admin site). This feature
+requires installation with the `drf` extra.
 
 .. code-block:: py
 
@@ -415,7 +424,8 @@ Development
 ===========
 
 Testing and development requirements can be installed using package extras
-``test`` and ``dev`` respectively.
+``test`` and ``dev`` respectively. You'll most likely always want to install the
+``drf`` extra when installing ``dev``.
 
 To get started, setup a virtualenv and then install test requirements and run
 tests and checks on Python 3.9/Django 3.1 with:
@@ -430,7 +440,7 @@ autoformatters with:
 
 .. code-block:: bash
 
-    python3 -m pip install -e .[dev]
+    python3 -m pip install -e .[dev,drf]
     make format
 
 After installing ``dev`` you can also run tests without tox for rapid iteration

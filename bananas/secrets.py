@@ -1,11 +1,24 @@
 import os
+from typing import Optional
+
+from typing_extensions import Final, overload
 
 from .environment import env
 
-BANANAS_SECRETS_DIR_ENV_KEY = "BANANAS_SECRETS_DIR"
+BANANAS_SECRETS_DIR_ENV_KEY: Final = "BANANAS_SECRETS_DIR"
 
 
-def get_secret(secret_name, default=None):
+@overload
+def get_secret(secret_name: str, default: str) -> str:
+    ...
+
+
+@overload
+def get_secret(secret_name: str) -> Optional[str]:
+    ...
+
+
+def get_secret(secret_name: str, default: Optional[str] = None) -> Optional[str]:
     """
     Gets contents of secret file
 
@@ -22,7 +35,7 @@ def get_secret(secret_name, default=None):
         return default
 
 
-def get_secrets_dir():
+def get_secrets_dir() -> str:
     """
     Returns path to secrets directory
     """
