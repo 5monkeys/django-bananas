@@ -2,7 +2,7 @@ import abc
 import datetime
 import operator
 from functools import wraps
-from typing import Any, Callable, FrozenSet, Generic, List, Optional, TypeVar
+from typing import Any, Callable, FrozenSet, Generic, List, NoReturn, Optional, TypeVar
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -31,6 +31,7 @@ __all__ = (
     "allow_if_match",
 )
 
+
 TokenType = TypeVar("TokenType")
 InstanceType = TypeVar("InstanceType")
 
@@ -43,10 +44,14 @@ class Fence(abc.ABC, Generic[InstanceType, TokenType]):
         compare: Callable[[TokenType, TokenType], bool],
         get_version: Callable[[InstanceType], Optional[TokenType]],
         openapi_parameter: openapi.Parameter,
+        rejection: Exception = errors.PreconditionFailed(
+            "The resource does not fulfill the given preconditions"
+        ),
     ) -> None:
         self._get_token: Final = get_token
         self._compare: Final = compare
         self._get_version: Final = get_version
+        self._rejection: Final = rejection
         self.openapi_parameter: Final = openapi_parameter
 
     def check(self, request: Request, instance: InstanceType) -> bool:
@@ -57,6 +62,13 @@ class Fence(abc.ABC, Generic[InstanceType, TokenType]):
             # if-modified-since other conditionals.
             return True
         return self._compare(version, self._get_token(request))
+
+    def reject(self) -> NoReturn:
+        raise self._rejection
+
+    def validate(self, request: Request, instance: InstanceType) -> None:
+        if not self.check(request, instance):
+            self.reject()
 
 
 class FenceAwareSwaggerAutoSchema(SwaggerAutoSchema):
@@ -85,10 +97,7 @@ class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
         # here instead.
         assert isinstance(self, GenericViewSet)
         assert isinstance(serializer, ModelSerializer)
-        if not self.fence.check(self.request, serializer.instance):
-            raise errors.PreconditionFailed(
-                "The resource does not fulfill the given preconditions"
-            )
+        self.fence.validate(self.request, serializer.instance)
         super().perform_update(serializer)
 
     @swagger_auto_schema(auto_schema=FenceAwareSwaggerAutoSchema)
@@ -131,7 +140,8 @@ def allow_if_unmodified_since() -> Fence[TimeStampedModel, datetime.datetime]:
             type=openapi.TYPE_STRING,
             required=True,
             description=(
-                "Time of last edit of the client's representation of the resource."
+                "Time of last edit of the client's representation of the resource in "
+                "RFC7231 format."
             ),
         ),
     )
