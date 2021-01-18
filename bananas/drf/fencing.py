@@ -7,7 +7,6 @@ from typing import Any, Callable, FrozenSet, Generic, List, NoReturn, Optional, 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from drf_yasg import openapi
-from drf_yasg.inspectors import SwaggerAutoSchema
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.request import Request
@@ -16,6 +15,7 @@ from rest_framework.serializers import BaseSerializer, ModelSerializer
 from rest_framework.viewsets import GenericViewSet
 from typing_extensions import Final, final
 
+from bananas.admin.api.schemas.yasg import BananasSwaggerSchema
 from bananas.models import TimeStampedModel
 
 from . import errors
@@ -71,7 +71,7 @@ class Fence(abc.ABC, Generic[InstanceType, TokenType]):
             self.reject()
 
 
-class FenceAwareSwaggerAutoSchema(SwaggerAutoSchema):
+class FenceAwareSwaggerAutoSchema(BananasSwaggerSchema):
     update_methods = ("PUT", "PATCH")
 
     def add_manual_parameters(
@@ -103,6 +103,10 @@ class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
     @swagger_auto_schema(auto_schema=FenceAwareSwaggerAutoSchema)
     def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().update(request, *args, **kwargs)
+
+    @swagger_auto_schema(auto_schema=FenceAwareSwaggerAutoSchema)
+    def partial_update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().partial_update(request, *args, **kwargs)
 
 
 def header_date_parser(header: str) -> Callable[[Request], datetime.datetime]:
