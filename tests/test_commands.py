@@ -8,7 +8,7 @@ class CommandTests(TestCase):
     def test_show_urls(self):
         urls = show_urls.collect_urls()
 
-        admin_api_url_count = 44
+        admin_api_url_count = 50
         self.assertEqual(len(urls), admin_api_url_count)
 
         class FakeSys:

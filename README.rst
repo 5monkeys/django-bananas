@@ -18,9 +18,9 @@ django-bananas is on PyPI, so just run:
 
     python3 -m pip install django-bananas
 
-Using the admin feature requires djangorestframework and drf-yasg and it's
-recommended to install django-bananas with the `drf` extra to keep those in
-sync:
+Using DRF specific features like Bananas Admin and fencing requires
+djangorestframework and drf-yasg and it's recommended to install django-bananas
+with the ``drf`` extra to keep those in sync:
 
 .. code-block:: bash
 
@@ -210,7 +210,7 @@ Custom django admin stylesheet.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Django admin API for use with django-bananas.js (react admin site). This feature
-requires installation with the `drf` extra.
+requires installation with the ``drf`` extra.
 
 .. code-block:: py
 
@@ -343,6 +343,7 @@ provides:
 
 
 :get_bool:
+
     returns ``True`` if the environment variable value is any of,
     case-insensitive:
 
@@ -408,6 +409,85 @@ Is useful for getting the content of secrets stored in files. One usecase is `do
 
     >>> secrets.get_secret("hemlis")
     "topsecret"
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+bananas.drf.fencing - Fence DRF views with HTTP conditional headers
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Building blocks for composing HTTP conditionals to guard DRF views. Built to
+work well in conjunction with ``BananasAdminAPI`` and ``TimeStampedModel``. This
+feature requires installation with the ``drf`` extra.
+
+Fences add a header parameter to the exposed OpenAPI schema if you're using
+drf-yasg.
+
+``allow_if_unmodified_since``
+=============================
+
+Make a view-set for a ``TimeStampedModel`` only accept updates when
+``If-Unmodified-Since`` specifies a date before the ``date_modified`` of the
+updated instance.
+
+Due to comparing datetime instances, using ``allow_if_unmodified_since``
+requires running Django with timezone support enabled, ``USE_TZ = TRUE``.
+
+.. code-block:: python
+
+    from bananas.drf.fencing import FencedUpdateModelMixin, allow_if_unmodified_since
+
+    class ItemAPI(FencedUpdateModelMixin, GenericViewSet):
+        fence = allow_if_unmodified_since()
+        serializer_class = ItemSerializer
+
+``allow_if_match``
+==================
+
+Make a view-set that requires passing a version string in ``If-Match`` and
+rejects requests when the given version does not match the ``version`` attribute
+of the updated instance.
+
+.. code-block:: python
+
+    from bananas.drf.fencing import FencedUpdateModelMixin, allow_if_match
+
+    class ItemAPI(FencedUpdateModelMixin, GenericViewSet):
+        fence = allow_if_match(operator.attrgetter("version"))
+        serializer_class = ItemSerializer
+
+``Fence``
+=========
+
+Example implementing a fence for ``If-Modified-Since``:
+
+.. code-block:: python
+
+    import operator
+    from drf_yasg import openapi
+    from rest_framework import status
+    from rest_framework.exceptions import APIException
+    from bananas.drf.fencing import Fence, header_date_parser, parse_date_modified
+
+    class NotModified(APIException):
+        status_code = status.HTTP_304_NOT_MODIFIED
+        default_detail = "An HTTP precondition failed"
+        default_code = "not_modified"
+
+    allow_if_not_modified_since = Fence(
+        get_token=header_date_parser("If-Modified-Since"),
+        compare=operator.gt,
+        get_version=parse_date_modified,
+        openapi_parameter=openapi.Parameter(
+            in_=openapi.IN_HEADER,
+            name="If-Modified-Since",
+            type=openapi.TYPE_STRING,
+            required=True,
+            description=(
+                "Time of last edit of the client's representation of the resource in "
+                "RFC7231 format."
+            ),
+        ),
+        rejection=NotModified("The resource is unmodified"),
+    )
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Contributing

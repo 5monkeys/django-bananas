@@ -6,7 +6,7 @@ help:
 
 .PHONY: test		# runs tests
 test:
-	python -X dev -Wd -m coverage run runtests.py
+	python -X dev -Wd -m coverage run runtests.py $(test)
 
 .PHONY: test_all		# runs tests using detox, combines coverage and reports it
 test_all:

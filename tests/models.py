@@ -23,6 +23,10 @@ class Parent(TimeStampedModel):
     def attribute_error(self):
         return getattr(object(), "missing_attribute")
 
+    @property
+    def version(self) -> str:
+        return str(self.pk) + ":" + str(self.date_modified)
+
 
 class Child(TimeStampedModel):
     name = models.CharField(max_length=255)

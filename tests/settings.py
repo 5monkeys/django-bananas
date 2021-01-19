@@ -50,3 +50,5 @@ REST_FRAMEWORK = {
     "DEFAULT_VERSION": 1.0,
     "ALLOWED_VERSIONS": [1.0],
 }
+
+USE_TZ = True
