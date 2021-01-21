@@ -209,8 +209,9 @@ Custom django admin stylesheet.
  Admin API
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Django admin API for use with django-bananas.js (react admin site). This feature
-requires installation with the ``drf`` extra.
+Django admin API for use with `django-bananas.js
+<https://github.com/5monkeys/django-bananas.js/>`_ (react admin site). This
+feature requires installation with the ``drf`` extra.
 
 .. code-block:: py
 
