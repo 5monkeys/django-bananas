@@ -98,7 +98,9 @@ class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
         assert isinstance(self, GenericViewSet)
         assert isinstance(serializer, ModelSerializer)
         self.fence.validate(self.request, serializer.instance)
-        super().perform_update(serializer)
+        # This ignore is due to this issue in restframework-stubs:
+        # https://github.com/typeddjango/djangorestframework-stubs/issues/132
+        super().perform_update(serializer)  # type: ignore[misc]
 
     @swagger_auto_schema(auto_schema=FenceAwareSwaggerAutoSchema)
     def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
