@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from bananas.admin.api.schemas import schema, schema_serializer_method
 from bananas.admin.api.schemas.decorators import tags
 from bananas.admin.api.views import BananasAPI
-from bananas.compat import reverse
+from django.urls import reverse
 from bananas.lazy import lazy_title
 
 
