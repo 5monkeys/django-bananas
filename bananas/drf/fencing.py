@@ -6,6 +6,7 @@ from typing import Any, Callable, FrozenSet, Generic, List, NoReturn, Optional, 
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import QuerySet
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.mixins import UpdateModelMixin
@@ -92,15 +93,21 @@ class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
     def fence(self) -> Fence:
         ...
 
+    # django-restframework uses an "advanced self-type" on self in
+    # perform_update() which subtly breaks subclassing. We try to remedy this by
+    # using an abstract method instead.
+    # See https://github.com/typeddjango/djangorestframework-stubs/issues/132
+    @abc.abstractmethod
+    def get_queryset(self) -> QuerySet:
+        ...
+
     def perform_update(self, serializer: BaseSerializer) -> None:
         # mypy's advanced self types don't work with super calls so we use an assertion
         # here instead.
         assert isinstance(self, GenericViewSet)
         assert isinstance(serializer, ModelSerializer)
         self.fence.validate(self.request, serializer.instance)
-        # This ignore is due to this issue in restframework-stubs:
-        # https://github.com/typeddjango/djangorestframework-stubs/issues/132
-        super().perform_update(serializer)  # type: ignore[misc]
+        super().perform_update(serializer)
 
     @swagger_auto_schema(auto_schema=FenceAwareSwaggerAutoSchema)
     def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
