@@ -10,7 +10,6 @@ from typing import (
     List,
     NoReturn,
     Optional,
-    Protocol,
     TypeVar,
     cast,
 )
@@ -25,7 +24,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer, ModelSerializer
 from rest_framework.viewsets import GenericViewSet
-from typing_extensions import Final, final
+from typing_extensions import Final, Protocol, final
 
 from bananas.admin.api.schemas.yasg import BananasSwaggerSchema
 from bananas.models import TimeStampedModel
