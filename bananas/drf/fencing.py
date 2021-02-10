@@ -2,11 +2,22 @@ import abc
 import datetime
 import operator
 from functools import wraps
-from typing import Any, Callable, FrozenSet, Generic, List, NoReturn, Optional, TypeVar
+from typing import (
+    Any,
+    Callable,
+    FrozenSet,
+    Generic,
+    List,
+    NoReturn,
+    Optional,
+    Protocol,
+    TypeVar,
+    cast,
+)
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import QuerySet
+from django.db.models import Model, QuerySet
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.mixins import UpdateModelMixin
@@ -87,6 +98,14 @@ class FenceAwareSwaggerAutoSchema(BananasSwaggerSchema):
         return parameters
 
 
+_MT_co = TypeVar("_MT_co", bound=Model, covariant=True)
+
+
+class UsesQuerySet(Protocol[_MT_co]):
+    def get_queryset(self) -> "QuerySet[_MT_co]":
+        ...
+
+
 class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
     @property
     @abc.abstractmethod
@@ -95,11 +114,11 @@ class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
 
     # django-restframework uses an "advanced self-type" on self in
     # perform_update() which subtly breaks subclassing. We try to remedy this by
-    # using an abstract method instead.
+    # implementing get_queryset() so that we fulfill the self-type in the
+    # overridden method.
     # See https://github.com/typeddjango/djangorestframework-stubs/issues/132
-    @abc.abstractmethod
-    def get_queryset(self) -> QuerySet:
-        ...
+    def get_queryset(self: UsesQuerySet[_MT_co]) -> "QuerySet[_MT_co]":
+        return cast(UsesQuerySet[_MT_co], super()).get_queryset()
 
     def perform_update(self, serializer: BaseSerializer) -> None:
         # mypy's advanced self types don't work with super calls so we use an assertion
