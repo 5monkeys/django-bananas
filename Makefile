@@ -13,6 +13,10 @@ test_all:
 	detox
 	make coverage
 
+.PHONY: test-types      # runs pytest-mypy-plugins to test exported types
+test-types:
+	pytest --mypy-ini-file=setup.cfg tests/*.yaml
+
 .PHONY: coverage		# combines coverage and reports it
 coverage:
 	coverage combine || true

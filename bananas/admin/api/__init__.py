@@ -1,1 +1,3 @@
-from .router import register  # noqa
+from .router import register
+
+__all__ = ("register",)

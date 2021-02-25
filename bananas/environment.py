@@ -211,6 +211,7 @@ def get_settings() -> Dict[str, Any]:
 
 
 S = TypeVar("S")
+U = TypeVar("U")
 
 
 class EnvironWrapper:
@@ -253,64 +254,58 @@ class EnvironWrapper:
             return default
 
     @overload
-    def get_bool(self, key: str) -> Optional[bool]:
+    def get_bool(self, key: str, default: U) -> Union[bool, U]:
         ...
 
     @overload
-    def get_bool(self, key: str, default: bool) -> bool:
+    def get_bool(self, key: str, default: None = None) -> Optional[bool]:
         ...
 
-    def get_bool(self, key: str, default: Optional[bool] = None) -> Optional[bool]:
+    def get_bool(self, key: str, default: object = None) -> object:
         return self.parse(parse_bool, key, default=default)
 
     @overload
-    def get_int(self, key: str) -> Optional[int]:
+    def get_int(self, key: str, default: U) -> Union[int, U]:
         ...
 
     @overload
-    def get_int(self, key: str, default: int) -> int:
+    def get_int(self, key: str, default: None = None) -> Optional[int]:
         ...
 
-    def get_int(self, key: str, default: Optional[int] = None) -> Optional[int]:
+    def get_int(self, key: str, default: object = None) -> object:
         return self.parse(parse_int, key, default=default)
 
     @overload
-    def get_tuple(self, key: str) -> Optional[Tuple[str, ...]]:
+    def get_tuple(self, key: str, default: U) -> Union[Tuple[str, ...], U]:
         ...
 
     @overload
-    def get_tuple(self, key: str, default: Tuple[str, ...]) -> Tuple[str, ...]:
+    def get_tuple(self, key: str, default: None = None) -> Optional[Tuple[str, ...]]:
         ...
 
-    def get_tuple(
-        self, key: str, default: Optional[Tuple[str, ...]] = None
-    ) -> Optional[Tuple[str, ...]]:
+    def get_tuple(self, key: str, default: object = None) -> object:
         return self.parse(parse_tuple, key, default=default)
 
     @overload
-    def get_list(self, key: str) -> Optional[List[str]]:
+    def get_list(self, key: str, default: U) -> Union[List[str], U]:
         ...
 
     @overload
-    def get_list(self, key: str, default: List[str]) -> List[str]:
+    def get_list(self, key: str, default: None = None) -> Optional[List[str]]:
         ...
 
-    def get_list(
-        self, key: str, default: Optional[List[str]] = None
-    ) -> Optional[List[str]]:
+    def get_list(self, key: str, default: object = None) -> object:
         return self.parse(parse_list, key, default=default)
 
     @overload
-    def get_set(self, key: str) -> Optional[Set[str]]:
+    def get_set(self, key: str, default: U) -> Union[Set[str], U]:
         ...
 
     @overload
-    def get_set(self, key: str, default: Set[str]) -> Set[str]:
+    def get_set(self, key: str, default: None = None) -> Optional[Set[str]]:
         ...
 
-    def get_set(
-        self, key: str, default: Optional[Set[str]] = None
-    ) -> Optional[Set[str]]:
+    def get_set(self, key: str, default: object = None) -> object:
         return self.parse(parse_set, key, default=default)
 
 
