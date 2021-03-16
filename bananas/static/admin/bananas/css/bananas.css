@@ -647,6 +647,7 @@ a.active.selector-clearall:hover {
   width: auto;
   position: static;
   display: block;
+  margin-left: 0px;
   /*margin-top: 15px;*/
   padding-top: 15px;
   /*background: transparent;*/
@@ -712,6 +713,10 @@ a.active.selector-clearall:hover {
   color: #fff;
 }
 
+#toolbar {
+  padding: 0;
+}
+
 body.popup #changelist #toolbar {
   margin-bottom: 0;
 }
@@ -738,10 +743,6 @@ body:not(.popup) #changelist #toolbar {
   padding: 0;
 }
 
-.change-list #content-main {
-  padding-top: 45px /* fallback */;
-  padding-top: var(--searchbar-height);
-}
 
 #changelist #changelist-filter {
   display: none;
@@ -753,7 +754,6 @@ body:not(.popup) #changelist #toolbar {
 }
 
 #changelist .actions {
-  position: absolute;
   top: calc(-1 * 45px) /* fallback */;
   top: calc(-1 * var(--searchbar-height));
   left: 0;
