@@ -1,7 +1,16 @@
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAdminUser
+from typing import Optional, Sequence, Type, Union
+
+from drf_yasg.inspectors.view import SwaggerAutoSchema
+from rest_framework.authentication import BaseAuthentication, SessionAuthentication
+from rest_framework.permissions import (
+    BasePermission,
+    IsAdminUser,
+    OperandHolder,
+    SingleOperandHolder,
+)
 from rest_framework.reverse import reverse
 from rest_framework.utils import formatting
+from rest_framework.versioning import BaseVersioning
 
 from bananas.models import ModelDict
 
@@ -10,13 +19,17 @@ from .versioning import BananasVersioning
 
 UNDEFINED = object()
 
+_PermissionClass = Union[Type[BasePermission], OperandHolder, SingleOperandHolder]
+
 
 class BananasAPI:
 
-    versioning_class = BananasVersioning
-    authentication_classes = (SessionAuthentication,)
-    permission_classes = (IsAdminUser,)
-    swagger_schema = BananasSchema  # for DRF: schema = BananasSchema()
+    versioning_class: Optional[Type[BaseVersioning]] = BananasVersioning
+    authentication_classes: Sequence[Type[BaseAuthentication]] = (
+        SessionAuthentication,
+    )
+    permission_classes: Sequence[_PermissionClass] = (IsAdminUser,)
+    swagger_schema: type[SwaggerAutoSchema] = BananasSchema
 
     @classmethod
     def get_admin_meta(cls):

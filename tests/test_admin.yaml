@@ -1,0 +1,23 @@
+# Test that types on BananasAPI are compatible with those of APIView.
+- case: can_subclass_admin_and_views
+  main: |
+    from rest_framework import mixins
+    from bananas.admin.api.views import BananasAdminAPI
+
+    class Subclass(
+      mixins.RetrieveModelMixin,
+      mixins.ListModelMixin,
+      mixins.UpdateModelMixin,
+      BananasAdminAPI,
+    ): ...
+
+    reveal_type(Subclass.versioning_class)
+    reveal_type(Subclass.renderer_classes)
+  out: |
+    main:11: note: Revealed type is 'Union[Type[rest_framework.versioning.BaseVersioning], None]'
+    main:12: note: Revealed type is 'typing.Sequence[Type[rest_framework.renderers.BaseRenderer]]'
+  mypy_config: |
+    [mypy-django.*]
+    ignore_errors = True
+    [mypy-rest_framework.*]
+    ignore_errors = True
