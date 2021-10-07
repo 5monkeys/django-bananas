@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.urls.exceptions import NoReverseMatch
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from drf_yasg import openapi
 from drf_yasg.generators import EndpointEnumerator, OpenAPISchemaGenerator
 from drf_yasg.inspectors.view import SwaggerAutoSchema
