@@ -1,7 +1,7 @@
 import os
 
 try:
-    from test.support.os_helper import EnvironmentVarGuard
+    from test.support.os_helper import EnvironmentVarGuard  # type: ignore[import]
 except ImportError:
     # Compatibility for Python <=3.9
     from test.support import EnvironmentVarGuard
