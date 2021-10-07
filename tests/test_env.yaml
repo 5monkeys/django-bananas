@@ -5,9 +5,9 @@
     reveal_type(env.get_bool("test", False))
     reveal_type(env.get_bool("test", "false"))
   out: |
-    main:2: note: Revealed type is 'Union[builtins.bool, None]'
-    main:3: note: Revealed type is 'builtins.bool'
-    main:4: note: Revealed type is 'Union[builtins.bool, builtins.str*]'
+    main:2: note: Revealed type is "Union[builtins.bool, None]"
+    main:3: note: Revealed type is "builtins.bool"
+    main:4: note: Revealed type is "Union[builtins.bool, builtins.str*]"
   mypy_config: |
     [mypy-django.*]
     ignore_errors = True
@@ -19,9 +19,9 @@
     reveal_type(env.get_int("test", 1))
     reveal_type(env.get_int("test", "1"))
   out: |
-    main:2: note: Revealed type is 'Union[builtins.int, None]'
-    main:3: note: Revealed type is 'builtins.int'
-    main:4: note: Revealed type is 'Union[builtins.int, builtins.str*]'
+    main:2: note: Revealed type is "Union[builtins.int, None]"
+    main:3: note: Revealed type is "builtins.int"
+    main:4: note: Revealed type is "Union[builtins.int, builtins.str*]"
   mypy_config: |
     [mypy-django.*]
     ignore_errors = True
@@ -33,9 +33,9 @@
     reveal_type(env.get_tuple("test", ()))
     reveal_type(env.get_tuple("test", []))
   out: |
-    main:2: note: Revealed type is 'Union[builtins.tuple[builtins.str], None]'
-    main:3: note: Revealed type is 'builtins.tuple[builtins.str]'
-    main:4: note: Revealed type is 'Union[builtins.tuple[builtins.str], builtins.list*[<nothing>]]'
+    main:2: note: Revealed type is "Union[builtins.tuple[builtins.str], None]"
+    main:3: note: Revealed type is "builtins.tuple[builtins.str]"
+    main:4: note: Revealed type is "Union[builtins.tuple[builtins.str], builtins.list*[<nothing>]]"
   mypy_config: |
     [mypy-django.*]
     ignore_errors = True
@@ -47,9 +47,9 @@
     reveal_type(env.get_list("test", ["strs"]))
     reveal_type(env.get_list("test", ()))
   out: |
-    main:2: note: Revealed type is 'Union[builtins.list[builtins.str], None]'
-    main:3: note: Revealed type is 'builtins.list[builtins.str]'
-    main:4: note: Revealed type is 'Union[builtins.list[builtins.str], Tuple[]]'
+    main:2: note: Revealed type is "Union[builtins.list[builtins.str], None]"
+    main:3: note: Revealed type is "builtins.list[builtins.str]"
+    main:4: note: Revealed type is "Union[builtins.list[builtins.str], Tuple[]]"
   mypy_config: |
     [mypy-django.*]
     ignore_errors = True
@@ -61,9 +61,9 @@
     reveal_type(env.get_set("test", {"doot"}))
     reveal_type(env.get_set("test", ()))
   out: |
-    main:2: note: Revealed type is 'Union[builtins.set[builtins.str], None]'
-    main:3: note: Revealed type is 'builtins.set[builtins.str]'
-    main:4: note: Revealed type is 'Union[builtins.set[builtins.str], Tuple[]]'
+    main:2: note: Revealed type is "Union[builtins.set[builtins.str], None]"
+    main:3: note: Revealed type is "builtins.set[builtins.str]"
+    main:4: note: Revealed type is "Union[builtins.set[builtins.str], Tuple[]]"
   mypy_config: |
     [mypy-django.*]
     ignore_errors = True
