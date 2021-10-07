@@ -35,6 +35,8 @@ Currently tested only for
 -   Django 2.2 under Python 3.6-3.9
 -   Django 3.0 under Python 3.6-3.9
 -   Django 3.1 under Python 3.6-3.9
+-   Django 3.2 under Python 3.6-3.9
+-   Django 4.0 under Python 3.8-3.10
 
 Pull requests welcome!
 
