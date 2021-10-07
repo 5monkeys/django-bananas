@@ -1,4 +1,5 @@
 import os
+
 try:
     from test.support.os_helper import EnvironmentVarGuard
 except ImportError:
