@@ -3,7 +3,7 @@ import operator
 from unittest import TestCase
 
 from django.core.exceptions import ImproperlyConfigured
-from django.test import override_settings
+from django.test.utils import isolate_apps, override_settings
 from django.utils.http import http_date
 from drf_yasg import openapi
 
@@ -133,6 +133,7 @@ class TestHeaderDateParser(TestCase):
         self.assertEqual(parsed, dt)
 
 
+@isolate_apps("tests.drf")
 class TestParseDateModified(TestCase):
     def test_replaces_microsecond(self):
         class A(TimeStampedModel):

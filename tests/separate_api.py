@@ -1,4 +1,4 @@
-from django.conf.urls import include, re_path
+from django.urls import include, re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework.viewsets import ViewSet
 
