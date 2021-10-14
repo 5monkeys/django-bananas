@@ -1,6 +1,9 @@
 include setup.py README.rst MANIFEST.in LICENSE AUTHORS
+exclude runtests.py tox.ini *.yml *.yaml Makefile Dockerfile .editorconfig
 
 recursive-include src/bananas/templates *
 recursive-include src/bananas/static *
-
-global-exclude *~
+recursive-include src *.py
+recursive-exclude example *
+recursive-exclude scripts *
+recursive-exclude tests *

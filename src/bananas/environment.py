@@ -73,7 +73,7 @@ def parse_bool(value: str) -> bool:
     elif boolean in ("False", "No", "Off", "0"):
         return False
     else:
-        raise ValueError('Unable to parse boolean value "{}"'.format(value))
+        raise ValueError(f'Unable to parse boolean value "{value}"')
 
 
 def parse_int(value: str) -> int:
