@@ -73,5 +73,6 @@ exclude: |
     | ^(
       example
       | scripts
+      | tests/files
     )/
   )
