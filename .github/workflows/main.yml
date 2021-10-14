@@ -62,7 +62,7 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade tox
       - name: Run checks
-        run: "TOXENV=checks python -m tox"
+        run: "TOXENV=type-check python -m tox"
 
   lint:
     name: Checks
