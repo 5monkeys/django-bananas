@@ -28,9 +28,9 @@ coverage-xml:
 
 .PHONY: lint                # runs flake8, black and isort checks
 lint:
-	@flake8 bananas tests && echo "flake8 OK"
-	black --check bananas tests
-	isort --check bananas tests
+	@flake8 src tests && echo "flake8 OK"
+	black --check src tests
+	isort --check src tests
 
 .PHONY: type-check
 type-check:
