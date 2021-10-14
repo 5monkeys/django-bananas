@@ -1,6 +1,6 @@
 include setup.py README.rst MANIFEST.in LICENSE AUTHORS
 
-recursive-include bananas/templates *
-recursive-include bananas/static *
+recursive-include src/bananas/templates *
+recursive-include src/bananas/static *
 
 global-exclude *~
