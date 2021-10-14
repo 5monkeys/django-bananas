@@ -6,12 +6,12 @@ class Command(BaseCommand):
 
     help = "Create admin permissions"
 
-    def handle(self, *args, **options):
+    def handle(self, *args: object, **options: object) -> None:
         if args:  # pragma: no cover
             raise CommandError("Command doesn't accept any arguments")
         return self.handle_noargs(**options)
 
-    def handle_noargs(self, *args, **options):
+    def handle_noargs(self, *args: object, **options: object) -> None:
         from django.contrib import admin as django_admin
         from django.contrib.contenttypes.models import ContentType
 
@@ -22,6 +22,7 @@ class Command(BaseCommand):
         for model, _ in admin.site._registry.items():
             if issubclass(getattr(model, "View", object), admin.AdminView):
                 meta = model._meta
+                assert isinstance(meta.object_name, str)
 
                 ct, created = ContentType.objects.get_or_create(
                     app_label=meta.app_label, model=meta.object_name.lower()
