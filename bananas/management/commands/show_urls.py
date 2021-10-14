@@ -1,11 +1,16 @@
 import sys
 from collections import OrderedDict
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from django.core.management import BaseCommand
 from django.urls import URLPattern, URLResolver, get_resolver
 
 
-def collect_urls(urls=None, namespace=None, prefix=None):
+def collect_urls(
+    urls: Union[URLResolver, URLPattern, Tuple[str, Callable], None] = None,
+    namespace: Optional[str] = None,
+    prefix: Optional[list] = None,
+) -> List["OrderedDict"]:
     if urls is None:
         urls = get_resolver(urlconf=None)
     prefix = prefix or []
@@ -27,7 +32,7 @@ def collect_urls(urls=None, namespace=None, prefix=None):
                     ("name", urls.name),
                     ("pattern", prefix + [pattern]),
                     ("lookup_str", lookup_str),
-                    ("default_args", dict(urls.default_args)),
+                    ("default_args", dict(urls.default_args or {})),
                 ]
             )
         ]
@@ -35,10 +40,10 @@ def collect_urls(urls=None, namespace=None, prefix=None):
         raise NotImplementedError(repr(urls))
 
 
-def show_urls():
+def show_urls() -> None:
     all_urls = collect_urls()
 
-    max_lengths = {}
+    max_lengths: Dict[str, int] = {}
     for u in all_urls:
         for k in ["pattern", "default_args"]:
             u[k] = str(u[k])
@@ -59,5 +64,5 @@ def show_urls():
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **kwargs):
+    def handle(self, *args: object, **kwargs: object) -> None:
         show_urls()
