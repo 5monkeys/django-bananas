@@ -1,25 +1,23 @@
 VERSION = (2, 0, 0, "final", 0)
 
 
-def get_version(version=None):
+def get_version() -> str:
     """Derives a PEP386-compliant version number from VERSION."""
-    if version is None:
-        version = VERSION
-    assert len(version) == 5
-    assert version[3] in ("alpha", "beta", "rc", "final")
+    assert len(VERSION) == 5
+    assert VERSION[3] in ("alpha", "beta", "rc", "final")
 
     # Now build the two parts of the version number:
     # main = X.Y[.Z]
     # sub = .devN - for pre-alpha releases
     #     | {a|b|c}N - for alpha, beta and rc releases
 
-    parts = 2 if version[2] == 0 else 3
-    main = ".".join(str(x) for x in version[:parts])
+    parts = 2 if VERSION[2] == 0 else 3
+    main = ".".join(str(x) for x in VERSION[:parts])
 
     sub = ""
-    if version[3] != "final":
+    if VERSION[3] != "final":
         mapping = {"alpha": "a", "beta": "b", "rc": "c"}
-        sub = mapping[version[3]] + str(version[4])
+        sub = mapping[VERSION[3]] + str(VERSION[4])
 
     return main + sub
 

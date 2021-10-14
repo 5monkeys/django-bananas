@@ -34,7 +34,7 @@ lint:
 
 .PHONY: type-check
 type-check:
-	mypy
+	mypy $(type-check)
 
 .PHONY: install
 install:
