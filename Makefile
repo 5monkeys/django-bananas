@@ -15,7 +15,10 @@ test_all:
 
 .PHONY: test-types      # runs pytest-mypy-plugins to test exported types
 test-types:
+	# Hack to make type-tests work until we add py.typed to the published package.
+	touch $$(python -c 'import bananas; print(bananas.__path__[0] + "/py.typed")')
 	pytest --mypy-ini-file=setup.cfg tests/*.yaml
+	rm $$(python -c 'import bananas; print(bananas.__path__[0] + "/py.typed")')
 
 .PHONY: coverage		# combines coverage and reports it
 coverage:
@@ -28,9 +31,9 @@ coverage-xml:
 
 .PHONY: lint                # runs flake8, black and isort checks
 lint:
-	@flake8 bananas tests && echo "flake8 OK"
-	black --check bananas tests
-	isort --check bananas tests
+	@flake8 src tests && echo "flake8 OK"
+	black --check src tests
+	isort --check src tests
 
 .PHONY: type-check
 type-check:
