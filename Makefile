@@ -29,12 +29,6 @@ coverage-xml:
 	coverage combine || true
 	coverage xml -o coverage.xml
 
-.PHONY: lint                # runs flake8, black and isort checks
-lint:
-	@flake8 src tests && echo "flake8 OK"
-	black --check src tests
-	isort --check src tests
-
 .PHONY: type-check
 type-check:
 	mypy
@@ -81,24 +75,4 @@ test-publish: build
 	python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 .PHONY: all			# runs clean, test_all, lint, type-check
-all: clean test_all lint type-check
-
-.PHONY: isort
-isort:
-	isort bananas tests
-
-.PHONY: black
-black:
-	black bananas tests
-
-.PHONY: autoflake
-autoflake:
-	autoflake \
-		--recursive \
-		--in-place \
-		--remove-all-unused-imports \
-		--ignore-init-module-imports \
-		bananas tests
-
-.PHONY: format
-format: black isort autoflake
+all: clean test_all type-check

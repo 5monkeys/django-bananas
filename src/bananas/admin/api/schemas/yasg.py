@@ -96,7 +96,7 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
     def get_tags(self, operation_keys):
         view = self.view
         meta = self.view.get_admin_meta()
-        tags = {"app:{label}".format(label=meta.app_label)}
+        tags = {f"app:{meta.app_label}"}
 
         if self.is_navigation():
             tags.add("navigation")

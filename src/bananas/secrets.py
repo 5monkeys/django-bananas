@@ -29,7 +29,7 @@ def get_secret(secret_name: str, default: Optional[str] = None) -> Optional[str]
     secrets_dir = get_secrets_dir()
     secret_path = os.path.join(secrets_dir, secret_name)
     try:
-        with open(secret_path, "r") as secret_file:
+        with open(secret_path) as secret_file:
             return secret_file.read()
     except OSError:
         return default

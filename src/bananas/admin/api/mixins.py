@@ -56,8 +56,8 @@ class BananasAPI:
                     }
                 )
 
-            basename = "{}.{}".format(meta.app_label, meta.basename)
-            meta.update(dict(basename=basename))
+            basename = f"{meta.app_label}.{meta.basename}"
+            meta.update({"basename": basename})
             cls._admin_meta = meta
 
         return meta
@@ -75,11 +75,11 @@ class BananasAPI:
         """
         Get full namespaced url name to use for reverse()
         """
-        url_name = "{}-{}".format(self.basename, action_url_name)
+        url_name = f"{self.basename}-{action_url_name}"
 
         namespace = self.request.resolver_match.namespace
         if namespace:
-            url_name = "{}:{}".format(namespace, url_name)
+            url_name = f"{namespace}:{url_name}"
 
         return url_name
 

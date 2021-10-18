@@ -59,13 +59,14 @@ Use TimeStampedModel as base class for your model
 
     from bananas.models import TimeStampedModel
 
+
     class Book(TimeStampedModel):
         pass
 
 
 the timestamps can be accessed on the model as
 
-.. code-block:: py
+.. code-block:: pycon
 
     >>> book.date_created
     >>> book.date_modified
@@ -80,9 +81,12 @@ Abstract model that uses a Django 1.8 UUID field as the primary key.
 
     from bananas.models import UUIDModel
 
+
     class User(UUIDModel):
         display_name = models.CharField(max_length=255)
         email = models.EmailField()
+
+.. code-block:: pycon
 
     >>> user.id
     UUID('70cf1f46-2c79-4fc9-8cc8-523d67484182')
@@ -99,9 +103,12 @@ Can be used to generate and store "safe" random bytes for authentication.
 
     from bananas.models import SecretField
 
+
     class User(models.Model):
         # Ask for 32 bytes and require 24 bytes from urandom
         token = SecretField(num_bytes=32, min_bytes=24)
+
+.. code-block:: pycon
 
     >>> User.objects.create()  # Token is generated automatically
     >>> user.token
@@ -125,6 +132,8 @@ instead of a hex representation of the random bytes.
         # Generates an URL-safe base64 representation of the random value
         token = URLSecretField(num_bytes=32, min_bytes=24)
 
+.. code-block:: pycon
+
     >>> user.token
     'WOgrNwqFKOF_LsHorJy_hGpPepjvVH7Uar-4Z_K6DzU-'
 
@@ -140,11 +149,14 @@ style results:
 
     from bananas.query import ExtendedQuerySet
 
+
     class Book(TimeStampedModel):
         author = ForeignKey(Author)
         objects = Manager.from_queryset(ExtendedQuerySet)()
 
-    >>> book = Book.objects.dicts('id', author='author__name').first()
+.. code-block:: pycon
+
+    >>> book = Book.objects.dicts("id", author="author__name").first()
     {'id': 1, 'author': 'Jonas'}
     >>> book.author
     'Jonas'
@@ -161,15 +173,15 @@ Custom django admin stylesheet.
 
     # settings.py
     INSTALLED_APPS = (
-        'bananas',  # Needs to be before 'django.contrib.admin'
-        'django.contrib.admin',
-        ...
+        "bananas",  # Needs to be before "django.contrib.admin"
+        "django.contrib.admin",
+        ...,
     )
 
     ADMIN = {
-        'SITE_HEADER': 'Bananas',
-        'SITE_TITLE': 'Bananas Admin',
-        'INDEX_TITLE': 'Admin Panel',
+        "SITE_HEADER": "Bananas",
+        "SITE_TITLE": "Bananas Admin",
+        "INDEX_TITLE": "Admin Panel",
         # 'BACKGROUND_COLOR': '#363c3f',
     }
 
@@ -179,8 +191,8 @@ Custom django admin stylesheet.
     from bananas import admin
 
     urlpatterns = [
-        ...
-        url(r'^admin/', include(admin.site.urls)),
+        # ...
+        url(r"^admin/", include(admin.site.urls)),
     ]
 
 .. code-block:: py
@@ -189,22 +201,22 @@ Custom django admin stylesheet.
     from django.conf.urls import url
     from bananas import admin
 
+
     @admin.register
     class MyAdminView(admin.AdminView):
         def get_urls(self):
             return [
-                url(r'^custom/$',
-                    self.admin_view(self.custom_view)),
-                    # ^^ Note that the view is wrapped in self.admin_view.
-                    # Needed for permissions and to prevent any
-                    # threading issues.
+                url(r"^custom/$", self.admin_view(self.custom_view)),
+                # ^^ Note that the view is wrapped in self.admin_view.
+                # Needed for permissions and to prevent any
+                # threading issues.
             ]
 
         def get(self, request):
-            return self.render('admin/template.html', {})
+            return self.render("admin/template.html", {})
 
         def custom_view(self, request):
-            return self.render('admin/custom.html', {})
+            return self.render("admin/custom.html", {})
 
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -225,6 +237,7 @@ feature requires installation with the ``drf`` extra.
     from django.utils.translation import gettext_lazy as _
     from rest_framework import viewsets
 
+
     class CustomAdminAPI(BananasAdminAPI):
 
         name = lazy_title(_("custom"))
@@ -233,7 +246,8 @@ feature requires installation with the ``drf`` extra.
         def list(self, request):
             return ...
 
-    class SomeModelAdminAPI(BananasAPI, viewsets.ModelViewSet)
+
+    class SomeModelAdminAPI(BananasAPI, viewsets.ModelViewSet):
 
         serializer_class = SomeModelSerializer
 
@@ -252,17 +266,17 @@ feature requires installation with the ``drf`` extra.
     api.register(SomeModelAdminAPI)
 
     urlpatterns = [
-        path(r"^api/", include("bananas.admin.api.urls"))
+        path(r"^api/", include("bananas.admin.api.urls")),
     ]
 
 .. code-block:: py
 
    # setting.py
    ADMIN = {
-      'API': {
-         # Optional: override the default OpenAPI schemes
-         'SCHEMES': ['https'],
-      }
+       "API": {
+           # Optional: override the default OpenAPI schemes
+           "SCHEMES": ["https"],
+       }
    }
 
 
@@ -300,12 +314,12 @@ database_conf_from_url(url)
 
   Example:
 
-  .. code-block:: py
+  .. code-block:: pycon
 
       >>> from bananas.url import database_conf_from_url
       >>> conf = database_conf_from_url(
-      ...     'pgsql://joar:hunter2@5monkeys.se:4242/tweets/tweetschema'
-      ...     '?hello=world')
+      ...     "pgsql://joar:hunter2@5monkeys.se:4242/tweets/tweetschema?hello=world"
+      ... )
       >>> sorted(conf.items())  # doctest: +NORMALIZE_WHITESPACE
       [('ENGINE', 'django.db.backends.postgresql_psycopg2'),
        ('HOST', '5monkeys.se'),
@@ -334,14 +348,14 @@ provides:
 
 :get_int:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> # env ONE=1
-        >>> env.get_int('ONE')
+        >>> env.get_int("ONE")
         1
-        >>> env.get_int('TWO')  # Not set
+        >>> env.get_int("TWO")  # Not set
         None
-        >>> env.get_int('TWO', -1)  # Not set, default to -1
+        >>> env.get_int("TWO", -1)  # Not set, default to -1
         -1
 
 
@@ -367,20 +381,20 @@ provides:
 
     e.g.:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> # env CAN_DO=1 NO_THANKS=false NO_HABLA=f4lse
-        >>> env.get_bool('CAN_DO')
+        >>> env.get_bool("CAN_DO")
         True
-        >>> env.get_bool('NO_THANKS')
+        >>> env.get_bool("NO_THANKS")
         False
-        >>> env.get_bool('NO_HABLA')  # Set, but not valid
+        >>> env.get_bool("NO_HABLA")  # Set, but not valid
         None
-        >>> env.get_bool('NO_HABLA', True)  # Set, but not valid, with default
+        >>> env.get_bool("NO_HABLA", True)  # Set, but not valid, with default
         True
-        >>> env.get_bool('IS_NONE')  # Not set
+        >>> env.get_bool("IS_NONE")  # Not set
         None
-        >>> env.get_bool('IS_NONE', False)  # Not set, default provided
+        >>> env.get_bool("IS_NONE", False)  # Not set, default provided
         False
 
 
@@ -389,12 +403,12 @@ provides:
     Returns a ``tuple``, ``list`` or ``set`` of the environment variable string,
     split by the ascii comma character. e.g.:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> # env FOOS=foo,foo,bar
-        >>> get_list('FOO')
+        >>> get_list("FOO")
         ['foo', 'foo', 'bar']
-        >>> get_set('FOO')
+        >>> get_set("FOO")
         set(['foo', 'bar'])
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -406,7 +420,7 @@ Is useful for getting the content of secrets stored in files. One usecase is `do
 
 ``BANANAS_SECRETS_DIR`` can be used to configure the directory that secrets live in. Defaults to ``/run/secrets/``.
 
-.. code-block:: py
+.. code-block:: pycon
 
     >>> from bananas import secrets
 
@@ -438,6 +452,7 @@ requires running Django with timezone support enabled, ``USE_TZ = TRUE``.
 
     from bananas.drf.fencing import FencedUpdateModelMixin, allow_if_unmodified_since
 
+
     class ItemAPI(FencedUpdateModelMixin, GenericViewSet):
         fence = allow_if_unmodified_since()
         serializer_class = ItemSerializer
@@ -452,6 +467,7 @@ of the updated instance.
 .. code-block:: python
 
     from bananas.drf.fencing import FencedUpdateModelMixin, allow_if_match
+
 
     class ItemAPI(FencedUpdateModelMixin, GenericViewSet):
         fence = allow_if_match(operator.attrgetter("version"))
@@ -470,10 +486,12 @@ Example implementing a fence for ``If-Modified-Since``:
     from rest_framework.exceptions import APIException
     from bananas.drf.fencing import Fence, header_date_parser, parse_date_modified
 
+
     class NotModified(APIException):
         status_code = status.HTTP_304_NOT_MODIFIED
         default_detail = "An HTTP precondition failed"
         default_code = "not_modified"
+
 
     allow_if_not_modified_since = Fence(
         get_token=header_date_parser("If-Modified-Since"),
@@ -518,16 +536,24 @@ tests and checks on Python 3.9/Django 3.1 with:
     python3 -m pip install -e .[test]
     TOXENV=py39-django31,checks python3 -m tox
 
-You can install development requirements into your virtualenv and run
-autoformatters with:
+You can install development requirements into your virtualenv. Linting and
+formatting uses pre-commit which you could also install on a system level.
 
 .. code-block:: bash
 
     python3 -m pip install -e .[dev,drf]
-    make format
+    make type-check
+    pre-commit run --all-files
+
+After installing pre-commit, you can enable hooks to have it run before you
+publish pull requests.
+
+.. code-block:: bash
+
+    pre-commit install -t pre-push
 
 After installing ``dev`` you can also run tests without tox for rapid iteration
-and select specific tests with ``test`` argument to ``make test``:
+and select specific tests with the ``test`` argument to ``make test``:
 
 .. code-block:: bash
 

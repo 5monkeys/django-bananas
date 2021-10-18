@@ -27,7 +27,7 @@ class DBURLTest(TestCase):
 
     def test_db_url(self):
         conf = url.database_conf_from_url(
-            "pgsql://joar:hunter2@5monkeys.se:4242/tweets/tweetschema" "?hello=world"
+            "pgsql://joar:hunter2@5monkeys.se:4242/tweets/tweetschema?hello=world"
         )
 
         self.assertDictEqual(
@@ -89,7 +89,7 @@ class DBURLTest(TestCase):
 
     def test_db_url_with_slashes(self):
         name = quote("/var/db/tweets.sqlite", safe="")
-        conf = url.database_conf_from_url("sqlite3:///{0}".format(name))
+        conf = url.database_conf_from_url(f"sqlite3:///{name}")
 
         self.assertDictEqual(
             conf,

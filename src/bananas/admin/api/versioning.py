@@ -17,6 +17,6 @@ class BananasVersioning(NamespaceVersioning):
         """
         namespace = request.resolver_match.namespace
         if namespace:
-            viewname = "{}:{}".format(namespace, viewname)
+            viewname = f"{namespace}:{viewname}"
 
         return viewname
