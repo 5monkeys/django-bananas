@@ -167,18 +167,14 @@ class AdminTest(AdminBaseTest):
         context = response.context
         self.assertEqual(context["context"], "custom")
         self.assertEqual(len(context["view_tools"]), 1)
-        self.assertEqual(
-            set(t.text for t in context["view_tools"]), expected_view_tools
-        )
+        self.assertEqual({t.text for t in context["view_tools"]}, expected_view_tools)
 
         response = self.client.get(self.detail_url)
         context = response.context
         self.assertEqual(response.status_code, 200)
         self.assertEqual(context["context"], "get")
         self.assertEqual(len(context["view_tools"]), 1)
-        self.assertEqual(
-            set(t.text for t in context["view_tools"]), expected_view_tools
-        )
+        self.assertEqual({t.text for t in context["view_tools"]}, expected_view_tools)
 
     def test_admin_view_with_permission(self):
         staff_user = self.login_user()
@@ -195,9 +191,7 @@ class AdminTest(AdminBaseTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(context["context"], "special")
         self.assertEqual(len(context["view_tools"]), 2)
-        self.assertEqual(
-            set(t.text for t in context["view_tools"]), expected_view_tools
-        )
+        self.assertEqual({t.text for t in context["view_tools"]}, expected_view_tools)
         # No access to other views
         self.assert_unauthorized(self.custom_url)
         self.assert_unauthorized(self.detail_url)

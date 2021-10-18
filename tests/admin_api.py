@@ -19,7 +19,7 @@ class FooAPI(BananasAdminAPI):
     serializer_class = HamSerializer
 
     def list(self, request):
-        serializer = self.serializer_class(dict(spam="Skinka"))
+        serializer = self.serializer_class({"spam": "Skinka"})
         return Response(serializer.data)
 
     @action(detail=False)

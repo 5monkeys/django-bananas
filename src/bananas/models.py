@@ -163,7 +163,7 @@ class TimeStampedModel(models.Model):
             update_fields = list(kwargs["update_fields"])
             update_fields.append("date_modified")
             kwargs["update_fields"] = update_fields
-        super(TimeStampedModel, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class UUIDModel(models.Model):

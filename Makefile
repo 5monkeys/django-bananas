@@ -15,7 +15,10 @@ test_all:
 
 .PHONY: test-types      # runs pytest-mypy-plugins to test exported types
 test-types:
+	# Hack to make type-tests work until we add py.typed to the published package.
+	touch $$(python -c 'import bananas; print(bananas.__path__[0] + "/py.typed")')
 	pytest --mypy-ini-file=setup.cfg tests/*.yaml
+	rm $$(python -c 'import bananas; print(bananas.__path__[0] + "/py.typed")')
 
 .PHONY: coverage		# combines coverage and reports it
 coverage:
@@ -25,12 +28,6 @@ coverage:
 coverage-xml:
 	coverage combine || true
 	coverage xml -o coverage.xml
-
-.PHONY: lint                # runs flake8, black and isort checks
-lint:
-	@flake8 bananas tests && echo "flake8 OK"
-	black --check bananas tests
-	isort --check bananas tests
 
 .PHONY: type-check
 type-check:
@@ -78,24 +75,4 @@ test-publish: build
 	python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 .PHONY: all			# runs clean, test_all, lint, type-check
-all: clean test_all lint type-check
-
-.PHONY: isort
-isort:
-	isort bananas tests
-
-.PHONY: black
-black:
-	black bananas tests
-
-.PHONY: autoflake
-autoflake:
-	autoflake \
-		--recursive \
-		--in-place \
-		--remove-all-unused-imports \
-		--ignore-init-module-imports \
-		bananas tests
-
-.PHONY: format
-format: black isort autoflake
+all: clean test_all type-check

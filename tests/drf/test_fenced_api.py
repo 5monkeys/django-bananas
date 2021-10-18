@@ -120,7 +120,7 @@ class TestAllowIfMatch(APITestCase):
         response = self.client.put(
             self.url(args=(item.pk,)),
             data={"name": "Great!"},
-            HTTP_IF_MATCH='"{}", "abc123"'.format(item.version),
+            HTTP_IF_MATCH=f'"{item.version}", "abc123"',
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response.json(), {"name": "Great!"})

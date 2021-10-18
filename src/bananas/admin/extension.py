@@ -1,4 +1,3 @@
-# coding=utf-8
 import re
 
 import django
@@ -108,7 +107,7 @@ class ModelAdminView(ModelAdmin):
 
     def get_permission(self, perm):
         if "." not in perm:
-            perm = "{}.{}".format(self.model._meta.app_label, perm)
+            perm = f"{self.model._meta.app_label}.{perm}"
         return perm
 
     def has_module_permission(self, request):
@@ -199,14 +198,14 @@ def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
                 "Meta": type(
                     "Meta",
                     (object,),
-                    dict(
-                        managed=False,
-                        abstract=True,
-                        app_label=app_config.label,
-                        verbose_name=verbose_name,
-                        verbose_name_plural=verbose_name,
-                        permissions=permissions,
-                    ),
+                    {
+                        "managed": False,
+                        "abstract": True,
+                        "app_label": app_config.label,
+                        "verbose_name": verbose_name,
+                        "verbose_name_plural": verbose_name,
+                        "permissions": permissions,
+                    },
                 ),
             },
         )
@@ -233,7 +232,7 @@ class ViewTool:
 
     @property
     def attrs(self):
-        return mark_safe(" ".join("{}={}".format(k, v) for k, v in self._attrs.items()))
+        return mark_safe(" ".join(f"{k}={v}" for k, v in self._attrs.items()))
 
     @property
     def link(self):

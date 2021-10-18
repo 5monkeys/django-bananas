@@ -21,7 +21,7 @@ class Parent(TimeStampedModel):
 
     @property
     def attribute_error(self):
-        return getattr(object(), "missing_attribute")
+        return getattr(object(), "missing_attribute")  # noqa: B009
 
     @property
     def version(self) -> str:

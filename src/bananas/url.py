@@ -42,7 +42,7 @@ class Alias:
         self.target = target
 
     def __repr__(self) -> str:
-        return '<Alias to "{}">'.format(self.target)
+        return f'<Alias to "{self.target}">'
 
 
 _EngineReference = Union[Alias, str, List[Union[str, Dict[str, str]]]]
