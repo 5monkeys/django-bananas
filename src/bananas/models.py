@@ -4,19 +4,26 @@ import math
 import os
 import uuid
 from itertools import chain
+from typing import Any, Dict, Mapping, Optional, Sized
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from typing_extensions import Final
 
-MISSING = object()
+
+class Missing:
+    ...
 
 
-class ModelDict(dict):
+MISSING: Final = Missing()
 
-    _nested = None
 
-    def __getattr__(self, item):
+class ModelDict(Dict[str, Any]):
+
+    _nested: Optional[Dict[str, "ModelDict"]] = None
+
+    def __getattr__(self, item: str) -> Any:
         """
         Try to to get attribute as key item.
         Fallback on prefixed nested keys.
@@ -30,7 +37,7 @@ class ModelDict(dict):
             except KeyError:
                 return self.__getattribute__(item)
 
-    def __getnested__(self, item):
+    def __getnested__(self, item: str) -> "ModelDict":
         """
         Find existing items prefixed with given item
         and return a new ModelDict containing matched keys,
@@ -41,12 +48,12 @@ class ModelDict(dict):
         """
         # Ensure _nested cache
         if self._nested is None:
-            self._nested = {}
+            self._nested: Dict[str, ModelDict] = {}
 
         # Try to get previously accessed/cached nested item
         value = self._nested.get(item, MISSING)
 
-        if value is not MISSING:
+        if not isinstance(value, Missing):
             # Return previously accessed nested item
             return value
 
@@ -66,7 +73,7 @@ class ModelDict(dict):
         # Item not a nested key, raise
         raise KeyError(item)
 
-    def expand(self):
+    def expand(self) -> "ModelDict":
         keys = list(self)
         for key in keys:
             field, __, nested_key = key.partition("__")
@@ -80,7 +87,8 @@ class ModelDict(dict):
         return ModelDict(self)
 
     @classmethod
-    def from_model(cls, model, *fields, **named_fields):
+    # Ignore types until no longer work-in-progress.
+    def from_model(cls, model, *fields, **named_fields):  # type: ignore[no-untyped-def]
         """
         Work-in-progress constructor,
         consuming fields and values from django model instance.
@@ -89,7 +97,9 @@ class ModelDict(dict):
 
         if not (fields or named_fields):
             # Default to all fields
-            fields = [f.attname for f in model._meta.concrete_fields]
+            fields = [  # type: ignore[assignment]
+                f.attname for f in model._meta.concrete_fields
+            ]
 
         not_found = object()
 
@@ -148,7 +158,7 @@ class TimeStampedModel(models.Model):
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         if "update_fields" in kwargs and "date_modified" not in kwargs["update_fields"]:
             update_fields = list(kwargs["update_fields"])
             update_fields.append("date_modified")
@@ -170,7 +180,7 @@ class UUIDModel(models.Model):
 class SecretField(models.CharField):
     description = _("Generates and stores a random key.")
 
-    default_error_messages = {
+    default_error_messages: Mapping[str, str] = {
         "random-is-none": _("%(cls)s.get_random_bytes returned None"),
         "random-too-short": _(
             "Too few random bytes received from "
@@ -181,23 +191,34 @@ class SecretField(models.CharField):
     }
 
     def __init__(
-        self, verbose_name=None, num_bytes=32, min_bytes=32, auto=True, **kwargs
+        self,
+        verbose_name: Optional[str] = None,
+        num_bytes: int = 32,
+        min_bytes: int = 32,
+        auto: bool = True,
+        **kwargs: Any,
     ):
         self.num_bytes, self.auto, self.min_length = num_bytes, auto, min_bytes
 
         field_length = self.get_field_length(self.num_bytes)
 
-        defaults = {"max_length": field_length}
-        defaults.update(kwargs)
-
-        if self.auto:
-            defaults["editable"] = False
-            defaults["blank"] = True
+        defaults: Mapping[str, object] = {
+            "max_length": field_length,
+            **kwargs,
+            **(
+                {
+                    "editable": False,
+                    "blank": True,
+                }
+                if self.auto
+                else {}
+            ),
+        }
 
         super().__init__(verbose_name, **defaults)
 
     @staticmethod
-    def get_field_length(num_bytes):
+    def get_field_length(num_bytes: int) -> int:
         """
         Return the length of hexadecimal byte representation of ``n`` bytes.
 
@@ -206,7 +227,7 @@ class SecretField(models.CharField):
         """
         return num_bytes * 2
 
-    def pre_save(self, model_instance, add):
+    def pre_save(self, model_instance: models.Model, add: bool) -> Any:
         if self.auto and add:
             value = self.get_random_str()
             setattr(model_instance, self.attname, value)
@@ -214,12 +235,12 @@ class SecretField(models.CharField):
         else:
             return super().pre_save(model_instance, add)
 
-    def get_random_str(self):
+    def get_random_str(self) -> str:
         random = self.get_random_bytes()
         self._check_random_bytes(random)
         return binascii.hexlify(random).decode("utf8")
 
-    def _check_random_bytes(self, random):
+    def _check_random_bytes(self, random: Optional[Sized]) -> None:
         if random is None:
             raise ValidationError(
                 self.error_messages["random-is-none"],
@@ -234,13 +255,13 @@ class SecretField(models.CharField):
                 params={"num_bytes": len(random), "min_length": self.min_length},
             )
 
-    def get_random_bytes(self):
+    def get_random_bytes(self) -> bytes:
         return os.urandom(self.num_bytes)
 
 
 class URLSecretField(SecretField):
     @staticmethod
-    def get_field_length(num_bytes):
+    def get_field_length(num_bytes: int) -> int:
         """
         Get the maximum possible length of a base64 encoded bytearray of
         length ``length``.
@@ -251,7 +272,7 @@ class URLSecretField(SecretField):
         return math.ceil(num_bytes / 3.0) * 4
 
     @staticmethod
-    def y64_encode(s):
+    def y64_encode(s: bytes) -> bytes:
         """
         Implementation of Y64 non-standard URL-safe base64 variant.
 
@@ -263,7 +284,7 @@ class URLSecretField(SecretField):
         first_pass = base64.urlsafe_b64encode(s)
         return first_pass.translate(bytes.maketrans(b"+/=", b"._-"))
 
-    def get_random_str(self):
+    def get_random_str(self) -> str:
         random = self.get_random_bytes()
         self._check_random_bytes(random)
         return self.y64_encode(random).decode("utf-8")
