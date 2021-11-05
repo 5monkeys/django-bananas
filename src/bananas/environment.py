@@ -272,7 +272,7 @@ class EnvironWrapper:
     def get_bool(self, key: str, default: None = None) -> Optional[bool]:
         ...
 
-    def get_bool(self, key: str, default: Optional[Path] = None) -> Optional[Path]:
+    def get_bool(self, key: str, default: object = None) -> object:
         return self.parse(parse_bool, key, default=default)
 
     @overload
@@ -283,7 +283,7 @@ class EnvironWrapper:
     def get_path(self, key: str, default: None = None) -> Optional[Path]:
         ...
 
-    def get_path(self, key: str, default: object = None) -> object:
+    def get_path(self, key: str, default: Optional[Path] = None) -> Optional[Path]:
         return self.parse(parse_path, key, default=default)
 
     @overload
