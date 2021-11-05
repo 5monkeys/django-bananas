@@ -1,6 +1,7 @@
 import logging
 from functools import partial
 from os import environ
+from pathlib import Path
 from typing import (
     Any,
     Callable,
@@ -57,6 +58,16 @@ def parse_str(value: str) -> str:
     :return: str: Cleaned str.
     """
     return value.strip()
+
+
+def parse_path(value: str) -> Path:
+    """
+    Parse string to pathlib.Path.
+
+    :param str value: String value to parse as path
+    :return Path:
+    """
+    return Path(value)
 
 
 def parse_bool(value: str) -> bool:
@@ -263,6 +274,17 @@ class EnvironWrapper:
 
     def get_bool(self, key: str, default: object = None) -> object:
         return self.parse(parse_bool, key, default=default)
+
+    @overload
+    def get_path(self, key: str, default: Path) -> Path:
+        ...
+
+    @overload
+    def get_path(self, key: str, default: None = None) -> Optional[Path]:
+        ...
+
+    def get_path(self, key: str, default: object = None) -> object:
+        return self.parse(parse_path, key, default=default)
 
     @overload
     def get_int(self, key: str, default: U) -> Union[int, U]:

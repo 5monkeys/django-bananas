@@ -1,4 +1,5 @@
 from os import environ
+from pathlib import Path
 
 from django.conf import global_settings
 from django.core.exceptions import ValidationError
@@ -300,6 +301,9 @@ class EnvTest(TestCase):
         self.assertSetEqual(env.get_set("foobar"), {"a", "b", "c"})
         self.assertEqual(env.get("foobar"), "a, b, c")
         self.assertEqual(env["foobar"], "a, b, c")
+
+        environ["foobar"] = "/tmp"
+        self.assertEqual(env.get_path("foobar"), Path("/tmp"))
 
 
 class SettingsTest(TestCase):
