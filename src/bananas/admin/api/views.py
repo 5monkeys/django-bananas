@@ -4,7 +4,9 @@ from django.contrib.auth import (
     update_session_auth_hash,
 )
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.csrf import csrf_protect
 from rest_framework import serializers, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -37,6 +39,7 @@ class LoginAPI(BananasAdminAPI):
         verbose_name_plural = None
 
     @schema(responses={200: UserSerializer})
+    @method_decorator(csrf_protect, name="create")
     def create(self, request):
         """
         Log in django staff user
