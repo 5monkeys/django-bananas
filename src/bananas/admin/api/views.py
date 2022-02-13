@@ -3,10 +3,12 @@ from django.contrib.auth import (
     logout as auth_logout,
     update_session_auth_hash,
 )
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers, status, viewsets
 from rest_framework.permissions import AllowAny
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from .i18n import RawTranslationCatalog
@@ -37,7 +39,7 @@ class LoginAPI(BananasAdminAPI):
         verbose_name_plural = None
 
     @schema(responses={200: UserSerializer})
-    def create(self, request):
+    def create(self, request: Request) -> Response:
         """
         Log in django staff user
         """
@@ -66,7 +68,7 @@ class LogoutAPI(BananasAPI, viewsets.ViewSet):
         verbose_name_plural = None
 
     @schema(responses={204: ""})
-    def create(self, request):
+    def create(self, request: Request) -> Response:
         """
         Log out django staff user
         """
@@ -82,7 +84,7 @@ class MeAPI(BananasAdminAPI):
         exclude_tags = ["navigation"]
 
     @schema(responses={200: UserSerializer})
-    def list(self, request):
+    def list(self, request: Request) -> Response:
         """
         Retrieve logged in user info
         """
@@ -100,12 +102,13 @@ class ChangePasswordAPI(BananasAdminAPI):
         verbose_name_plural = None
 
     @schema(responses={204: ""})
-    def create(self, request):
+    def create(self, request: Request) -> Response:
         """
         Change password for logged in django staff user
         """
         # TODO: Decorate api with sensitive post parameters as Django admin do?
 
+        assert isinstance(request.user, AbstractBaseUser)
         password_form = PasswordChangeForm(request.user, data=request.data)
 
         if not password_form.is_valid():
@@ -127,7 +130,7 @@ class TranslationAPI(BananasAdminAPI):
         exclude_tags = ["navigation"]
 
     @schema(responses={200: ""})
-    def list(self, request):
+    def list(self, request: Request) -> Response:
         """
         Retrieve the translation catalog.
         """

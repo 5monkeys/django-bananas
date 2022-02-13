@@ -1,4 +1,17 @@
 import re
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 
 import django
 from django.apps import apps
@@ -6,18 +19,24 @@ from django.conf import settings as django_settings
 from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.sites import site as django_admin_site
 from django.contrib.auth.decorators import permission_required, user_passes_test
+from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import Model
+from django.http import HttpRequest
+from django.http.response import HttpResponse, HttpResponseBase
 from django.shortcuts import render
-from django.urls import re_path, reverse, reverse_lazy
+from django.urls import URLPattern, URLResolver, re_path, reverse, reverse_lazy
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
-from django.utils.safestring import mark_safe
+from django.utils.safestring import SafeText, mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
 from ..environment import env
 
 __all__ = ["ModelAdminView", "ViewTool", "AdminView", "register", "site"]
+
+
+MT = TypeVar("MT", bound=Model)
 
 
 class ExtendedAdminSite(AdminSite):
@@ -36,8 +55,9 @@ class ExtendedAdminSite(AdminSite):
         "LOGO_ALIGN": env.get("DJANGO_ADMIN_LOGO_ALIGN", "middle"),
         "LOGO_STYLE": env.get("DJANGO_ADMIN_LOGO_STYLE"),
     }
+    settings: Dict[str, Any]
 
-    def __init__(self, name="admin"):
+    def __init__(self, name: str = "admin") -> None:
         super().__init__(name=name)
         self.settings = dict(self.default_settings)
         self.settings.update(getattr(django_settings, "ADMIN", {}))
@@ -46,32 +66,32 @@ class ExtendedAdminSite(AdminSite):
         self.site_header = self.settings["SITE_HEADER"]
         self.index_title = self.settings["INDEX_TITLE"]
 
-    def each_context(self, request):
+    def each_context(self, request: WSGIRequest) -> Dict[str, Any]:
         context = super().each_context(request)
         context.update(settings=self.settings)
         return context
 
     @property
-    def urls(self):
+    def urls(self) -> Tuple[List[Union[URLResolver, URLPattern]], str, str]:
         if self.settings["INHERIT_REGISTERED_MODELS"]:
             for model, admin in list(django_admin_site._registry.items()):
                 # django_admin_site.unregister(model)
                 self._registry[model] = admin.__class__(model, self)
-        return self.get_urls(), "admin", self.name
+        return self.get_urls(), "admin", self.name  # type: ignore[return-value]
 
 
 class ModelAdminView(ModelAdmin):
     @cached_property
-    def access_permission(self):
+    def access_permission(self) -> str:
         meta = self.model._meta
         return "{app_label}.{codename}".format(
             app_label=meta.app_label,
             codename=meta.permissions[0][0],  # First perm codename
         )
 
-    def get_urls(self):
+    def get_urls(self) -> List[URLPattern]:
         app_label = self.model._meta.app_label
-        View = self.model.View
+        View: Type[AdminView] = self.model.View
         info = app_label, View.label
         urlpatterns = [
             re_path(
@@ -92,7 +112,9 @@ class ModelAdminView(ModelAdmin):
             urlpatterns += extra_urls
         return urlpatterns
 
-    def admin_view(self, view, perm=None):
+    def admin_view(
+        self, view: Callable[..., HttpResponseBase], perm: Optional[str] = None
+    ) -> Callable[..., HttpResponseBase]:
         if perm is not None:
             perm = self.get_permission(perm)
         else:
@@ -105,24 +127,31 @@ class ModelAdminView(ModelAdmin):
         view = permission_required(perm, login_url=admin_login_url)(view)
         return view
 
-    def get_permission(self, perm):
+    def get_permission(self, perm: str) -> str:
         if "." not in perm:
             perm = f"{self.model._meta.app_label}.{perm}"
         return perm
 
-    def has_module_permission(self, request):
+    def has_module_permission(self, request: HttpRequest) -> bool:
         return request.user.has_perm(self.access_permission)
 
-    def has_change_permission(self, request, obj=None):
+    def has_change_permission(
+        self, request: HttpRequest, obj: Optional[MT] = None
+    ) -> bool:
         return request.user.has_perm(self.access_permission)
 
-    def has_add_permission(self, request, obj=None):
+    # TODO: Remove obj?
+    def has_add_permission(
+        self, request: HttpRequest, obj: Optional[MT] = None
+    ) -> bool:
         return False
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(
+        self, request: HttpRequest, obj: Optional[MT] = None
+    ) -> bool:
         return False
 
-    def get_context(self, request, **extra):
+    def get_context(self, request: WSGIRequest, **extra: Any) -> Dict[str, Any]:
         opts = self.model._meta
         context = self.admin_site.each_context(request)
         context.update(
@@ -139,7 +168,34 @@ class ModelAdminView(ModelAdmin):
         return context
 
 
-def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
+# Call without parenthesis: @register
+@overload
+def register(
+    view: Type["AdminView"],
+    *,
+    admin_site: Optional[AdminSite] = None,
+    admin_class: Type[ModelAdmin] = ModelAdminView,
+) -> Type["AdminView"]:
+    ...
+
+
+# Call with parenthesis: @register()
+@overload
+def register(
+    view: None = ...,
+    *,
+    admin_site: Optional[AdminSite] = None,
+    admin_class: Type[ModelAdmin] = ModelAdminView,
+) -> Callable[[Type["AdminView"]], Type["AdminView"]]:
+    ...
+
+
+def register(
+    view: Optional[Type["AdminView"]] = None,
+    *,
+    admin_site: Optional[AdminSite] = None,
+    admin_class: Type[ModelAdmin] = ModelAdminView,
+) -> Union[Type["AdminView"], Callable[[Type["AdminView"]], Type["AdminView"]]]:
     """
     Register a generic class based view wrapped with ModelAdmin and fake model
 
@@ -163,9 +219,11 @@ def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
     if not admin_site:
         admin_site = site
 
-    def wrapped(inner_view):
+    def wrapped(inner_view: Type["AdminView"]) -> Type["AdminView"]:
         module = inner_view.__module__
-        app_label = re.search(r"\.?(\w+)\.admin", module).group(1)
+        match = re.search(r"\.?(\w+)\.admin", module)
+        assert match is not None
+        app_label = match.group(1)
         app_config = apps.get_app_config(app_label)
 
         label = getattr(inner_view, "label", None)
@@ -210,6 +268,7 @@ def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
             },
         )
 
+        assert admin_site is not None
         admin_site._registry[model] = admin_class(model, admin_site)
         return inner_view
 
@@ -220,7 +279,9 @@ def register(view=None, *, admin_site=None, admin_class=ModelAdminView):
 
 
 class ViewTool:
-    def __init__(self, text, link, perm=None, **attrs):
+    def __init__(
+        self, text: str, link: str, perm: Optional[str] = None, **attrs: Any
+    ) -> None:
         self.text = text
         self._link = link
         self.perm = perm
@@ -231,32 +292,38 @@ class ViewTool:
         self._attrs = attrs
 
     @property
-    def attrs(self):
+    def attrs(self) -> SafeText:
         return mark_safe(" ".join(f"{k}={v}" for k, v in self._attrs.items()))
 
     @property
-    def link(self):
+    def link(self) -> str:
         if "/" not in self._link:
             return reverse(self._link)
         return self._link
 
 
 class AdminView(View):
-    admin = None  # type: ModelAdminView
-    tools = None
-    action = None
+    tools: Optional[List[Union[Tuple[str, str], Tuple[str, str, str], ViewTool]]] = None
+    action: Optional[str] = None
+    admin: Optional[ModelAdminView] = None
 
-    def dispatch(self, request, *args, **kwargs):
+    label: str
+    verbose_name: str
+    request: WSGIRequest
+
+    def dispatch(
+        self, request: HttpRequest, *args: Any, **kwargs: Any
+    ) -> HttpResponseBase:
         # Try to fetch set action first.
         # This should be the view name for custom views
         action = self.action
         if action is None:
             return super().dispatch(request, *args, **kwargs)
 
-        handler = getattr(self, action)
+        handler: Callable[..., HttpResponseBase] = getattr(self, action)
         return handler(request, *args, **kwargs)
 
-    def get_urls(self):
+    def get_urls(self) -> List[URLPattern]:
         """Should return a list of urls
         Views should be wrapped in `self.admin_view` if the view isn't
         supposed to be accessible for non admin users.
@@ -269,22 +336,26 @@ class AdminView(View):
                     self.admin_view(self.custom_view))
             ]
         """
-        return None
+        return []
 
-    def get_tools(self):
+    def get_tools(
+        self,
+    ) -> Optional[List[Union[Tuple[str, str], Tuple[str, str, str], ViewTool]]]:
         # Override point, self.request is available.
         return self.tools
 
-    def get_view_tools(self):
+    def get_view_tools(self) -> List[ViewTool]:
         tools = []
         all_tools = self.get_tools()
         if all_tools:
             for tool in all_tools:
                 if isinstance(tool, (list, tuple)):
                     perm = None
+                    # Mypy doesn't change type on a len(...) call
+                    # See: https://github.com/python/mypy/issues/1178
                     if len(tool) == 3:
-                        tool, perm = tool[:-1], tool[-1]
-                    text, link = tool
+                        tool, perm = cast(Tuple[str, str, str], tool)[:-1], tool[-1]
+                    text, link = cast(Tuple[str, str], tool)
                     tool = ViewTool(text, link, perm=perm)
                 else:
                     # Assume ViewTool
@@ -296,28 +367,39 @@ class AdminView(View):
 
         return tools
 
-    def admin_view(self, view, perm=None, **initkwargs):
+    def admin_view(
+        self,
+        view: Callable[..., HttpResponseBase],
+        perm: Optional[str] = None,
+        **initkwargs: Any,
+    ) -> Callable[..., HttpResponseBase]:
+        assert self.admin is not None
         view = self.__class__.as_view(
             action=view.__name__, admin=self.admin, **initkwargs
         )
         return self.admin.admin_view(view, perm=perm)
 
-    def get_permission(self, perm):
+    def get_permission(self, perm: str) -> str:
+        assert self.admin is not None
         return self.admin.get_permission(perm)
 
-    def has_permission(self, perm):
+    def has_permission(self, perm: str) -> bool:
         perm = self.get_permission(perm)
         return self.request.user.has_perm(perm)
 
-    def has_access(self):
+    def has_access(self) -> bool:
+        assert self.admin is not None
         return self.has_permission(self.admin.access_permission)
 
-    def get_context(self, **extra):
+    def get_context(self, **extra: Any) -> Dict[str, Any]:
+        assert self.admin is not None
         return self.admin.get_context(
             self.request, view_tools=self.get_view_tools(), **extra
         )
 
-    def render(self, template, context=None):
+    def render(
+        self, template: str, context: Optional[Dict[str, Any]] = None
+    ) -> HttpResponse:
         extra = context or {}
         return render(self.request, template, self.get_context(**extra))
 

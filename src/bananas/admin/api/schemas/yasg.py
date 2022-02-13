@@ -1,3 +1,5 @@
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
+
 from django.conf import settings
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext as _
@@ -7,6 +9,7 @@ from drf_yasg.inspectors.view import SwaggerAutoSchema
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions, viewsets
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.request import Request
 from rest_framework.routers import SimpleRouter
 from rest_framework.schemas.coreapi import is_custom_action
 
@@ -16,8 +19,13 @@ from .base import BananasBaseRouter
 
 class BananasEndpointEnumerator(EndpointEnumerator):
     def should_include_endpoint(
-        self, path, callback, app_name="", namespace="", url_name=None
-    ):
+        self,
+        path: str,
+        callback: Callable,
+        app_name: str = "",
+        namespace: str = "",
+        url_name: Optional[str] = None,
+    ) -> bool:
         # Fall back to check namespace on the resolver match
         request = self.request
         if (
@@ -26,33 +34,40 @@ class BananasEndpointEnumerator(EndpointEnumerator):
             and getattr(request, "resolver_match", None)
         ):
             namespace = request.resolver_match.namespace or ""
-        return super().should_include_endpoint(
-            path, callback, app_name, namespace, url_name
+        return cast(
+            bool,
+            super().should_include_endpoint(
+                path, callback, app_name, namespace, url_name
+            ),
         )
 
 
 class BananasOpenAPISchemaGenerator(OpenAPISchemaGenerator):
     endpoint_enumerator_class = BananasEndpointEnumerator
 
-    def get_schema(self, *args, **kwargs):
-        schema = super().get_schema(*args, **kwargs)
+    def get_schema(
+        self, request: Optional[Request] = None, public: bool = False
+    ) -> Dict[str, Any]:
+        schema: Dict[str, Any] = super().get_schema(request, public)
         api_settings = getattr(settings, "ADMIN", {}).get("API", {})
         schema["schemes"] = api_settings.get("SCHEMES", schema["schemes"])
         return schema
 
-    def get_paths(self, endpoints, components, request, public):
+    def get_paths(
+        self, endpoints: Dict[str, Any], components: Any, request: Request, public: bool
+    ) -> Tuple[Any, str]:
         paths, prefix = super().get_paths(endpoints, components, request, public)
         path = request._request.path
         return paths, path[: path.rfind("/")] + prefix
 
 
 class BananasSwaggerSchema(SwaggerAutoSchema):
-    def get_operation_id(self, operation_keys):
+    def get_operation_id(self, operation_keys: Sequence[str]) -> str:
         name = ".".join(operation_keys[2:])
-        meta = self.view.get_admin_meta()
-        return meta.basename + ":" + name
+        basename: str = self.view.get_admin_meta().basename
+        return basename + ":" + name
 
-    def get_summary_and_description(self):
+    def get_summary_and_description(self) -> Tuple[Optional[str], str]:
         """
         Compat: drf-yasg 1.12+
         """
@@ -60,7 +75,7 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
         _, description = super().get_summary_and_description()
         return summary, description
 
-    def get_summary(self):
+    def get_summary(self) -> str:
         """
         Compat: drf-yasg 1.11
         """
@@ -93,7 +108,7 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
 
         return title
 
-    def get_tags(self, operation_keys):
+    def get_tags(self, operation_keys: Tuple[str, ...]) -> List[str]:
         view = self.view
         meta = self.view.get_admin_meta()
         tags = {f"app:{meta.app_label}"}
@@ -113,7 +128,7 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
 
         return [tag for tag in tags if tag not in meta.exclude_tags]
 
-    def is_navigation(self):
+    def is_navigation(self) -> bool:
         if not hasattr(self, "_is_navigation"):
             self._is_navigation = False
             try:
@@ -129,7 +144,7 @@ class BananasSwaggerSchema(SwaggerAutoSchema):
 
 
 class BananasSimpleRouter(BananasBaseRouter, SimpleRouter):
-    def get_schema_view(self):
+    def get_schema_view(self) -> Any:
         view = get_schema_view(
             openapi.Info(
                 title="Django Bananas Admin API Schema",

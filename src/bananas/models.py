@@ -202,7 +202,7 @@ class SecretField(models.CharField):
 
         field_length = self.get_field_length(self.num_bytes)
 
-        defaults: Mapping[str, object] = {
+        defaults: Mapping[str, Any] = {
             "max_length": field_length,
             **kwargs,
             **(

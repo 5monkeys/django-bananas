@@ -8,9 +8,9 @@ help:
 test:
 	python -X dev -Wd -m coverage run runtests.py $(test)
 
-.PHONY: test_all		# runs tests using detox, combines coverage and reports it
+.PHONY: test_all		# runs tests using tox -p, combines coverage and reports it
 test_all:
-	detox
+	tox -p
 	make coverage
 
 .PHONY: test-types      # runs pytest-mypy-plugins to test exported types
