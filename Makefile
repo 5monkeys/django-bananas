@@ -15,10 +15,7 @@ test_all:
 
 .PHONY: test-types      # runs pytest-mypy-plugins to test exported types
 test-types:
-	# Hack to make type-tests work until we add py.typed to the published package.
-	touch $$(python -c 'import bananas; print(bananas.__path__[0] + "/py.typed")')
 	pytest --mypy-ini-file=setup.cfg tests/*.yaml
-	rm $$(python -c 'import bananas; print(bananas.__path__[0] + "/py.typed")')
 
 .PHONY: coverage		# combines coverage and reports it
 coverage:
