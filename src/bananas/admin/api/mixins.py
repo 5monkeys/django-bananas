@@ -23,6 +23,7 @@ UNDEFINED = object()
 class BananasAPI:
 
     # TODO: DRF stubs should change versioning type to `Type[BaseVersioning]`
+    #       See: https://github.com/typeddjango/djangorestframework-stubs/pull/146
     versioning_class: Optional[str] = BananasVersioning  # type: ignore[assignment]
     authentication_classes: Sequence[Type[BaseAuthentication]] = (
         SessionAuthentication,
