@@ -53,6 +53,8 @@ repos:
     rev: "0.47"
     hooks:
       - id: check-manifest
+        # See https://github.com/mgedmin/check-manifest/issues/141
+        args: ["--no-build-isolation"]
 
 exclude: |
   (?x)(

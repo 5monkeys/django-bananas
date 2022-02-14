@@ -4,7 +4,7 @@ from .versioning import __versions__
 
 apipatterns = [
     re_path(
-        fr"^{version.__version__}/",
+        rf"^{version.__version__}/",
         include(
             (f"{version.__name__}.urls", "bananas"),
             namespace=version.__version__,
