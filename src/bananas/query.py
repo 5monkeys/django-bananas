@@ -1,25 +1,46 @@
 import logging
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+)
 
+from django.db.models import Model
+from django.db.models.expressions import Combinable
 from django.db.models.query import QuerySet
+from typing_extensions import Protocol
 
 from .models import ModelDict
 
+if TYPE_CHECKING:
+    from django.db.models.query import _QuerySet
+
 _log = logging.getLogger(__name__)
+
+T = TypeVar("T", bound="QuerySet[Model]")
 
 
 class ModelDictIterable:
-    def __init__(self, queryset):
+    def __init__(self, queryset: T) -> None:
         self.queryset = queryset
-        self.named_fields = self.queryset._hints.get("_named_fields")
+        self.named_fields: Mapping[str, str] = self.queryset._hints.get("_named_fields")  # type: ignore[attr-defined]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[ModelDict]:
         queryset = self.queryset
         query = queryset.query
         compiler = query.get_compiler(queryset.db)
 
-        field_names = list(query.values_select)
-        extra_names = list(query.extra_select)
-        annotation_names = list(query.annotation_select)
+        field_names: List[str] = list(query.values_select)
+        extra_names: List[str] = list(query.extra_select)  # type: ignore[attr-defined]
+        annotation_names: List[str] = list(query.annotation_select)  # type: ignore[attr-defined]
 
         # Modified super(); rename fields given in queryset.values() kwargs
         names = extra_names + field_names + annotation_names
@@ -29,19 +50,31 @@ class ModelDictIterable:
         for row in compiler.results_iter():
             yield ModelDict(zip(names, row))
 
-    def rename_fields(self, names):
+    def rename_fields(self, names: Iterable[str]) -> List[str]:
         named_fields = {value: key for key, value in self.named_fields.items()}
         names = [named_fields.get(name, name) for name in names]
         return names
 
 
+_MT_co = TypeVar("_MT_co", bound=Model, covariant=True)
+
+
+class IsQuerySet(Protocol[_MT_co]):
+    def values(
+        self, *fields: Union[str, Combinable], **expressions: Any
+    ) -> "_QuerySet[_MT_co, Dict[str, Any]]":
+        ...
+
+
 class ModelDictQuerySetMixin:
-    def dicts(self, *fields, **named_fields):
+    def dicts(
+        self: IsQuerySet[_MT_co], *fields: str, **named_fields: str
+    ) -> "_QuerySet[_MT_co, Dict[str, Any]]":
         if named_fields:
             fields += tuple(named_fields.values())
 
         clone = self.values(*fields)
-        clone._iterable_class = ModelDictIterable
+        clone._iterable_class = ModelDictIterable  # type: ignore[attr-defined]
 
         # QuerySet._hints is a dict object used by db router
         # to aid deciding which db should get a request. Currently
@@ -49,7 +82,7 @@ class ModelDictQuerySetMixin:
         # fine to set a custom key on this dict as it's a guaranteed
         # way that it'll be returned with the QuerySet instance
         # while leaving the queryset intact
-        clone._add_hints(**{"_named_fields": named_fields})
+        clone._add_hints(**{"_named_fields": named_fields})  # type: ignore[attr-defined]
 
         return clone
 
@@ -58,11 +91,23 @@ class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):
     pass
 
 
-class ModelDictManagerMixin:
-    def dicts(self, *fields, **named_fields):
-        return self.get_queryset().dicts(*fields, **named_fields)
+_MT = TypeVar("_MT", bound=Model)
 
-    def get_queryset(self):
+
+class IsManager(Protocol[_MT]):
+    model: Type[_MT]
+    _db: Optional[str]
+
+
+class ModelDictManagerMixin:
+    def dicts(
+        self, *fields: str, **named_fields: str
+    ) -> "_QuerySet[_MT_co, Dict[str, Any]]":
+        # Mypy: `self` types don't add up
+        queryset = self.get_queryset()  # type: ignore[misc]
+        return queryset.dicts(*fields, **named_fields)
+
+    def get_queryset(self: IsManager[_MT]) -> ModelDictQuerySet:
         return ModelDictQuerySet(self.model, using=self._db)
 
 

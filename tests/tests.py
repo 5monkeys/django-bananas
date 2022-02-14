@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from bananas import environment
 from bananas.environment import env
-from bananas.query import ModelDict
+from bananas.models import ModelDict
 
 from .models import (
     Child,

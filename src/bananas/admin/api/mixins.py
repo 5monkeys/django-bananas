@@ -1,37 +1,53 @@
-from rest_framework.authentication import SessionAuthentication
+from typing import TYPE_CHECKING, Any, Optional, Sequence, Type, TypeVar, cast
+
+from django.db.models import Model
+from rest_framework.authentication import BaseAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAdminUser
 from rest_framework.reverse import reverse
 from rest_framework.utils import formatting
+from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet, ViewSetMixin
 
 from bananas.models import ModelDict
 
 from .schemas import BananasSchema
 from .versioning import BananasVersioning
 
+if TYPE_CHECKING:
+    from rest_framework.permissions import _PermissionClass
+    from rest_framework.serializers import BaseSerializer
+
 UNDEFINED = object()
 
 
 class BananasAPI:
 
-    versioning_class = BananasVersioning
-    authentication_classes = (SessionAuthentication,)
-    permission_classes = (IsAdminUser,)
+    # TODO: DRF stubs should change versioning type to `Type[BaseVersioning]`
+    #       See: https://github.com/typeddjango/djangorestframework-stubs/pull/146
+    versioning_class: Optional[str] = BananasVersioning  # type: ignore[assignment]
+    authentication_classes: Sequence[Type[BaseAuthentication]] = (
+        SessionAuthentication,
+    )
+    permission_classes: Sequence["_PermissionClass"] = (IsAdminUser,)
     swagger_schema = BananasSchema  # for DRF: schema = BananasSchema()
 
+    _admin_meta: ModelDict
+    basename: str
+
     @classmethod
-    def get_admin_meta(cls):
-        meta = getattr(cls, "_admin_meta", None)
+    def get_admin_meta(cls) -> ModelDict:
+        meta: Optional[ModelDict] = getattr(cls, "_admin_meta", None)
 
         if meta is None:
             # TODO: Get proper app_label, not only root package
             app_label, __, __ = cls.__module__.lower().partition(".")
-            name = cls.get_view_name(cls)
+            name = cls.get_view_name(cls)  # type: ignore[arg-type]
 
             basename = getattr(cls, "basename", None)
             if basename is None:
                 if type(name).__name__ == "__proxy__":
                     # name is lazy, probably gettext, extract basename from class name
-                    basename = cls.get_view_name(cls, respect_name=False)
+                    basename = cls.get_view_name(cls, respect_name=False)  # type: ignore[arg-type]
                 else:
                     basename = name
                 basename = basename.replace(" ", "_").lower()
@@ -51,7 +67,7 @@ class BananasAPI:
                     {
                         key: getattr(admin, key)
                         for key in filter(
-                            lambda key: key in meta, admin.__dict__.keys()
+                            lambda key: key in meta, admin.__dict__.keys()  # type: ignore[operator]
                         )
                     }
                 )
@@ -62,32 +78,34 @@ class BananasAPI:
 
         return meta
 
-    def reverse_action(self, url_name, *args, **kwargs):
+    def reverse_action(self, url_name: str, *args: Any, **kwargs: Any) -> str:
         """
         Extended DRF with fallback to requested namespace if request.version is missing
         """
-        if self.request and not self.request.version:
+        request = cast(APIView, self).request
+        if request and not request.version:
             return reverse(self.get_url_name(url_name), *args, **kwargs)
 
-        return super().reverse_action(url_name, *args, **kwargs)
+        return cast(ViewSetMixin, super()).reverse_action(url_name, *args, **kwargs)
 
-    def get_url_name(self, action_url_name="list"):
+    def get_url_name(self, action_url_name: str = "list") -> str:
         """
         Get full namespaced url name to use for reverse()
         """
         url_name = f"{self.basename}-{action_url_name}"
 
-        namespace = self.request.resolver_match.namespace
+        namespace = cast(APIView, self).request.resolver_match.namespace
         if namespace:
             url_name = f"{namespace}:{url_name}"
 
         return url_name
 
-    def get_view_name(self, respect_name=True):
+    def get_view_name(self, respect_name: bool = True) -> str:
         """
         Get or generate human readable view name.
         Extended version from DRF to support usage from both class and instance.
         """
+        view: Type
         if isinstance(self, type):
             view = self
         else:
@@ -95,28 +113,31 @@ class BananasAPI:
 
         # Name may be set by some Views, such as a ViewSet.
         if respect_name:
-            name = getattr(view, "name", None)
+            name: Optional[str] = getattr(view, "name", None)
             if name is not None:
                 return name
 
         name = view.__name__
-        for suffix in ("ViewSet", "View", "API", "Admin"):
-            name = formatting.remove_trailing_string(name, suffix)
+        for view_suffix in ("ViewSet", "View", "API", "Admin"):
+            name = formatting.remove_trailing_string(name, view_suffix)
         name = formatting.camelcase_to_spaces(name)
 
         # Suffix may be set by some Views, such as a ViewSet.
-        suffix = getattr(view, "suffix", None)
+        suffix: Optional[str] = getattr(view, "suffix", None)
         if suffix:
             name += " " + suffix
 
         return name
 
 
-class SchemaSerializerMixin:
-    def get_serializer_class(self, status_code: int = None):
-        serializer_class = super().get_serializer_class()
+_MT_co = TypeVar("_MT_co", bound=Model, covariant=True)
 
-        action = getattr(self, self.action, None)
+
+class SchemaSerializerMixin:
+    def get_serializer_class(self) -> Type["BaseSerializer[_MT_co]"]:
+        serializer_class = cast(GenericViewSet, super()).get_serializer_class()
+
+        action = getattr(self, cast(GenericViewSet, self).action, None)
         schema = getattr(action, "_swagger_auto_schema", None)
         if schema:
             responses = schema.get("responses")

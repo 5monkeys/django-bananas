@@ -1,9 +1,14 @@
+from typing import Callable, Iterable, List, Optional, TypeVar
+
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.password_validation import password_validators_help_texts
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from bananas.admin.api.schemas import schema_serializer_method
+
+User = TypeVar("User", bound=AbstractUser)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -33,10 +38,10 @@ class UserSerializer(serializers.ModelSerializer):
             help_text=_("Falls back to username, if not implemented or empty")
         )
     )
-    def get_full_name(self, obj):
-        full_name = getattr(obj, "get_full_name", None)
-        if full_name is not None:
-            full_name = full_name()
+    def get_full_name(self, obj: User) -> str:
+        getter: Optional[Callable[[], str]] = getattr(obj, "get_full_name", None)
+        if getter is not None:
+            full_name = getter()
 
         if not full_name:
             full_name = obj.get_username()
@@ -44,7 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
         return full_name
 
     @schema_serializer_method(serializer_or_field=serializers.CharField())
-    def get_email(self, obj):
+    def get_email(self, obj: User) -> Optional[str]:
         return getattr(obj, obj.get_email_field_name(), None)
 
     @schema_serializer_method(
@@ -54,11 +59,11 @@ class UserSerializer(serializers.ModelSerializer):
             )
         )
     )
-    def get_permissions(self, obj):
+    def get_permissions(self, obj: User) -> List[str]:
         return sorted(obj.get_all_permissions())
 
     @schema_serializer_method(serializer_or_field=serializers.ListField)
-    def get_groups(self, obj):
+    def get_groups(self, obj: User) -> Iterable[str]:
         return obj.groups.order_by("name").values_list("name", flat=True)
 
 
@@ -71,7 +76,7 @@ class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(label=_("Old password"), write_only=True)
     new_password1 = serializers.CharField(
         label=_("New password"),
-        help_text=password_validators_help_texts(),
+        help_text="\n".join(password_validators_help_texts()),
         write_only=True,
     )
     new_password2 = serializers.CharField(
