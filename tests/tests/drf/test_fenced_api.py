@@ -5,7 +5,7 @@ from django.utils.http import http_date
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from tests.models import Parent
+from tests.project.models import Parent
 
 
 class TestAllowIfUnmodifiedSince(APITestCase):

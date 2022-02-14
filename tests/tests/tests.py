@@ -7,8 +7,7 @@ from django.test import TestCase
 from bananas import environment
 from bananas.environment import env
 from bananas.models import ModelDict
-
-from .models import (
+from tests.project.models import (
     Child,
     Node,
     Parent,
@@ -314,7 +313,7 @@ class SettingsTest(TestCase):
             }
         )
 
-        from . import settings_example as settings
+        from tests.project import settings_example as settings
 
         self.assertEqual(global_settings.DEBUG, False)
         self.assertEqual(settings.DEBUG, True)

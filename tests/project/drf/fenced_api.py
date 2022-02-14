@@ -1,5 +1,6 @@
 import operator
 
+from django.db.models import QuerySet
 from django.urls import include, re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework.serializers import ModelSerializer
@@ -10,7 +11,7 @@ from bananas.drf.fencing import (
     allow_if_match,
     allow_if_unmodified_since,
 )
-from tests.models import Parent
+from tests.project.models import Parent
 
 
 class SimpleSerializer(ModelSerializer):
@@ -29,8 +30,11 @@ class AllowIfMatchAPI(FencedUpdateModelMixin, GenericViewSet):
     fence = allow_if_match(operator.attrgetter("version"))
     serializer_class = SimpleSerializer
 
-    def get_queryset(self):
-        return Parent.objects.all()
+    def get_queryset(self) -> "QuerySet[Parent]":
+        # Mypy: `Parent.objects` doesn't play well with a dynamically generated manager
+        # in `django-stubs`, so until there's a new release, we just ignore it being Any
+        # See: https://github.com/typeddjango/django-stubs/issues/709
+        return Parent.objects.all()  # type: ignore[no-any-return]
 
 
 router = DefaultRouter()

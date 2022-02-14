@@ -69,7 +69,7 @@ class AdminBaseTest(TestCase):
 class AdminTest(AdminBaseTest):
     def setUp(self):
         super().setUp()
-        self.detail_url = reverse("admin:tests_simple")
+        self.detail_url = reverse("admin:project_simple")
         self.custom_url = reverse("admin:tests_simple_custom")
         self.special_url = reverse("admin:tests_simple_special")
 
@@ -77,7 +77,7 @@ class AdminTest(AdminBaseTest):
     def test_admin(self):
         @admin.register
         class AnAdminView(admin.AdminView):
-            __module__ = "tests.admin"
+            __module__ = "tests.project.admin"
 
         class FakeRequest:
             META = {"SCRIPT_NAME": ""}
@@ -93,7 +93,7 @@ class AdminTest(AdminBaseTest):
         # As decorator without arguments
         @admin.register
         class MyAdminViewRegisteredWithoutArgs(admin.AdminView):
-            __module__ = "tests.admin"
+            __module__ = "tests.project.admin"
 
         model_admin = get_model_admin_from_registry(MyAdminViewRegisteredWithoutArgs)
         self.assertIsNotNone(model_admin)
@@ -105,7 +105,7 @@ class AdminTest(AdminBaseTest):
         # As decorator with arguments
         @admin.register(admin_class=SpecialModelAdmin)
         class MyAdminViewRegisteredWithArgs(admin.AdminView):
-            __module__ = "tests.admin"
+            __module__ = "tests.project.admin"
 
         model_admin = get_model_admin_from_registry(MyAdminViewRegisteredWithArgs)
         self.assertIsNotNone(model_admin)
@@ -116,7 +116,7 @@ class AdminTest(AdminBaseTest):
 
         # Just registered
         class MyAdminViewRegisteredNormally(admin.AdminView):
-            __module__ = "tests.admin"
+            __module__ = "tests.project.admin"
 
         admin.register(MyAdminViewRegisteredNormally, admin_class=SpecialModelAdmin)
         model_admin = get_model_admin_from_registry(MyAdminViewRegisteredNormally)
@@ -127,7 +127,7 @@ class AdminTest(AdminBaseTest):
     def test_register_app_nested_in_package(self):
         @admin.register
         class MyAdminViewRegisteredInNestedApp(admin.AdminView):
-            __module__ = "somepackage.tests.admin"
+            __module__ = "somepackage.project.admin"
 
         model_admin = get_model_admin_from_registry(MyAdminViewRegisteredInNestedApp)
         self.assertIsNotNone(model_admin)
