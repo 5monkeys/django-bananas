@@ -58,18 +58,5 @@ example:
 clean:
 	@rm -rf dist/ *.egg *.egg-info .coverage .coverage.* example/db.sqlite3
 
-.PHONY: build
-build: clean
-	python3 -m pip install --upgrade wheel twine setuptools
-	python3 setup.py sdist bdist_wheel
-
-.PHONY: publish
-publish: build
-	python3 -m twine upload dist/*
-
-.PHONY: test-publish
-test-publish: build
-	python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-
 .PHONY: all			# runs clean, test_all, lint, type-check
 all: clean test_all type-check
