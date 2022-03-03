@@ -4,7 +4,7 @@
     "build-css": "node build-css.js"
   },
   "dependencies": {
-    "postcss": "6.0.12",
+    "postcss": "7.0.36",
     "postcss-custom-properties": "6.1.0"
   }
 }
