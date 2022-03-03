@@ -1,3 +1,5 @@
+from typing import List
+
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -13,13 +15,13 @@ class CommandTests(TestCase):
 
         class FakeSys:
             class stdout:
-                lines = []
+                lines: List[str] = []
 
                 @classmethod
-                def write(cls, line):
+                def write(cls, line: str) -> None:
                     cls.lines.append(line)
 
-        show_urls.sys = FakeSys
+        show_urls.sys = FakeSys  # type: ignore[attr-defined]
         show_urls.show_urls()
 
         self.assertEqual(len(FakeSys.stdout.lines), admin_api_url_count)

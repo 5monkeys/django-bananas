@@ -83,7 +83,7 @@ class AdminTest(AdminBaseTest):
             META = {"SCRIPT_NAME": ""}
             user = AnonymousUser()
 
-        ctx = admin.site.each_context(FakeRequest())
+        ctx = admin.site.each_context(FakeRequest())  # type: ignore[arg-type]
         self.assertTrue("settings" in ctx)
         self.assertIsInstance(admin.site.urls, tuple)
 

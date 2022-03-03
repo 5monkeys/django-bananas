@@ -219,10 +219,17 @@ class EnvironWrapper:
     Wrapper around os environ with type conversion support.
     """
 
-    __delitem__ = environ.__delitem__
-    __getitem__ = environ.__getitem__
-    __setitem__ = environ.__setitem__
-    __contains__ = environ.__contains__
+    def __delitem__(self, key: str) -> None:
+        environ.__delitem__(key)
+
+    def __getitem__(self, key: str) -> str:
+        return environ.__getitem__(key)
+
+    def __setitem__(self, key: str, value: str) -> None:
+        environ.__setitem__(key, value)
+
+    def __contains__(self, key: object) -> bool:
+        return environ.__contains__(key)
 
     def __getattr__(self, item: str) -> object:
         return getattr(environ, item)
