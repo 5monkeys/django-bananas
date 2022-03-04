@@ -11,10 +11,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.admin",
-    "tests",
+    "tests.project",
 ]
 
-ROOT_URLCONF = "tests.urls"
+ROOT_URLCONF = "tests.project.urls"
 
 MIDDLEWARE = MIDDLEWARE_CLASSES = [
     "django.middleware.security.SecurityMiddleware",

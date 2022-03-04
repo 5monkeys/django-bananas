@@ -7,8 +7,7 @@ from django.test import TestCase
 from bananas import environment
 from bananas.environment import env
 from bananas.models import ModelDict
-
-from .models import (
+from tests.project.models import (
     Child,
     Node,
     Parent,
@@ -109,7 +108,7 @@ class QuerySetTest(TestCase):
     def test_dicts(self):
         self.assertTrue(hasattr(Parent.objects, "dicts"))
 
-        simple = Simple.objects.all().dicts("name").first()
+        simple = Simple.objects.all().dicts("name").first()  # type: ignore[attr-defined]
         self.assertEqual(simple.name, self.simple.name)
 
         simple = Simple.objects.dicts("name").first()
@@ -203,7 +202,7 @@ class QuerySetTest(TestCase):
         self.assertEqual(len(model.secret), field_length)
 
         field.auto = False
-        self.assertEqual(len(field.pre_save(model, None)), field_length)
+        self.assertEqual(len(field.pre_save(model, False)), field_length)
 
         self.assertRaisesMessage(
             ValidationError,
@@ -237,7 +236,7 @@ class QuerySetTest(TestCase):
 
     def test_nested(self):
         md = ModelDict()
-        md._nested = {"x": 1}
+        md._nested = {"x": 1}  # type: ignore[dict-item]
         self.assertEqual(md.x, 1)
 
     def test_expand(self):
@@ -291,13 +290,19 @@ class EnvTest(TestCase):
         self.assertEqual(env.get_int("foobar"), 123)
 
         environ["foobar"] = "a, b, c"
-        self.assertTupleEqual(env.get_tuple("foobar"), ("a", "b", "c"))
+        tuple_result = env.get_tuple("foobar")
+        assert tuple_result is not None
+        self.assertTupleEqual(tuple_result, ("a", "b", "c"))
 
         environ["foobar"] = "a, b, c"
-        self.assertListEqual(env.get_list("foobar"), ["a", "b", "c"])
+        list_result = env.get_list("foobar")
+        assert list_result is not None
+        self.assertListEqual(list_result, ["a", "b", "c"])
 
         environ["foobar"] = "a, b, c"
-        self.assertSetEqual(env.get_set("foobar"), {"a", "b", "c"})
+        set_result = env.get_set("foobar")
+        assert set_result is not None
+        self.assertSetEqual(set_result, {"a", "b", "c"})
         self.assertEqual(env.get("foobar"), "a, b, c")
         self.assertEqual(env["foobar"], "a, b, c")
 
@@ -314,13 +319,13 @@ class SettingsTest(TestCase):
             }
         )
 
-        from . import settings_example as settings
+        from tests.project import settings_example as settings
 
         self.assertEqual(global_settings.DEBUG, False)
         self.assertEqual(settings.DEBUG, True)
-        self.assertListEqual(settings.INTERNAL_IPS, ["127.0.0.1", "10.0.0.1"])
+        self.assertListEqual(settings.INTERNAL_IPS, ["127.0.0.1", "10.0.0.1"])  # type: ignore[attr-defined]
         self.assertIsNone(global_settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS)
-        self.assertEqual(settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS, 420)
+        self.assertEqual(settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS, 420)  # type: ignore[attr-defined]
 
     def test_get_settings(self):
         environ["DJANGO_ADMINS"] = "foobar"

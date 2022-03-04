@@ -1,3 +1,5 @@
+from typing import NoReturn
+
 from django.db import models
 from django.db.models import Model
 from django.db.models.manager import Manager
@@ -20,8 +22,8 @@ class Parent(TimeStampedModel):
     objects = Manager.from_queryset(ExtendedQuerySet)()
 
     @property
-    def attribute_error(self):
-        return getattr(object(), "missing_attribute")  # noqa: B009
+    def attribute_error(self) -> NoReturn:
+        raise AttributeError()
 
     @property
     def version(self) -> str:

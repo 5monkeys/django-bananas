@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 try:
     from test.support.os_helper import EnvironmentVarGuard  # type: ignore[import]
@@ -13,7 +13,7 @@ from bananas import secrets
 
 class SecretsTest(TestCase):
     def setUp(self):
-        secrets_dir = os.path.join(os.path.dirname(__file__), "files")
+        secrets_dir = str(Path(__file__).resolve().parent.parent / "project" / "files")
         self.env = EnvironmentVarGuard()
         self.env.set(secrets.BANANAS_SECRETS_DIR_ENV_KEY, secrets_dir)
 

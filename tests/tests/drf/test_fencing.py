@@ -6,6 +6,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.test.utils import isolate_apps, override_settings
 from django.utils.http import http_date
 from drf_yasg import openapi
+from rest_framework.exceptions import ErrorDetail
 
 from bananas.drf.errors import BadRequest
 from bananas.drf.fencing import (
@@ -17,8 +18,7 @@ from bananas.drf.fencing import (
     parse_date_modified,
 )
 from bananas.models import TimeStampedModel
-
-from .request import FakeRequest
+from tests.project.drf.request import FakeRequest
 
 
 class TestFence(TestCase):
@@ -124,6 +124,8 @@ class TestHeaderDateParser(TestCase):
         get_header = header_date_parser("header")
         with self.assertRaises(BadRequest) as exc_info:
             get_header(FakeRequest.fake())
+
+        assert isinstance(exc_info.exception.detail, ErrorDetail)
         self.assertEqual(exc_info.exception.detail.code, "missing_header")
 
     def test_can_get_parsed_header_datetime(self):
@@ -133,13 +135,16 @@ class TestHeaderDateParser(TestCase):
         self.assertEqual(parsed, dt)
 
 
-@isolate_apps("tests.drf")
+@isolate_apps("tests.project.drf")
 class TestParseDateModified(TestCase):
     def test_replaces_microsecond(self):
         class A(TimeStampedModel):
-            date_modified = datetime.datetime(
+            date_modified = datetime.datetime(  # type: ignore[assignment]
                 2021, 1, 14, 17, 30, 1, 1, tzinfo=datetime.timezone.utc
             )
+
+            class Meta:
+                app_label = "project"
 
         self.assertEqual(
             parse_date_modified(A()),
@@ -148,7 +153,10 @@ class TestParseDateModified(TestCase):
 
     def test_can_get_none(self):
         class A(TimeStampedModel):
-            date_modified = None
+            date_modified = None  # type: ignore[assignment]
+
+            class Meta:
+                app_label = "project"
 
         self.assertIsNone(parse_date_modified(A()))
 
@@ -174,6 +182,8 @@ class TestHeaderEtagParser(TestCase):
         parser = header_etag_parser("If-Match")
         with self.assertRaises(BadRequest) as exc_info:
             parser(request)
+
+        assert isinstance(exc_info.exception.detail, ErrorDetail)
         self.assertEqual(exc_info.exception.detail.code, "missing_header")
 
     def test_raises_bad_request_for_invalid_header(self):
@@ -181,14 +191,23 @@ class TestHeaderEtagParser(TestCase):
         parser = header_etag_parser("If-Match")
         with self.assertRaises(BadRequest) as exc_info:
             parser(request)
+
+        assert isinstance(exc_info.exception.detail, ErrorDetail)
         self.assertEqual(exc_info.exception.detail.code, "invalid_header")
 
 
 class TestAsSet(TestCase):
     def test_returns_single_item_set(self):
-        result = as_set(lambda x: x)(1)
+        def fn(x: int) -> int:
+            return x
+
+        result = as_set(fn)(1)
         self.assertIsInstance(result, frozenset)
+        assert result is not None
         self.assertSetEqual(result, {1})
 
     def test_passes_through_none(self):
-        self.assertIsNone(as_set(lambda _: None)(1))
+        def fn(_: int) -> None:
+            return None
+
+        self.assertIsNone(as_set(fn)(1))

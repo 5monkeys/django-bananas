@@ -1,4 +1,7 @@
-from django.urls import re_path
+from typing import List
+
+from django.http import HttpRequest, HttpResponse
+from django.urls import URLPattern, re_path
 
 from bananas import admin
 
@@ -17,7 +20,7 @@ class SimpleAdminView(admin.AdminView):
         ),
     ]
 
-    def get_urls(self):
+    def get_urls(self) -> List[URLPattern]:
         return [
             re_path(
                 r"^custom/$",
@@ -33,12 +36,12 @@ class SimpleAdminView(admin.AdminView):
             ),
         ]
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         return self.render("simple.html", {"context": "get"})
 
-    def custom_view(self, request):
+    def custom_view(self, request: HttpRequest) -> HttpResponse:
         assert self.has_access()  # For coverage...
         return self.render("simple.html", {"context": "custom"})
 
-    def special_permission_view(self, request):
+    def special_permission_view(self, request: HttpRequest) -> HttpResponse:
         return self.render("simple.html", {"context": "special"})
