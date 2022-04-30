@@ -23,7 +23,7 @@ UNDEFINED = object()
 
 class BananasAPI:
 
-    versioning_class: Optional[Type[BaseVersioning]] = BananasVersioning
+    versioning_class: Optional[Type["BaseVersioning"]] = BananasVersioning
     authentication_classes: Sequence[Type[BaseAuthentication]] = (
         SessionAuthentication,
     )
