@@ -16,15 +16,14 @@ from .versioning import BananasVersioning
 if TYPE_CHECKING:
     from rest_framework.permissions import _PermissionClass
     from rest_framework.serializers import BaseSerializer
+    from rest_framework.versioning import BaseVersioning
 
 UNDEFINED = object()
 
 
 class BananasAPI:
 
-    # TODO: DRF stubs should change versioning type to `Type[BaseVersioning]`
-    #       See: https://github.com/typeddjango/djangorestframework-stubs/pull/146
-    versioning_class: Optional[str] = BananasVersioning  # type: ignore[assignment]
+    versioning_class: Optional[Type[BaseVersioning]] = BananasVersioning
     authentication_classes: Sequence[Type[BaseAuthentication]] = (
         SessionAuthentication,
     )

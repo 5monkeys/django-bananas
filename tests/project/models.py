@@ -19,7 +19,9 @@ class Simple(Model):
 
 class Parent(TimeStampedModel):
     name = models.CharField(max_length=255)
-    objects = Manager.from_queryset(ExtendedQuerySet)()
+    # TODO: django-stubs errors when `objects` gets a type that's not directly of
+    #       `QuerySet`. Related: https://github.com/typeddjango/django-stubs/issues/905
+    objects = Manager.from_queryset(ExtendedQuerySet)()  # type: ignore[django-manager]
 
     @property
     def attribute_error(self) -> NoReturn:
@@ -33,13 +35,13 @@ class Parent(TimeStampedModel):
 class Child(TimeStampedModel):
     name = models.CharField(max_length=255)
     parent = models.ForeignKey(Parent, null=True, on_delete=models.CASCADE)
-    objects = Manager.from_queryset(ExtendedQuerySet)()
+    objects = Manager.from_queryset(ExtendedQuerySet)()  # type: ignore[django-manager]
 
 
 class Node(TimeStampedModel):
     name = models.CharField(max_length=255)
     parent = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
-    objects = Manager.from_queryset(ExtendedQuerySet)()
+    objects = Manager.from_queryset(ExtendedQuerySet)()  # type: ignore[django-manager]
 
 
 class TestUUIDModel(UUIDModel):
