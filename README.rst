@@ -554,4 +554,4 @@ and select specific tests with the ``test`` argument to ``make test``:
 
 .. code-block:: bash
 
-    make test test='tests.test_admin.APITest.test_logout'
+    make test test='-k test_logout'

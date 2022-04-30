@@ -1,7 +1,7 @@
 from pathlib import Path
 
 try:
-    from test.support.os_helper import (  # type: ignore[import-not-found]
+    from test.support.os_helper import (
         EnvironmentVarGuard,
     )
 except ImportError:
@@ -15,14 +15,14 @@ from bananas import secrets
 
 class SecretsTest(TestCase):
     def setUp(self):
-        secrets_dir = str(Path(__file__).resolve().parent.parent / "project" / "files")
+        secrets_dir = str(Path(__file__).resolve().parent / "files")
         self.env = EnvironmentVarGuard()
         self.env.set(secrets.BANANAS_SECRETS_DIR_ENV_KEY, secrets_dir)
 
     def test_get_existing_secret(self):
         with self.env:
             secret = secrets.get_secret("hemlis")
-        self.assertEqual(secret, "HEMLIS")
+        self.assertEqual(secret, "HEMLIS\n")
 
     def test_get_non_existing_secret_with_no_default(self):
         with self.env:

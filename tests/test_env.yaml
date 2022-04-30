@@ -49,7 +49,7 @@
   out: |
     main:2: note: Revealed type is "Union[builtins.list[builtins.str], None]"
     main:3: note: Revealed type is "builtins.list[builtins.str]"
-    main:4: note: Revealed type is "Union[builtins.list[builtins.str], Tuple[()]]"
+    main:4: note: Revealed type is "Union[builtins.list[builtins.str], tuple[()]]"
   mypy_config: |
     [mypy-django.*]
     ignore_errors = True
@@ -63,7 +63,7 @@
   out: |
     main:2: note: Revealed type is "Union[builtins.set[builtins.str], None]"
     main:3: note: Revealed type is "builtins.set[builtins.str]"
-    main:4: note: Revealed type is "Union[builtins.set[builtins.str], Tuple[()]]"
+    main:4: note: Revealed type is "Union[builtins.set[builtins.str], tuple[()]]"
   mypy_config: |
     [mypy-django.*]
     ignore_errors = True
