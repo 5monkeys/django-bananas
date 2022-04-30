@@ -33,9 +33,9 @@
     reveal_type(env.get_tuple("test", ()))
     reveal_type(env.get_tuple("test", []))
   out: |
-    main:2: note: Revealed type is "Union[builtins.tuple[builtins.str], None]"
-    main:3: note: Revealed type is "builtins.tuple[builtins.str]"
-    main:4: note: Revealed type is "Union[builtins.tuple[builtins.str], builtins.list*[<nothing>]]"
+    main:2: note: Revealed type is "Union[builtins.tuple[builtins.str, ...], None]"
+    main:3: note: Revealed type is "builtins.tuple[builtins.str, ...]"
+    main:4: note: Revealed type is "Union[builtins.tuple[builtins.str, ...], builtins.list*[<nothing>]]"
   mypy_config: |
     [mypy-django.*]
     ignore_errors = True
