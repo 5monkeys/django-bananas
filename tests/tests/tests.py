@@ -115,13 +115,15 @@ class QuerySetTest(TestCase):
         simple = Simple.objects.dicts("name").first()
         self.assertEqual(simple.name, self.simple.name)
 
-        child = Child.objects.dicts("name", "parent__name").get()
+        child = Child.objects.dicts("name", "parent__name").first()
+        assert child
         self.assertEqual(child.name, self.child.name)
         self.assertNotIn("parent", child)
         self.assertEqual(child.parent.name, self.parent.name)
 
     def test_dicts_rename(self):
-        child = Child.objects.dicts("parent__name", alias="name").get()
+        child = Child.objects.dicts("parent__name", alias="name").first()
+        assert child
         self.assertEqual(child.alias, self.child.name)
         self.assertEqual(child.parent.name, self.parent.name)
 
