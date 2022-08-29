@@ -90,13 +90,20 @@ class ModelDictQuerySetMixin:
 _MT = TypeVar("_MT", bound=Model)
 
 
-class ModelDictQuerySet(  # type: ignore[misc]
-    ModelDictQuerySetMixin,
-    QuerySet[_MT],
-    IsQuerySet[_MT],
-    Generic[_MT],
-):
-    pass
+if TYPE_CHECKING:
+
+    class ModelDictQuerySet(  # type: ignore[misc]
+        ModelDictQuerySetMixin,
+        QuerySet[_MT],
+        IsQuerySet[_MT],
+        Generic[_MT],
+    ):
+        pass
+
+else:
+
+    class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):
+        pass
 
 
 class IsManager(Protocol[_MT]):
