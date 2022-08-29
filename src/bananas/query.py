@@ -39,8 +39,8 @@ class ModelDictIterable:
         compiler = query.get_compiler(queryset.db)
 
         field_names: List[str] = list(query.values_select)
-        extra_names: List[str] = list(query.extra_select)  # type: ignore[attr-defined]
-        annotation_names: List[str] = list(query.annotation_select)  # type: ignore[attr-defined]
+        extra_names: List[str] = list(query.extra_select)
+        annotation_names: List[str] = list(query.annotation_select)
 
         # Modified super(); rename fields given in queryset.values() kwargs
         names = extra_names + field_names + annotation_names

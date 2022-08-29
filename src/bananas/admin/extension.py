@@ -77,7 +77,7 @@ class ExtendedAdminSite(AdminSite):
             for model, admin in list(django_admin_site._registry.items()):
                 # django_admin_site.unregister(model)
                 self._registry[model] = admin.__class__(model, self)
-        return self.get_urls(), "admin", self.name  # type: ignore[return-value]
+        return self.get_urls(), "admin", self.name
 
 
 class ModelAdminView(ModelAdmin):

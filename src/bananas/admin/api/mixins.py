@@ -67,7 +67,7 @@ class BananasAPI:
                     {
                         key: getattr(admin, key)
                         for key in filter(
-                            lambda key: key in meta, admin.__dict__.keys()  # type: ignore[operator]
+                            lambda key: key in meta, admin.__dict__.keys()
                         )
                     }
                 )
