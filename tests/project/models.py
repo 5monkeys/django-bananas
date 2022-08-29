@@ -2,7 +2,7 @@ from typing import NoReturn
 
 from django.db import models
 from django.db.models import Model
-from django.db.models.manager import Manager
+from django.db.models.manager import BaseManager, Manager
 
 from bananas.models import SecretField, TimeStampedModel, URLSecretField, UUIDModel
 from bananas.query import ExtendedQuerySet, ModelDictManagerMixin
@@ -17,9 +17,16 @@ class Simple(Model):
     objects = SimpleManager()
 
 
+class ParentQuerySet(ExtendedQuerySet["Parent"]):
+    ...
+
+
+ParentManager = BaseManager.from_queryset(ParentQuerySet)
+
+
 class Parent(TimeStampedModel):
     name = models.CharField(max_length=255)
-    objects = Manager.from_queryset(ExtendedQuerySet)()
+    objects = ParentManager()
 
     @property
     def attribute_error(self) -> NoReturn:
@@ -30,16 +37,30 @@ class Parent(TimeStampedModel):
         return str(self.pk) + ":" + str(self.date_modified)
 
 
+class ChildQuerySet(ExtendedQuerySet["Child"]):
+    ...
+
+
+ChildManager = BaseManager.from_queryset(ChildQuerySet)
+
+
 class Child(TimeStampedModel):
     name = models.CharField(max_length=255)
     parent = models.ForeignKey(Parent, null=True, on_delete=models.CASCADE)
-    objects = Manager.from_queryset(ExtendedQuerySet)()
+    objects = ChildManager()
+
+
+class NodeQuerySet(ExtendedQuerySet["Node"]):
+    ...
+
+
+NodeManager = BaseManager.from_queryset(NodeQuerySet)
 
 
 class Node(TimeStampedModel):
     name = models.CharField(max_length=255)
     parent = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
-    objects = Manager.from_queryset(ExtendedQuerySet)()
+    objects = NodeManager()
 
 
 class TestUUIDModel(UUIDModel):

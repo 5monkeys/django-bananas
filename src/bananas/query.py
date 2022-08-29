@@ -2,7 +2,7 @@ import logging
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
+    Generic,
     Iterable,
     Iterator,
     List,
@@ -62,14 +62,14 @@ _MT_co = TypeVar("_MT_co", bound=Model, covariant=True)
 class IsQuerySet(Protocol[_MT_co]):
     def values(
         self, *fields: Union[str, Combinable], **expressions: Any
-    ) -> "_QuerySet[_MT_co, Dict[str, Any]]":
+    ) -> "_QuerySet[_MT_co, ModelDict]":
         ...
 
 
 class ModelDictQuerySetMixin:
     def dicts(
         self: IsQuerySet[_MT_co], *fields: str, **named_fields: str
-    ) -> "_QuerySet[_MT_co, Dict[str, Any]]":
+    ) -> "_QuerySet[_MT_co, ModelDict]":
         if named_fields:
             fields += tuple(named_fields.values())
 
@@ -87,11 +87,16 @@ class ModelDictQuerySetMixin:
         return clone
 
 
-class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):
-    pass
-
-
 _MT = TypeVar("_MT", bound=Model)
+
+
+class ModelDictQuerySet(  # type: ignore[misc]
+    ModelDictQuerySetMixin,
+    QuerySet[_MT],
+    IsQuerySet[_MT],
+    Generic[_MT],
+):
+    pass
 
 
 class IsManager(Protocol[_MT]):
@@ -102,7 +107,7 @@ class IsManager(Protocol[_MT]):
 class ModelDictManagerMixin:
     def dicts(
         self, *fields: str, **named_fields: str
-    ) -> "_QuerySet[_MT_co, Dict[str, Any]]":
+    ) -> "_QuerySet[_MT_co, ModelDict]":
         # Mypy: `self` types don't add up
         queryset = self.get_queryset()  # type: ignore[misc]
         return queryset.dicts(*fields, **named_fields)

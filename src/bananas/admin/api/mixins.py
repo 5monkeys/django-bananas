@@ -5,6 +5,7 @@ from rest_framework.authentication import BaseAuthentication, SessionAuthenticat
 from rest_framework.permissions import IsAdminUser
 from rest_framework.reverse import reverse
 from rest_framework.utils import formatting
+from rest_framework.versioning import BaseVersioning
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ViewSetMixin
 
@@ -21,10 +22,7 @@ UNDEFINED = object()
 
 
 class BananasAPI:
-
-    # TODO: DRF stubs should change versioning type to `Type[BaseVersioning]`
-    #       See: https://github.com/typeddjango/djangorestframework-stubs/pull/146
-    versioning_class: Optional[str] = BananasVersioning  # type: ignore[assignment]
+    versioning_class: Optional[Type[BaseVersioning]] = BananasVersioning
     authentication_classes: Sequence[Type[BaseAuthentication]] = (
         SessionAuthentication,
     )
@@ -65,9 +63,10 @@ class BananasAPI:
             if admin is not None:
                 meta.update(
                     {
-                        key: getattr(admin, key)
+                        key: getattr(admin, key)  # type: ignore[misc, call-overload]
                         for key in filter(
-                            lambda key: key in meta, admin.__dict__.keys()
+                            lambda key: key in meta,  # type: ignore[arg-type]
+                            admin.__dict__.keys(),
                         )
                     }
                 )
@@ -94,7 +93,9 @@ class BananasAPI:
         """
         url_name = f"{self.basename}-{action_url_name}"
 
-        namespace = cast(APIView, self).request.resolver_match.namespace
+        request = cast(APIView, self).request
+        assert request.resolver_match
+        namespace = request.resolver_match.namespace
         if namespace:
             url_name = f"{namespace}:{url_name}"
 
