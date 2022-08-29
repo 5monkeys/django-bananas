@@ -66,7 +66,7 @@ class ExtendedAdminSite(AdminSite):
         self.site_header = self.settings["SITE_HEADER"]
         self.index_title = self.settings["INDEX_TITLE"]
 
-    def each_context(self, request: WSGIRequest) -> Dict[str, Any]:
+    def each_context(self, request: HttpRequest) -> Dict[str, Any]:
         context = super().each_context(request)
         context.update(settings=self.settings)
         return context

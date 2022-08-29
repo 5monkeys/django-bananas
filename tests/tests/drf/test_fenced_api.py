@@ -34,6 +34,7 @@ class TestAllowIfUnmodifiedSince(APITestCase):
 
     def test_returns_precondition_failed_for_expired_token(self):
         item = Parent.objects.create()
+        assert item.date_modified
         response = self.client.put(
             self.url(args=(item.pk,)),
             data={"name": "Great!"},
@@ -47,6 +48,7 @@ class TestAllowIfUnmodifiedSince(APITestCase):
 
     def test_allows_request_for_valid_token(self):
         item = Parent.objects.create()
+        assert item.date_modified
         response = self.client.put(
             self.url(args=(item.pk,)),
             data={"name": "Great!"},

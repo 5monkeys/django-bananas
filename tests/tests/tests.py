@@ -1,4 +1,5 @@
 from os import environ
+from typing import Dict, List
 
 from django.conf import global_settings
 from django.core.exceptions import ValidationError
@@ -126,7 +127,7 @@ class QuerySetTest(TestCase):
 
         # Test that renamed fields on reverse relation fields
         # will actually return all possible results
-        expected_dicts = [
+        expected_dicts: List[Dict] = [
             {"child_name": self.child.name},
             {"child_name": self.other_child.name},
         ]
