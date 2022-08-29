@@ -1,4 +1,4 @@
-from typing import NoReturn
+from typing import TYPE_CHECKING, NoReturn
 
 from django.db import models
 from django.db.models import Model
@@ -17,8 +17,15 @@ class Simple(Model):
     objects = SimpleManager()
 
 
-class ParentQuerySet(ExtendedQuerySet["Parent"]):
-    ...
+if TYPE_CHECKING:
+
+    class ParentQuerySet(ExtendedQuerySet["Parent"]):
+        ...
+
+else:
+
+    class ParentQuerySet(ExtendedQuerySet):
+        ...
 
 
 ParentManager = BaseManager.from_queryset(ParentQuerySet)
@@ -37,8 +44,15 @@ class Parent(TimeStampedModel):
         return str(self.pk) + ":" + str(self.date_modified)
 
 
-class ChildQuerySet(ExtendedQuerySet["Child"]):
-    ...
+if TYPE_CHECKING:
+
+    class ChildQuerySet(ExtendedQuerySet["Child"]):
+        ...
+
+else:
+
+    class ChildQuerySet(ExtendedQuerySet):
+        ...
 
 
 ChildManager = BaseManager.from_queryset(ChildQuerySet)
@@ -50,8 +64,15 @@ class Child(TimeStampedModel):
     objects = ChildManager()
 
 
-class NodeQuerySet(ExtendedQuerySet["Node"]):
-    ...
+if TYPE_CHECKING:
+
+    class NodeQuerySet(ExtendedQuerySet["Node"]):
+        ...
+
+else:
+
+    class NodeQuerySet(ExtendedQuerySet):
+        ...
 
 
 NodeManager = BaseManager.from_queryset(NodeQuerySet)
