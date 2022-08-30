@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, NoReturn
 
 from django.db import models
 from django.db.models import Model
-from django.db.models.manager import BaseManager, Manager
+from django.db.models.manager import Manager
 
 from bananas.models import SecretField, TimeStampedModel, URLSecretField, UUIDModel
 from bananas.query import ExtendedQuerySet, ModelDictManagerMixin
@@ -28,7 +28,7 @@ else:
         ...
 
 
-ParentManager = BaseManager.from_queryset(ParentQuerySet)
+ParentManager = Manager.from_queryset(ParentQuerySet)
 
 
 class Parent(TimeStampedModel):
@@ -55,7 +55,7 @@ else:
         ...
 
 
-ChildManager = BaseManager.from_queryset(ChildQuerySet)
+ChildManager = Manager.from_queryset(ChildQuerySet)
 
 
 class Child(TimeStampedModel):
@@ -75,7 +75,7 @@ else:
         ...
 
 
-NodeManager = BaseManager.from_queryset(NodeQuerySet)
+NodeManager = Manager.from_queryset(NodeQuerySet)
 
 
 class Node(TimeStampedModel):
