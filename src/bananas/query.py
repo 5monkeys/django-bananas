@@ -2,7 +2,7 @@ import logging
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
+    Generic,
     Iterable,
     Iterator,
     List,
@@ -39,8 +39,8 @@ class ModelDictIterable:
         compiler = query.get_compiler(queryset.db)
 
         field_names: List[str] = list(query.values_select)
-        extra_names: List[str] = list(query.extra_select)  # type: ignore[attr-defined]
-        annotation_names: List[str] = list(query.annotation_select)  # type: ignore[attr-defined]
+        extra_names: List[str] = list(query.extra_select)
+        annotation_names: List[str] = list(query.annotation_select)
 
         # Modified super(); rename fields given in queryset.values() kwargs
         names = extra_names + field_names + annotation_names
@@ -62,14 +62,14 @@ _MT_co = TypeVar("_MT_co", bound=Model, covariant=True)
 class IsQuerySet(Protocol[_MT_co]):
     def values(
         self, *fields: Union[str, Combinable], **expressions: Any
-    ) -> "_QuerySet[_MT_co, Dict[str, Any]]":
+    ) -> "_QuerySet[_MT_co, ModelDict]":
         ...
 
 
 class ModelDictQuerySetMixin:
     def dicts(
         self: IsQuerySet[_MT_co], *fields: str, **named_fields: str
-    ) -> "_QuerySet[_MT_co, Dict[str, Any]]":
+    ) -> "_QuerySet[_MT_co, ModelDict]":
         if named_fields:
             fields += tuple(named_fields.values())
 
@@ -87,11 +87,23 @@ class ModelDictQuerySetMixin:
         return clone
 
 
-class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):
-    pass
-
-
 _MT = TypeVar("_MT", bound=Model)
+
+
+if TYPE_CHECKING:
+
+    class ModelDictQuerySet(  # type: ignore[misc]
+        ModelDictQuerySetMixin,
+        QuerySet[_MT],
+        IsQuerySet[_MT],
+        Generic[_MT],
+    ):
+        pass
+
+else:
+
+    class ModelDictQuerySet(ModelDictQuerySetMixin, QuerySet):
+        pass
 
 
 class IsManager(Protocol[_MT]):
@@ -102,7 +114,7 @@ class IsManager(Protocol[_MT]):
 class ModelDictManagerMixin:
     def dicts(
         self, *fields: str, **named_fields: str
-    ) -> "_QuerySet[_MT_co, Dict[str, Any]]":
+    ) -> "_QuerySet[_MT_co, ModelDict]":
         # Mypy: `self` types don't add up
         queryset = self.get_queryset()  # type: ignore[misc]
         return queryset.dicts(*fields, **named_fields)

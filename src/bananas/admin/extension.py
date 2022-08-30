@@ -66,7 +66,7 @@ class ExtendedAdminSite(AdminSite):
         self.site_header = self.settings["SITE_HEADER"]
         self.index_title = self.settings["INDEX_TITLE"]
 
-    def each_context(self, request: WSGIRequest) -> Dict[str, Any]:
+    def each_context(self, request: HttpRequest) -> Dict[str, Any]:
         context = super().each_context(request)
         context.update(settings=self.settings)
         return context
@@ -77,7 +77,7 @@ class ExtendedAdminSite(AdminSite):
             for model, admin in list(django_admin_site._registry.items()):
                 # django_admin_site.unregister(model)
                 self._registry[model] = admin.__class__(model, self)
-        return self.get_urls(), "admin", self.name  # type: ignore[return-value]
+        return self.get_urls(), "admin", self.name
 
 
 class ModelAdminView(ModelAdmin):
