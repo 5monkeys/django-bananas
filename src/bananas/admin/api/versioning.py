@@ -23,6 +23,7 @@ class BananasVersioning(NamespaceVersioning):
         """
         Prefix viewname with full namespace bananas:vX.Y:
         """
+        assert request.resolver_match is not None
         namespace = request.resolver_match.namespace
         if namespace:
             viewname = f"{namespace}:{viewname}"

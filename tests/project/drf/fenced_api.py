@@ -31,10 +31,7 @@ class AllowIfMatchAPI(FencedUpdateModelMixin, GenericViewSet):
     serializer_class = SimpleSerializer
 
     def get_queryset(self) -> "QuerySet[Parent]":
-        # Mypy: `Parent.objects` doesn't play well with a dynamically generated manager
-        # in `django-stubs`, so until there's a new release, we just ignore it being Any
-        # See: https://github.com/typeddjango/django-stubs/issues/709
-        return Parent.objects.all()  # type: ignore[no-any-return]
+        return Parent.objects.all()
 
 
 router = DefaultRouter()

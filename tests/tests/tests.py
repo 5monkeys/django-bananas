@@ -1,4 +1,5 @@
 from os import environ
+from typing import Dict, List
 
 from django.conf import global_settings
 from django.core.exceptions import ValidationError
@@ -52,12 +53,12 @@ class QuerySetTest(TestCase):
             },
         )
 
-        _parent = Node.objects.create(name="A", parent=None)
-        _child = Node.objects.create(name="B", parent=_parent)
-        _grandchild = Node.objects.create(name="C", parent=_child)
+        _node_parent = Node.objects.create(name="A", parent=None)
+        _node_child = Node.objects.create(name="B", parent=_node_parent)
+        _node_grandchild = Node.objects.create(name="C", parent=_node_child)
 
         d = ModelDict.from_model(
-            _grandchild,
+            _node_grandchild,
             test__id="parent__parent__id",
             test__name="parent__parent__name",
         )
@@ -76,11 +77,11 @@ class QuerySetTest(TestCase):
             },
         )
 
-        _child.parent = None
-        _child.save()
+        _node_child.parent = None
+        _node_child.save()
 
         d = ModelDict.from_model(
-            _grandchild,
+            _node_grandchild,
             test__id="parent__parent__id",
             test__name="parent__parent__name",
         )
@@ -115,18 +116,20 @@ class QuerySetTest(TestCase):
         self.assertEqual(simple.name, self.simple.name)
 
         child = Child.objects.dicts("name", "parent__name").first()
+        assert child
         self.assertEqual(child.name, self.child.name)
         self.assertNotIn("parent", child)
         self.assertEqual(child.parent.name, self.parent.name)
 
     def test_dicts_rename(self):
         child = Child.objects.dicts("parent__name", alias="name").first()
+        assert child
         self.assertEqual(child.alias, self.child.name)
         self.assertEqual(child.parent.name, self.parent.name)
 
         # Test that renamed fields on reverse relation fields
         # will actually return all possible results
-        expected_dicts = [
+        expected_dicts: List[Dict] = [
             {"child_name": self.child.name},
             {"child_name": self.other_child.name},
         ]

@@ -1,4 +1,4 @@
-from typing import NoReturn
+from typing import TYPE_CHECKING, NoReturn
 
 from django.db import models
 from django.db.models import Model
@@ -17,9 +17,23 @@ class Simple(Model):
     objects = SimpleManager()
 
 
+if TYPE_CHECKING:
+
+    class ParentQuerySet(ExtendedQuerySet["Parent"]):
+        ...
+
+else:
+
+    class ParentQuerySet(ExtendedQuerySet):
+        ...
+
+
+ParentManager = Manager.from_queryset(ParentQuerySet)
+
+
 class Parent(TimeStampedModel):
     name = models.CharField(max_length=255)
-    objects = Manager.from_queryset(ExtendedQuerySet)()
+    objects = ParentManager()
 
     @property
     def attribute_error(self) -> NoReturn:
@@ -30,16 +44,44 @@ class Parent(TimeStampedModel):
         return str(self.pk) + ":" + str(self.date_modified)
 
 
+if TYPE_CHECKING:
+
+    class ChildQuerySet(ExtendedQuerySet["Child"]):
+        ...
+
+else:
+
+    class ChildQuerySet(ExtendedQuerySet):
+        ...
+
+
+ChildManager = Manager.from_queryset(ChildQuerySet)
+
+
 class Child(TimeStampedModel):
     name = models.CharField(max_length=255)
     parent = models.ForeignKey(Parent, null=True, on_delete=models.CASCADE)
-    objects = Manager.from_queryset(ExtendedQuerySet)()
+    objects = ChildManager()
+
+
+if TYPE_CHECKING:
+
+    class NodeQuerySet(ExtendedQuerySet["Node"]):
+        ...
+
+else:
+
+    class NodeQuerySet(ExtendedQuerySet):
+        ...
+
+
+NodeManager = Manager.from_queryset(NodeQuerySet)
 
 
 class Node(TimeStampedModel):
     name = models.CharField(max_length=255)
     parent = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
-    objects = Manager.from_queryset(ExtendedQuerySet)()
+    objects = NodeManager()
 
 
 class TestUUIDModel(UUIDModel):

@@ -180,7 +180,7 @@ class UUIDModel(models.Model):
 class SecretField(models.CharField):
     description = _("Generates and stores a random key.")
 
-    default_error_messages: Mapping[str, str] = {
+    default_error_messages = {
         "random-is-none": _("%(cls)s.get_random_bytes returned None"),
         "random-too-short": _(
             "Too few random bytes received from "
