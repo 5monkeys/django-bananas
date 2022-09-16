@@ -13,7 +13,7 @@ class CommandTests(TestCase):
         admin_api_url_count = 50
         self.assertEqual(len(urls), admin_api_url_count)
 
-        with mock.patch.object(show_urls.sys, "stdout", autospec=True) as stdout:
+        with mock.patch.object(show_urls.sys, "stdout", autospec=True) as stdout:  # type: ignore[attr-defined]
             show_urls.show_urls()
 
         self.assertEqual(stdout.write.call_count, admin_api_url_count)
