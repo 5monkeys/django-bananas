@@ -45,6 +45,7 @@ repos:
           - flake8-bugbear
           - flake8-comprehensions
           - flake8-tidy-imports
+          - flake8-print
   - repo: https://github.com/sirosen/check-jsonschema
     rev: "0.18.1"
     hooks:

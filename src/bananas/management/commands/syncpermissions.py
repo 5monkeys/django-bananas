@@ -29,11 +29,13 @@ class Command(BaseCommand):
                 )
 
                 if created:
-                    print(f"Found new admin view: {ct.name} [{ct.app_label}]")
+                    self.stdout.write(
+                        f"Found new admin view: {ct.name} [{ct.app_label}]"
+                    )
 
                 for codename, name in model._meta.permissions:
                     p, created = Permission.objects.update_or_create(
                         codename=codename, content_type=ct, defaults={"name": name}
                     )
                     if created:
-                        print(f"Created permission: {name}")
+                        self.stdout.write(f"Created permission: {name}")
