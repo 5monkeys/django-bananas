@@ -181,8 +181,8 @@ class SecretField(models.CharField):
     description = _("Generates and stores a random key.")
 
     default_error_messages = {
-        "random-is-none": _("%(cls)s.get_random_bytes returned None"),
-        "random-too-short": _(
+        "random-is-none": _("%(cls)s.get_random_bytes returned None"),  # type: ignore[dict-item]
+        "random-too-short": _(  # type: ignore[dict-item]
             "Too few random bytes received from "
             "get_random_bytes. Number of"
             " bytes=%(num_bytes)s,"

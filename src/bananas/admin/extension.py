@@ -122,7 +122,7 @@ class ModelAdminView(ModelAdmin):
 
         admin_login_url = reverse_lazy("admin:login")
         view = user_passes_test(
-            lambda u: u.is_active and u.is_staff, login_url=admin_login_url
+            lambda u: u.is_active and hasattr(u, "is_staff") and u.is_staff, login_url=admin_login_url  # type: ignore[arg-type, return-value]
         )(view)
         view = permission_required(perm, login_url=admin_login_url)(view)
         return view
