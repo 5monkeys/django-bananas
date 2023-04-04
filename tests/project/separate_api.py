@@ -6,7 +6,7 @@ from rest_framework.viewsets import ViewSet
 
 
 class SomeThingAPI(ViewSet):
-    def list(self, request: Request) -> Response:
+    def list(self, request: Request) -> Response:  # type: ignore[empty-body]
         pass
 
 

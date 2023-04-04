@@ -30,7 +30,7 @@ class BananasAdminAPI(BananasAPI, viewsets.GenericViewSet):
 
 class LoginAPI(BananasAdminAPI):
 
-    name = _("Log in")
+    name = _("Log in")  # type: ignore[assignment]
     basename = "login"
     permission_classes = (IsAnonymous,)
     serializer_class = AuthenticationSerializer  # Placeholder for schema
@@ -61,7 +61,7 @@ class LoginAPI(BananasAdminAPI):
 
 class LogoutAPI(BananasAPI, viewsets.ViewSet):
 
-    name = _("Log out")
+    name = _("Log out")  # type: ignore[assignment]
     basename = "logout"
 
     class Admin:
@@ -94,7 +94,7 @@ class MeAPI(BananasAdminAPI):
 
 class ChangePasswordAPI(BananasAdminAPI):
 
-    name = _("Change password")
+    name = _("Change password")  # type: ignore[assignment]
     basename = "change_password"
     serializer_class = PasswordChangeSerializer  # Placeholder for schema
 
@@ -122,7 +122,7 @@ class ChangePasswordAPI(BananasAdminAPI):
 
 class TranslationAPI(BananasAdminAPI):
 
-    name = _("Translation catalog")
+    name = _("Translation catalog")  # type: ignore[assignment]
     basename = "i18n"
     permission_classes = (AllowAny,)
 

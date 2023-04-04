@@ -74,7 +74,7 @@ class ModelDictQuerySetMixin:
             fields += tuple(named_fields.values())
 
         clone = self.values(*fields)
-        clone._iterable_class = ModelDictIterable  # type: ignore[attr-defined]
+        clone._iterable_class = ModelDictIterable  # type: ignore[assignment]
 
         # QuerySet._hints is a dict object used by db router
         # to aid deciding which db should get a request. Currently
