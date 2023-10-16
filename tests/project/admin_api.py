@@ -18,7 +18,6 @@ class HamSerializer(serializers.Serializer):
 
 
 class FooAPI(BananasAdminAPI):
-
     name = lazy_title(_("foo"))
     serializer_class = HamSerializer
 
@@ -37,7 +36,6 @@ class FooAPI(BananasAdminAPI):
 
 
 class HamAPI(BananasAPI, viewsets.ModelViewSet):
-
     name = lazy_capitalize(_("ham"))
     serializer_class = HamSerializer
 

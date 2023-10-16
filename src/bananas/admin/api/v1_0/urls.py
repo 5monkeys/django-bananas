@@ -1,7 +1,7 @@
 from django.urls import include, re_path
 
-from .. import views
-from ..router import register, router
+from bananas.admin.api import views
+from bananas.admin.api.router import register, router
 
 register(views.LoginAPI)
 register(views.LogoutAPI)

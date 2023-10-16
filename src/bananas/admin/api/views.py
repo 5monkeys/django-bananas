@@ -1,6 +1,12 @@
+from typing import ClassVar, List
+
 from django.contrib.auth import (
     login as auth_login,
+)
+from django.contrib.auth import (
     logout as auth_logout,
+)
+from django.contrib.auth import (
     update_session_auth_hash,
 )
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -29,7 +35,6 @@ class BananasAdminAPI(BananasAPI, viewsets.GenericViewSet):
 
 
 class LoginAPI(BananasAdminAPI):
-
     name = _("Log in")  # type: ignore[assignment]
     basename = "login"
     permission_classes = (IsAnonymous,)
@@ -60,7 +65,6 @@ class LoginAPI(BananasAdminAPI):
 
 
 class LogoutAPI(BananasAPI, viewsets.ViewSet):
-
     name = _("Log out")  # type: ignore[assignment]
     basename = "logout"
 
@@ -77,11 +81,10 @@ class LogoutAPI(BananasAPI, viewsets.ViewSet):
 
 
 class MeAPI(BananasAdminAPI):
-
     serializer_class = UserSerializer
 
     class Admin:
-        exclude_tags = ["navigation"]
+        exclude_tags: ClassVar[List[str]] = ["navigation"]
 
     @schema(responses={200: UserSerializer})
     def list(self, request: Request) -> Response:
@@ -93,7 +96,6 @@ class MeAPI(BananasAdminAPI):
 
 
 class ChangePasswordAPI(BananasAdminAPI):
-
     name = _("Change password")  # type: ignore[assignment]
     basename = "change_password"
     serializer_class = PasswordChangeSerializer  # Placeholder for schema
@@ -121,13 +123,12 @@ class ChangePasswordAPI(BananasAdminAPI):
 
 
 class TranslationAPI(BananasAdminAPI):
-
     name = _("Translation catalog")  # type: ignore[assignment]
     basename = "i18n"
     permission_classes = (AllowAny,)
 
     class Admin:
-        exclude_tags = ["navigation"]
+        exclude_tags: ClassVar[List[str]] = ["navigation"]
 
     @schema(responses={200: ""})
     def list(self, request: Request) -> Response:

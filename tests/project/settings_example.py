@@ -2,4 +2,4 @@
 
 DEBUG = False
 
-from bananas.settings import *  # noqa
+from bananas.settings import *

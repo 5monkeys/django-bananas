@@ -13,7 +13,8 @@ from rest_framework.request import Request
 from rest_framework.routers import SimpleRouter
 from rest_framework.schemas.coreapi import is_custom_action
 
-from ..versioning import BananasVersioning
+from bananas.admin.api.versioning import BananasVersioning
+
 from .base import BananasBaseRouter
 
 

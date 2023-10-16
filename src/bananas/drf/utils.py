@@ -39,8 +39,8 @@ class InvalidHeader(HeaderError):
 def parse_header_datetime(request: Request, header: str) -> datetime.datetime:
     try:
         value = request.headers[header]
-    except KeyError:
-        raise MissingHeader(header)
+    except KeyError as exc:
+        raise MissingHeader(header) from exc
     try:
         return datetime.datetime.fromtimestamp(
             parse_http_date(value), tz=datetime.timezone.utc
@@ -60,8 +60,8 @@ def clean_tags(tags: Iterable[str]) -> Iterable[str]:
 def parse_header_etags(request: Request, header: str) -> FrozenSet[str]:
     try:
         parts = request.headers[header].split(",")
-    except KeyError:
-        raise MissingHeader(header)
+    except KeyError as exc:
+        raise MissingHeader(header) from exc
     tags = frozenset(clean_tags(parts))
     if not tags:
         raise InvalidHeader(header)

@@ -5,6 +5,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Final,
     Generic,
     Iterable,
     List,
@@ -18,7 +19,7 @@ from typing import (
 )
 
 from django.conf import global_settings
-from typing_extensions import Final, Protocol, overload
+from typing_extensions import Protocol, overload
 
 __all__ = ["env", "parse_bool", "parse_int", "parse_tuple", "parse_list", "parse_set"]
 
@@ -165,8 +166,8 @@ def get_parser(typ: Type[P]) -> Callable[[str], P]:
                 set: parse_set,
             }[typ],
         )
-    except KeyError:
-        raise NotImplementedError("Unsupported setting type: %r", typ)
+    except KeyError as exc:
+        raise NotImplementedError("Unsupported setting type: %r", typ) from exc
 
 
 def get_settings() -> Dict[str, Any]:
@@ -189,8 +190,8 @@ def get_settings() -> Dict[str, Any]:
         if key:
             if key in UNSUPPORTED_ENV_SETTINGS:
                 raise ValueError(
-                    'Django setting "{}" can not be '
-                    "configured through environment.".format(key)
+                    f'Django setting "{key}" can not be '
+                    "configured through environment."
                 )
 
             default_value = getattr(global_settings, key, UNDEFINED)
@@ -253,11 +254,7 @@ class EnvironWrapper:
         try:
             return parser(value)
         except ValueError:
-            log.warning(
-                "Unable to parse environment variable {key}={value}".format(
-                    key=key, value=value
-                )
-            )
+            log.warning(f"Unable to parse environment variable {key}={value}")
             return default
 
     @overload

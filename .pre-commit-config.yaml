@@ -36,6 +36,7 @@ repos:
       - id: check-manifest
         # See https://github.com/mgedmin/check-manifest/issues/141
         args: ["--no-build-isolation"]
+        additional_dependencies: [setuptools-scm]
 
 exclude: |
   (?x)(

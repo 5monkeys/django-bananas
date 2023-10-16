@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-
     help = "Create admin permissions"
 
     def handle(self, *args: object, **options: object) -> None:

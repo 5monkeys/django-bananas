@@ -19,7 +19,7 @@ def collect_urls(
         pattern = urls.pattern.regex.pattern
         for x in urls.url_patterns:
             res += collect_urls(
-                x, namespace=urls.namespace or namespace, prefix=prefix + [pattern]
+                x, namespace=urls.namespace or namespace, prefix=[*prefix, pattern]
             )
         return res
     elif isinstance(urls, URLPattern):
@@ -30,7 +30,7 @@ def collect_urls(
                 [
                     ("namespace", namespace),
                     ("name", urls.name),
-                    ("pattern", prefix + [pattern]),
+                    ("pattern", [*prefix, pattern]),
                     ("lookup_str", lookup_str),
                     ("default_args", dict(urls.default_args or {})),
                 ]

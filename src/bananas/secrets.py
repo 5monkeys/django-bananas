@@ -1,7 +1,7 @@
 import os
-from typing import Optional
+from typing import Final, Optional
 
-from typing_extensions import Final, overload
+from typing_extensions import overload
 
 from .environment import env
 
