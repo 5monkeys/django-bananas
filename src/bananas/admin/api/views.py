@@ -2,11 +2,7 @@ from typing import ClassVar, List
 
 from django.contrib.auth import (
     login as auth_login,
-)
-from django.contrib.auth import (
     logout as auth_logout,
-)
-from django.contrib.auth import (
     update_session_auth_hash,
 )
 from django.contrib.auth.base_user import AbstractBaseUser

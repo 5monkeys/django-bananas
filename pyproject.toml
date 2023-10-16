@@ -18,3 +18,7 @@ select = [
 
 [tool.ruff.per-file-ignores]
 "tests/**" = ["RUF012"]
+
+[tool.ruff.isort]
+known-first-party = ["src/"]
+combine-as-imports = true
