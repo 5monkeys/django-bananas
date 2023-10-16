@@ -1,7 +1,9 @@
 from pathlib import Path
 
 try:
-    from test.support.os_helper import EnvironmentVarGuard  # type: ignore[import]
+    from test.support.os_helper import (  # type: ignore[import-not-found]
+        EnvironmentVarGuard,
+    )
 except ImportError:
     # Compatibility for Python <=3.9
     from test.support import EnvironmentVarGuard

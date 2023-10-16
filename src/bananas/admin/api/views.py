@@ -51,7 +51,7 @@ class LoginAPI(BananasAdminAPI):
         login_form = AuthenticationForm(request, data=request.data)
 
         if not login_form.is_valid():
-            raise serializers.ValidationError(login_form.errors)
+            raise serializers.ValidationError(login_form.errors)  # type: ignore[arg-type]
 
         auth_login(request, login_form.get_user())
 
@@ -112,7 +112,7 @@ class ChangePasswordAPI(BananasAdminAPI):
         password_form = PasswordChangeForm(request.user, data=request.data)
 
         if not password_form.is_valid():
-            raise serializers.ValidationError(password_form.errors)
+            raise serializers.ValidationError(password_form.errors)  # type: ignore[arg-type]
 
         password_form.save()
         update_session_auth_hash(request, password_form.user)
