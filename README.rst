@@ -238,7 +238,6 @@ feature requires installation with the ``drf`` extra.
 
 
     class CustomAdminAPI(BananasAdminAPI):
-
         name = lazy_title(_("custom"))
 
         @schema(query_serializer=SomeSerializer, responses={200: SomeSerializer})
@@ -247,7 +246,6 @@ feature requires installation with the ``drf`` extra.
 
 
     class SomeModelAdminAPI(BananasAPI, viewsets.ModelViewSet):
-
         serializer_class = SomeModelSerializer
 
         def list(self, request):

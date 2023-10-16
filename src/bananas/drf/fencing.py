@@ -5,6 +5,7 @@ from functools import wraps
 from typing import (
     Any,
     Callable,
+    Final,
     FrozenSet,
     Generic,
     List,
@@ -24,7 +25,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer, ModelSerializer
 from rest_framework.viewsets import GenericViewSet
-from typing_extensions import Final, Protocol, final
+from typing_extensions import Protocol, final
 
 from bananas.admin.api.schemas.yasg import BananasSwaggerSchema
 from bananas.models import TimeStampedModel
@@ -55,14 +56,18 @@ class Fence(abc.ABC, Generic[InstanceType, TokenType]):
         compare: Callable[[TokenType, TokenType], bool],
         get_version: Callable[[InstanceType], Optional[TokenType]],
         openapi_parameter: openapi.Parameter,
-        rejection: Exception = errors.PreconditionFailed(
-            "The resource does not fulfill the given preconditions"
-        ),
+        rejection: Optional[Exception] = None,
     ) -> None:
         self._get_token: Final = get_token
         self._compare: Final = compare
         self._get_version: Final = get_version
-        self._rejection: Final = rejection
+        self._rejection: Final = (
+            rejection
+            if rejection is not None
+            else errors.PreconditionFailed(
+                "The resource does not fulfill the given preconditions"
+            )
+        )
         self.openapi_parameter: Final = openapi_parameter
 
     def check(self, request: Request, instance: InstanceType) -> bool:
@@ -93,7 +98,7 @@ class FenceAwareSwaggerAutoSchema(BananasSwaggerSchema):
             isinstance(self.view, FencedUpdateModelMixin)
             and self.method in self.update_methods
         ):
-            return parameters + [self.view.fence.openapi_parameter]
+            return [*parameters, self.view.fence.openapi_parameter]
         return parameters
 
 
@@ -141,7 +146,7 @@ def header_date_parser(header: str) -> Callable[[Request], datetime.datetime]:
         try:
             return parse_header_datetime(request, header)
         except HeaderError as e:
-            raise e.as_api_error()
+            raise e.as_api_error() from e
 
     return parse
 
@@ -183,7 +188,7 @@ def header_etag_parser(header: str) -> Callable[[Request], FrozenSet[str]]:
         try:
             return parse_header_etags(request, header)
         except HeaderError as e:
-            raise e.as_api_error()
+            raise e.as_api_error() from e
 
     return parse
 

@@ -4,12 +4,11 @@ import math
 import os
 import uuid
 from itertools import chain
-from typing import Any, Dict, Mapping, Optional, Sized
+from typing import Any, ClassVar, Dict, Final, Mapping, Optional, Sized
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from typing_extensions import Final
 
 
 class Missing:
@@ -20,7 +19,6 @@ MISSING: Final = Missing()
 
 
 class ModelDict(Dict[str, Any]):
-
     _nested: Optional[Dict[str, "ModelDict"]] = None
 
     def __getattr__(self, item: str) -> Any:
@@ -120,9 +118,7 @@ class ModelDict(Dict[str, Any]):
                         )
                     else:
                         raise AttributeError(
-                            "{!r} does not have {!r} attribute".format(
-                                previous_value, _field
-                            )
+                            f"{previous_value!r} does not have {_field!r} attribute"
                         )
 
                 elif value is None:
@@ -180,7 +176,7 @@ class UUIDModel(models.Model):
 class SecretField(models.CharField):
     description = _("Generates and stores a random key.")
 
-    default_error_messages = {
+    default_error_messages = {  # noqa: RUF012
         "random-is-none": _("%(cls)s.get_random_bytes returned None"),
         "random-too-short": _(
             "Too few random bytes received from "

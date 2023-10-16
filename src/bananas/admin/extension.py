@@ -2,6 +2,7 @@ import re
 from typing import (
     Any,
     Callable,
+    ClassVar,
     Dict,
     List,
     Optional,
@@ -31,7 +32,7 @@ from django.utils.safestring import SafeText, mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
-from ..environment import env
+from bananas.environment import env
 
 __all__ = ["ModelAdminView", "ViewTool", "AdminView", "register", "site"]
 
@@ -41,7 +42,7 @@ MT = TypeVar("MT", bound=Model)
 
 class ExtendedAdminSite(AdminSite):
     enable_nav_sidebar = False
-    default_settings = {
+    default_settings: ClassVar[Dict[str, Any]] = {
         "INHERIT_REGISTERED_MODELS": env.get_bool(
             "DJANGO_ADMIN_INHERIT_REGISTERED_MODELS", True
         ),
@@ -84,10 +85,8 @@ class ModelAdminView(ModelAdmin):
     @cached_property
     def access_permission(self) -> str:
         meta = self.model._meta
-        return "{app_label}.{codename}".format(
-            app_label=meta.app_label,
-            codename=meta.permissions[0][0],  # First perm codename
-        )
+        codename = meta.permissions[0][0]  # First perm codename
+        return f"{meta.app_label}.{codename}"
 
     def get_urls(self) -> List[URLPattern]:
         app_label = self.model._meta.app_label
@@ -241,9 +240,9 @@ def register(
         )
         # The first permission here is expected to be
         # the general access permission.
-        permissions = tuple(
-            [(access_perm_codename, access_perm_name)]
-            + list(getattr(inner_view, "permissions", []))
+        permissions = (
+            (access_perm_codename, access_perm_name),
+            *list(getattr(inner_view, "permissions", [])),
         )
 
         model = type(
@@ -303,9 +302,11 @@ class ViewTool:
 
 
 class AdminView(View):
-    tools: Optional[List[Union[Tuple[str, str], Tuple[str, str, str], ViewTool]]] = None
-    action: Optional[str] = None
-    admin: Optional[ModelAdminView] = None
+    tools: ClassVar[
+        Optional[List[Union[Tuple[str, str], Tuple[str, str, str], ViewTool]]]
+    ] = None
+    action: ClassVar[Optional[str]] = None
+    admin: ClassVar[Optional[ModelAdminView]] = None
 
     label: str
     verbose_name: str

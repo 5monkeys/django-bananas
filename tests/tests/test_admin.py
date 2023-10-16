@@ -89,7 +89,6 @@ class AdminTest(AdminBaseTest):
 
     @reset_admin_registry
     def test_register_without_args(self):
-
         # As decorator without arguments
         @admin.register
         class MyAdminViewRegisteredWithoutArgs(admin.AdminView):
@@ -101,7 +100,6 @@ class AdminTest(AdminBaseTest):
 
     @reset_admin_registry
     def test_register_with_args(self):
-
         # As decorator with arguments
         @admin.register(admin_class=SpecialModelAdmin)
         class MyAdminViewRegisteredWithArgs(admin.AdminView):
@@ -113,7 +111,6 @@ class AdminTest(AdminBaseTest):
 
     @reset_admin_registry
     def test_register_normally(self):
-
         # Just registered
         class MyAdminViewRegisteredNormally(admin.AdminView):
             __module__ = "tests.project.admin"

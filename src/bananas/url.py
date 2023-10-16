@@ -27,10 +27,8 @@ Currently supported engines are:
 You can add your own by running ``register(scheme, module_name)`` before
 parsing.
 """
-from typing import Any, Dict, List, Mapping, NamedTuple, Optional, Tuple, Union
+from typing import Any, Dict, Final, List, Mapping, NamedTuple, Optional, Tuple, Union
 from urllib.parse import parse_qs, unquote_plus, urlsplit
-
-from typing_extensions import Final
 
 
 class Alias:
@@ -97,8 +95,8 @@ def resolve(
         ), "Multiple levels of aliases are not supported"
 
         return result
-    except KeyError:
-        raise KeyError("No matches for engine %s" % key)
+    except KeyError as exc:
+        raise KeyError("No matches for engine %s" % key) from exc
 
 
 def get_engine(scheme: str) -> str:
@@ -128,12 +126,12 @@ def get_engine(scheme: str) -> str:
 
     try:
         engine, extra = engine
-    except ValueError:
+    except ValueError as exc:
         # engine was not a list of length 2
         raise ValueError(
             "django-bananas.url' engine "
             "configuration is invalid: %r" % ENGINE_MAPPING
-        )
+        ) from exc
 
     assert isinstance(
         extra, Mapping
