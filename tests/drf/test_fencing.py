@@ -18,7 +18,8 @@ from bananas.drf.fencing import (
     parse_date_modified,
 )
 from bananas.models import TimeStampedModel
-from tests.project.drf.request import FakeRequest
+
+from .request import FakeRequest
 
 
 class TestFence(TestCase):
@@ -135,16 +136,13 @@ class TestHeaderDateParser(TestCase):
         self.assertEqual(parsed, dt)
 
 
-@isolate_apps("tests.project.drf")
+@isolate_apps("tests.drf")
 class TestParseDateModified(TestCase):
     def test_replaces_microsecond(self):
         class A(TimeStampedModel):
             date_modified = datetime.datetime(  # type: ignore[assignment]
                 2021, 1, 14, 17, 30, 1, 1, tzinfo=datetime.timezone.utc
             )
-
-            class Meta:
-                app_label = "project"
 
         self.assertEqual(
             parse_date_modified(A()),
@@ -154,9 +152,6 @@ class TestParseDateModified(TestCase):
     def test_can_get_none(self):
         class A(TimeStampedModel):
             date_modified = None  # type: ignore[assignment]
-
-            class Meta:
-                app_label = "project"
 
         self.assertIsNone(parse_date_modified(A()))
 

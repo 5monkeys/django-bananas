@@ -8,15 +8,8 @@ from django.test import TestCase
 from bananas import environment
 from bananas.environment import env
 from bananas.models import ModelDict
-from tests.project.models import (
-    Child,
-    Node,
-    Parent,
-    SecretModel,
-    Simple,
-    TestUUIDModel,
-    URLSecretModel,
-)
+
+from .models import Child, Node, Parent, SecretModel, Simple, URLSecretModel, UUIDModel
 
 
 class QuerySetTest(TestCase):
@@ -188,12 +181,12 @@ class QuerySetTest(TestCase):
         )
 
     def test_uuid_model(self):
-        first = TestUUIDModel.objects.create(text="first")
+        first = UUIDModel.objects.create(text="first")
 
-        second = TestUUIDModel.objects.create(text="second", parent=first)
+        second = UUIDModel.objects.create(text="second", parent=first)
 
-        self.assertEqual(TestUUIDModel.objects.get(parent=first), second)
-        self.assertEqual(TestUUIDModel.objects.get(parent__pk=first.pk), second)
+        self.assertEqual(UUIDModel.objects.get(parent=first), second)
+        self.assertEqual(UUIDModel.objects.get(parent__pk=first.pk), second)
 
     def test_secret_field(self):
         model = SecretModel.objects.create()
@@ -322,7 +315,7 @@ class SettingsTest(TestCase):
             }
         )
 
-        from tests.project import settings_example as settings
+        from . import settings_example as settings
 
         self.assertEqual(global_settings.DEBUG, False)
         self.assertEqual(settings.DEBUG, True)

@@ -11,7 +11,7 @@ from bananas.drf.fencing import (
     allow_if_match,
     allow_if_unmodified_since,
 )
-from tests.project.models import Parent
+from tests.models import Parent
 
 
 class SimpleSerializer(ModelSerializer):

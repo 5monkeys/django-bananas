@@ -6,16 +6,12 @@ help:
 
 .PHONY: test		# runs tests
 test:
-	python -X dev -Wd -m coverage run runtests.py $(test)
+	pytest $(test)
 
 .PHONY: test_all		# runs tests using tox -p, combines coverage and reports it
 test_all:
 	tox -p
 	make coverage
-
-.PHONY: test-types      # runs pytest-mypy-plugins to test exported types
-test-types:
-	PYTHONPATH=$$(pwd) pytest --mypy-ini-file=setup.cfg tests/*.yaml
 
 .PHONY: coverage		# combines coverage and reports it
 coverage:

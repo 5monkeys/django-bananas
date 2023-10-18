@@ -2,6 +2,9 @@
 requires = ["setuptools>=57.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.black]
+target-version = ["py38", "py39", "py310", "py311"]
+
 [tool.ruff]
 src = ["src"]
 fix = true
@@ -22,3 +25,73 @@ select = [
 [tool.ruff.isort]
 known-first-party = ["src/"]
 combine-as-imports = true
+
+[tool.pytest.ini_options]
+python_files = "tests.py test_*.py *_tests.py"
+testpaths = ["tests"]
+norecursedirs = "migrations"
+
+[tool.coverage.paths]
+source = [
+  "src/bananas",
+  "*/.tox/*/lib/*/site-packages/bananas"
+]
+
+[tool.coverage.run]
+branch = true
+source = ["src/", "tests/"]
+
+[tool.coverage.report]
+skip_covered = true
+show_missing = true
+fail_under= 94
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    # Ignore non-implementations
+    '^\s*\.\.\.',
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
+
+[tool.mypy]
+python_version = "3.8"
+show_error_codes = true
+pretty = true
+files = ["src", "tests", "setup.py"]
+
+no_implicit_reexport = true
+no_implicit_optional = true
+strict_equality = true
+strict_optional = true
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = false
+
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unreachable = true
+
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main",
+]
+
+[tool.django-stubs]
+django_settings_module = "tests.conftest"
+
+[[tool.mypy.overrides]]
+module = [
+  "tests.*",
+]
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = [
+  "test.support.*",
+  "drf_yasg.*",
+]
+ignore_missing_imports = true

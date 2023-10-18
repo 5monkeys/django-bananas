@@ -33,9 +33,6 @@ jobs:
         run: |
           ENV_PREFIX=$(tr -C -d "0-9" <<< "${{ matrix.python-version }}")
           TOXENV=$(tox --listenvs | grep "^py$ENV_PREFIX" | tr '\n' ',') python -m tox
-      - name: Generate coverage file
-        if: matrix.python-version == '3.10'
-        run: "TOXENV=coverage python -m tox"
       - name: Report coverage
         if: matrix.python-version == '3.10' && github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize')
         uses: 5monkeys/cobertura-action@master

@@ -4,15 +4,30 @@ from django.db import models
 from django.db.models import Model
 from django.db.models.manager import Manager
 
-from bananas.models import SecretField, TimeStampedModel, URLSecretField, UUIDModel
+from bananas.models import (
+    SecretField,
+    TimeStampedModel,
+    URLSecretField,
+    UUIDModel as BananasUUIDModel,
+)
 from bananas.query import ExtendedQuerySet, ModelDictManagerMixin
+
+
+class BananasModel(Model):
+    """
+    Base for test models that sets app_label, so they play nicely
+    """
+
+    class Meta:
+        app_label = "tests"
+        abstract = True
 
 
 class SimpleManager(ModelDictManagerMixin, Manager):
     pass
 
 
-class Simple(Model):
+class Simple(BananasModel):
     name = models.CharField(max_length=255)
     objects = SimpleManager()
 
@@ -31,7 +46,7 @@ else:
 ParentManager = Manager.from_queryset(ParentQuerySet)
 
 
-class Parent(TimeStampedModel):
+class Parent(TimeStampedModel, BananasModel):
     name = models.CharField(max_length=255)
     objects = ParentManager()
 
@@ -58,7 +73,7 @@ else:
 ChildManager = Manager.from_queryset(ChildQuerySet)
 
 
-class Child(TimeStampedModel):
+class Child(TimeStampedModel, BananasModel):
     name = models.CharField(max_length=255)
     parent = models.ForeignKey(Parent, null=True, on_delete=models.CASCADE)
     objects = ChildManager()
@@ -78,21 +93,21 @@ else:
 NodeManager = Manager.from_queryset(NodeQuerySet)
 
 
-class Node(TimeStampedModel):
+class Node(TimeStampedModel, BananasModel):
     name = models.CharField(max_length=255)
     parent = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
     objects = NodeManager()
 
 
-class TestUUIDModel(UUIDModel):
+class UUIDModel(BananasUUIDModel, BananasModel):
     text = models.CharField(max_length=255)
-    parent = models.ForeignKey("TestUUIDModel", null=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey("UUIDModel", null=True, on_delete=models.CASCADE)
 
 
-class SecretModel(models.Model):
+class SecretModel(BananasModel):
     secret = SecretField()
 
 
-class URLSecretModel(models.Model):
+class URLSecretModel(BananasModel):
     # num_bytes=25 forces the base64 algorithm to pad
     secret = URLSecretField(num_bytes=25, min_bytes=25)

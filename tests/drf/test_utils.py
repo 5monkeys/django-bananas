@@ -9,7 +9,8 @@ from bananas.drf.utils import (
     parse_header_datetime,
     parse_header_etags,
 )
-from tests.project.drf.request import FakeRequest
+
+from .request import FakeRequest
 
 
 class TestParseHeaderDatetime(TestCase):
