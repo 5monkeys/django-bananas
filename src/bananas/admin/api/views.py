@@ -13,7 +13,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from .i18n import RawTranslationCatalog
+from bananas.admin.i18n import RawTranslationCatalog
+
 from .mixins import BananasAPI
 from .permissions import IsAnonymous
 from .schemas import schema
