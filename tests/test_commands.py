@@ -1,12 +1,18 @@
 from unittest import mock
 
+import pytest
 from django.core.management import call_command
 from django.test import TestCase
 
 from bananas.management.commands import show_urls
 
+from .utils import drf_installed
+
 
 class CommandTests(TestCase):
+    @pytest.mark.skipif(
+        not drf_installed(), reason="Django rest framework not installed"
+    )
     def test_show_urls(self):
         urls = show_urls.collect_urls()
 

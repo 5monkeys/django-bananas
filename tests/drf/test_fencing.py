@@ -2,10 +2,15 @@ import datetime
 import operator
 from unittest import TestCase
 
+import pytest
 from django.core.exceptions import ImproperlyConfigured
 from django.test.utils import isolate_apps, override_settings
 from django.utils.http import http_date
+
+drf_yasg = pytest.importorskip("drf_yasg")
 from drf_yasg import openapi
+
+rest_framework = pytest.importorskip("rest_framework")
 from rest_framework.exceptions import ErrorDetail
 
 from bananas.drf.errors import BadRequest

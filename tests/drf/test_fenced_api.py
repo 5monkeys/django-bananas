@@ -1,7 +1,10 @@
 from functools import partial
 
+import pytest
 from django.urls import reverse
 from django.utils.http import http_date
+
+rest_framework = pytest.importorskip("rest_framework")
 from rest_framework import status
 from rest_framework.test import APITestCase
 
