@@ -28,7 +28,7 @@ def reset_admin_registry(method):
 
 
 def get_model_admin_from_registry(admin_view_cls):
-    for model, model_admin in admin.site._registry.items():
+    for model, model_admin in admin.site._registry.items():  # pragma: no branch
         if getattr(model, "View", object) is admin_view_cls:
             return model_admin
 

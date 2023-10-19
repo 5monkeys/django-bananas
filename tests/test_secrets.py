@@ -4,7 +4,7 @@ try:
     from test.support.os_helper import (
         EnvironmentVarGuard,
     )
-except ImportError:
+except ImportError:  # pragma: no cover
     # Compatibility for Python <=3.9
     from test.support import EnvironmentVarGuard
 
