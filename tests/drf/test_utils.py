@@ -1,8 +1,10 @@
 import datetime
 from unittest import TestCase
 
+import pytest
 from django.utils.http import http_date
 
+pytest.importorskip("rest_framework")
 from bananas.drf.utils import (
     InvalidHeader,
     MissingHeader,
