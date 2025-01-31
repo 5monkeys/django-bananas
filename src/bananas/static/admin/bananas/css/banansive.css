@@ -48,9 +48,8 @@ body:not(.popup) #header #object-tools {
   padding: 0;
   border-radius: 0;
   border: 0;
-  background: #417690 /* fallback */;
-  background: var(--theme-color);
-  background-image: url(../../img/search.svg), linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15));
+  background: white;
+  background-image: url(../../img/search.svg);
   background-position: center center;
   background-repeat: no-repeat;
   box-shadow: none;
@@ -58,7 +57,7 @@ body:not(.popup) #header #object-tools {
 }
 
 #header #changelist-search input[type="submit"]:hover {
-  background-image: url(../../img/search.svg), linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35));
+  background-image: url(../../img/search.svg), linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15));
 }
 
 #changelist-search > div {
@@ -123,6 +122,12 @@ body:not(.popup) #header #object-tools {
     transform: translateX(var(--sidebar-width));
   }
 
+  html.is-sidebarOpen #header nav {
+    position: unset;
+    width: var(--sidebar-width);
+    transform: translateY(-15px);
+  }
+
   body:not(.popup) #content .object-tools {
     display: none;
   }
@@ -138,6 +143,14 @@ body:not(.popup) #header #object-tools {
   .filtered .actions,
   .filtered div.xfull {
     margin-right: 0;
+  }
+
+  #changelist > .changelist-form-container {
+    max-width: 100vw;
+  }
+
+  html.is-sidebarOpen #changelist > .changelist-form-container {
+    max-width: calc(100vw - var(--sidebar-width));
   }
 
   #changelist .actions {
