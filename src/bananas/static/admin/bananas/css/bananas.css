@@ -75,6 +75,7 @@ body:not(.login) #header {
 }
 
 #branding {
+  width: 100%;
   float: none;
 }
 
@@ -113,6 +114,7 @@ body.login #branding a:active {
 }
 
 #branding a.logo {
+  width: 100%;
   padding-top: 15px;
   line-height: calc(70px - 15px * 2) /* fallback */;
   line-height: var(--topbar-height-inner);
@@ -144,8 +146,8 @@ body.login #branding a:active {
   height: 100%;
 }
 #header .searchable nav {
-  height: calc(100% - 45px) /* fallback */;
-  height: calc(100% - var(--searchbar-height));
+  height: calc(100% - 45px - 15px) /* fallback */;
+  height: calc(100% - var(--searchbar-height) - 15px);
 }
 #header nav > ul {
   overflow-y: auto;
@@ -171,7 +173,7 @@ body.login #branding a:active {
   margin-top: 15px;
 }
 #header .filtered-results nav > ul:first-of-type > li:first-of-type {
-  margin-top: 30px;
+  margin-top: 15px;
 }
 
 #header nav > ul > li > a,
@@ -381,6 +383,11 @@ body.popup #title .back-arrow {
   background-color: transparent;
 }
 
+#content h2:first-of-type {
+  font-size: 22px;
+  margin-top: 0;
+}
+
 #content .object-tools {
   position: fixed;
   z-index: 3000;
@@ -527,6 +534,7 @@ input[type="button"]:disabled,
 .timelist a:hover,
 .timelist a:focus,
 .calendar td.selected a {
+  color: white;
   background-color: #417690 /* fallback */;
   background-color: var(--theme-color);
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25)) /* fallback */;
@@ -572,6 +580,8 @@ textarea:disabled {
   background: none;
   color: #333;
   font-size: 22px;
+  border: 0;
+  text-transform: unset;
 }
 
 .module > h2 a.section:link,
@@ -685,6 +695,21 @@ a.active.selector-clearall:hover {
   margin: 0;
 }
 
+#header #changelist-filter h3 .viewlink {
+  background: none;
+}
+#header #changelist-filter h3 .viewlink:hover {
+  color: var(--lighten-75);
+}
+
+#changelist-filter #changelist-filter-extra-actions {
+  border-bottom: 0;
+}
+
+#changelist-filter details[open] > summary::before {
+  color: var(--lighten-25);
+}
+
 #header #object-tools h2 {
   margin: 0;
 }
@@ -735,6 +760,11 @@ body:not(.popup) #changelist #toolbar {
   margin-right: 0;
 }
 
+.nav-global #toolbar {
+  border: 0;
+  margin-bottom: 25px;
+}
+
 .nav-global #toolbar form {
   display: block;
 }
@@ -764,7 +794,9 @@ body:not(.popup) #changelist #toolbar {
   background-image: var(--bg-lighten-33);
   color: #fff;
   line-height: 25px;
-  height: 25px;
+  height: 45px;
+  padding: 10px 0;
+  box-sizing: border-box;
 }
 
 #changelist .results ~ .actions {
@@ -778,6 +810,7 @@ body:not(.popup) #changelist #toolbar {
 }
 
 #changelist .actions label {
+  padding-left: 10px;
   vertical-align: top;
 }
 
