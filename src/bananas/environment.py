@@ -199,10 +199,10 @@ def get_settings() -> Dict[str, Any]:
             if default_value is not UNDEFINED:
                 if default_value is None and key in SETTINGS_TYPES.keys():
                     # Handle typed django settings defaulting to None
-                    parse = get_parser(SETTINGS_TYPES[key])  # type: ignore[type-var]
+                    parse = get_parser(SETTINGS_TYPES[key])
                 else:
                     # Determine parser by django setting type
-                    parse = get_parser(type(default_value))
+                    parse = get_parser(type(default_value))  # type: ignore[type-var]
 
                 value = parse(value)  # type: ignore[assignment]
 
