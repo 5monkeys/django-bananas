@@ -121,7 +121,7 @@ class ModelAdminView(ModelAdmin):
 
         admin_login_url = reverse_lazy("admin:login")
         view = user_passes_test(
-            lambda u: u.is_active and hasattr(u, "is_staff") and u.is_staff, login_url=admin_login_url  # type: ignore[arg-type, return-value]
+            lambda u: u.is_active and hasattr(u, "is_staff") and u.is_staff, login_url=admin_login_url
         )(view)
         view = permission_required(perm, login_url=admin_login_url)(view)
         return view
@@ -355,8 +355,8 @@ class AdminView(View):
                     # Mypy doesn't change type on a len(...) call
                     # See: https://github.com/python/mypy/issues/1178
                     if len(tool) == 3:
-                        tool, perm = cast(Tuple[str, str, str], tool)[:-1], tool[-1]
-                    text, link = cast(Tuple[str, str], tool)
+                        tool, perm = tool[:-1], tool[-1]
+                    text, link = tool
                     tool = ViewTool(text, link, perm=perm)
                 else:
                     # Assume ViewTool

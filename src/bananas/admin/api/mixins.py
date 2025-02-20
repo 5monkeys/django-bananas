@@ -63,9 +63,9 @@ class BananasAPI:
             if admin is not None:
                 meta.update(
                     {
-                        key: getattr(admin, key)  # type: ignore[misc, call-overload]
+                        key: getattr(admin, key)
                         for key in filter(
-                            lambda key: key in meta,  # type: ignore[arg-type]
+                            lambda key: key in meta,
                             admin.__dict__.keys(),
                         )
                     }
