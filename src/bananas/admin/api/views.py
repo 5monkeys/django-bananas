@@ -114,7 +114,7 @@ class ChangePasswordAPI(BananasAdminAPI):
             raise serializers.ValidationError(password_form.errors)  # type: ignore[arg-type]
 
         password_form.save()
-        update_session_auth_hash(request, password_form.user)
+        update_session_auth_hash(request, password_form.user)  # type: ignore[arg-type]
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

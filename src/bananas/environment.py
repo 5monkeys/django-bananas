@@ -202,9 +202,9 @@ def get_settings() -> Dict[str, Any]:
                     parse = get_parser(SETTINGS_TYPES[key])
                 else:
                     # Determine parser by django setting type
-                    parse = get_parser(type(default_value))
+                    parse = get_parser(type(default_value))  # type: ignore[type-var]
 
-                value = parse(value)
+                value = parse(value)  # type: ignore[assignment]
 
             settings[key] = value
 

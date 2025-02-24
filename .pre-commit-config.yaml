@@ -1,5 +1,5 @@
 default_language_version:
-  python: python3.10
+  python: python3.13
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: "v4.5.0"
@@ -36,7 +36,7 @@ repos:
       - id: check-manifest
         # See https://github.com/mgedmin/check-manifest/issues/141
         args: ["--no-build-isolation"]
-        additional_dependencies: [setuptools-scm]
+        additional_dependencies: [setuptools, wheel, setuptools-scm]
 
 exclude: |
   (?x)(
