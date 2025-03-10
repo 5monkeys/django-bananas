@@ -66,10 +66,10 @@ jobs:
 
   lint:
     name: Lint
-    uses: less-action/reusables/.github/workflows/pre-commit.yaml@v2
+    uses: less-action/reusables/.github/workflows/pre-commit.yaml@v10
     with:
       python-version: "3.13"
 
   check-build:
     name: Check packaging
-    uses: less-action/reusables/.github/workflows/python-test-build.yaml@v2
+    uses: less-action/reusables/.github/workflows/python-test-build.yaml@v10
