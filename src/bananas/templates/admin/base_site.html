@@ -63,7 +63,7 @@
           {% for app in available_apps %}
             <li>
               <a href="{{ app.app_url }}">
-                {{ app.name }}
+                {% translate app.name %}
               </a>
               {% if app.models %}
                 <ul>
