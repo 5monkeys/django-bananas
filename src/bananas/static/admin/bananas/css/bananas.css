@@ -614,26 +614,6 @@ a.active.selector-clearall:hover {
   /* TODO: selector-icons.svg is hardcoded blue on hover */
 }
 
-@supports (background-blend-mode: overlay) {
-  .datetimeshortcuts .date-icon,
-  .datetimeshortcuts .clock-icon {
-    background: none;
-    background-color: #447e9b /* fallback */;
-    background-color: var(--secondary-color);
-    background-blend-mode: overlay;
-  }
-
-  .datetimeshortcuts .date-icon {
-    -webkit-mask-image: url(../../img/icon-calendar.svg);
-    mask-image: url(../../img/icon-calendar.svg);
-  }
-
-  .datetimeshortcuts .clock-icon {
-    -webkit-mask-image: url(../../img/icon-clock.svg);
-    mask-image: url(../../img/icon-clock.svg);
-  }
-}
-
 .calendar caption,
 .calendarbox h2 {
   color: white;
@@ -644,12 +624,15 @@ a.active.selector-clearall:hover {
   filter: invert(1);
 }
 
-.calendarbox .calendarnav-previous {
-  background-position: 0 -15px;
+.calendar-cancel a {
+  color: var(--button-fg);
 }
 
-.calendarbox .calendarnav-next {
-  background-position: 0 -45px;
+.clockbox h2 {
+  font-size: 1.1em;
+  color: white;
+  background: var(--theme-color);
+  background-image: var(--bg-lighten-25);
 }
 
 #header #changelist-filter,
@@ -838,4 +821,8 @@ body:not(.popup) #changelist #toolbar {
 #changelist .actions span.clear,
 #changelist .actions span.question {
   margin: 0 0 0 10px;
+}
+
+.selector-chosen-title {
+  background: var(--theme-color);
 }
