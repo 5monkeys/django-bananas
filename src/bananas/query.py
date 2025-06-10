@@ -66,8 +66,7 @@ _MT_co = TypeVar("_MT_co", bound=Model, covariant=True)
 class IsQuerySet(Protocol[_MT_co]):
     def values(
         self, *fields: Union[str, Combinable], **expressions: Any
-    ) -> "_QuerySet[_MT_co, ModelDict]":
-        ...
+    ) -> "_QuerySet[_MT_co, ModelDict]": ...
 
 
 class ModelDictQuerySetMixin:

@@ -18,7 +18,9 @@ class QuerySetTest(TestCase):
         self.simple = Simple.objects.create(name="S")
         self.parent = Parent.objects.create(name="A", description="D")
         self.child = Child.objects.create(name="B", description="E", parent=self.parent)
-        self.other_child = Child.objects.create(name="C", description="F", parent=self.parent)
+        self.other_child = Child.objects.create(
+            name="C", description="F", parent=self.parent
+        )
 
     def test_modeldict(self):
         d = ModelDict(foo="bar", baz__ham="spam")
@@ -31,14 +33,24 @@ class QuerySetTest(TestCase):
         self.assertIsInstance(d.baz, ModelDict, "should lazy resolve sub dict")
 
     def test_modeldict_from_model(self):
-        d = ModelDict.from_model(self.child, "id", "parent__id", "parent__name", "parent__description")
+        d = ModelDict.from_model(
+            self.child, "id", "parent__id", "parent__name", "parent__description"
+        )
         self.assertDictEqual(
-            d, {"id": self.child.id, "parent__id": self.parent.id, "parent__name": "A", "parent__description": "D"}
+            d,
+            {
+                "id": self.child.id,
+                "parent__id": self.parent.id,
+                "parent__name": "A",
+                "parent__description": "D",
+            },
         )
         self.assertTrue(d.parent)
 
         _child = Child.objects.create(name="B", description="E")
-        d = ModelDict.from_model(_child, "id", "parent__id", "parent__name", "parent__description")
+        d = ModelDict.from_model(
+            _child, "id", "parent__id", "parent__name", "parent__description"
+        )
         self.assertDictEqual(
             d,
             {
@@ -195,9 +207,9 @@ class QuerySetTest(TestCase):
 
         self.assertListEqual(
             list(
-                Parent.objects.filter(name="A").annotate(child_id=F("child__id"), child_name=F("child__name")).dicts(
-                    "child_name", id="child_id"
-                )
+                Parent.objects.filter(name="A")
+                .annotate(child_id=F("child__id"), child_name=F("child__name"))
+                .dicts("child_name", id="child_id")
             ),
             expected_dicts,
         )

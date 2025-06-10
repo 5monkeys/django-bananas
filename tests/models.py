@@ -34,13 +34,11 @@ class Simple(BananasModel):
 
 if TYPE_CHECKING:
 
-    class ParentQuerySet(ExtendedQuerySet["Parent"]):
-        ...
+    class ParentQuerySet(ExtendedQuerySet["Parent"]): ...
 
 else:
 
-    class ParentQuerySet(ExtendedQuerySet):
-        ...
+    class ParentQuerySet(ExtendedQuerySet): ...
 
 
 ParentManager = Manager.from_queryset(ParentQuerySet)
@@ -62,13 +60,11 @@ class Parent(TimeStampedModel, BananasModel):
 
 if TYPE_CHECKING:
 
-    class ChildQuerySet(ExtendedQuerySet["Child"]):
-        ...
+    class ChildQuerySet(ExtendedQuerySet["Child"]): ...
 
 else:
 
-    class ChildQuerySet(ExtendedQuerySet):
-        ...
+    class ChildQuerySet(ExtendedQuerySet): ...
 
 
 ChildManager = Manager.from_queryset(ChildQuerySet)
@@ -83,13 +79,11 @@ class Child(TimeStampedModel, BananasModel):
 
 if TYPE_CHECKING:
 
-    class NodeQuerySet(ExtendedQuerySet["Node"]):
-        ...
+    class NodeQuerySet(ExtendedQuerySet["Node"]): ...
 
 else:
 
-    class NodeQuerySet(ExtendedQuerySet):
-        ...
+    class NodeQuerySet(ExtendedQuerySet): ...
 
 
 NodeManager = Manager.from_queryset(NodeQuerySet)

@@ -9,13 +9,11 @@ BANANAS_SECRETS_DIR_ENV_KEY: Final = "BANANAS_SECRETS_DIR"
 
 
 @overload
-def get_secret(secret_name: str, default: str) -> str:
-    ...
+def get_secret(secret_name: str, default: str) -> str: ...
 
 
 @overload
-def get_secret(secret_name: str) -> Optional[str]:
-    ...
+def get_secret(secret_name: str) -> Optional[str]: ...
 
 
 def get_secret(secret_name: str, default: Optional[str] = None) -> Optional[str]:

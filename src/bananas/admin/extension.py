@@ -175,8 +175,7 @@ def register(
     *,
     admin_site: Optional[AdminSite] = None,
     admin_class: Type[ModelAdmin] = ModelAdminView,
-) -> Type["AdminView"]:
-    ...
+) -> Type["AdminView"]: ...
 
 
 # Call with parenthesis: @register()
@@ -186,8 +185,7 @@ def register(
     *,
     admin_site: Optional[AdminSite] = None,
     admin_class: Type[ModelAdmin] = ModelAdminView,
-) -> Callable[[Type["AdminView"]], Type["AdminView"]]:
-    ...
+) -> Callable[[Type["AdminView"]], Type["AdminView"]]: ...
 
 
 def register(
