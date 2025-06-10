@@ -3,6 +3,7 @@ from typing import Dict, List
 
 from django.conf import global_settings
 from django.core.exceptions import ValidationError
+from django.db.models import F
 from django.test import TestCase
 
 from bananas import environment
@@ -15,9 +16,9 @@ from .models import Child, Node, Parent, SecretModel, Simple, URLSecretModel, UU
 class QuerySetTest(TestCase):
     def setUp(self):
         self.simple = Simple.objects.create(name="S")
-        self.parent = Parent.objects.create(name="A")
-        self.child = Child.objects.create(name="B", parent=self.parent)
-        self.other_child = Child.objects.create(name="C", parent=self.parent)
+        self.parent = Parent.objects.create(name="A", description="D")
+        self.child = Child.objects.create(name="B", description="E", parent=self.parent)
+        self.other_child = Child.objects.create(name="C", description="F", parent=self.parent)
 
     def test_modeldict(self):
         d = ModelDict(foo="bar", baz__ham="spam")
@@ -30,14 +31,14 @@ class QuerySetTest(TestCase):
         self.assertIsInstance(d.baz, ModelDict, "should lazy resolve sub dict")
 
     def test_modeldict_from_model(self):
-        d = ModelDict.from_model(self.child, "id", "parent__id", "parent__name")
+        d = ModelDict.from_model(self.child, "id", "parent__id", "parent__name", "parent__description")
         self.assertDictEqual(
-            d, {"id": self.child.id, "parent__id": self.parent.id, "parent__name": "A"}
+            d, {"id": self.child.id, "parent__id": self.parent.id, "parent__name": "A", "parent__description": "D"}
         )
         self.assertTrue(d.parent)
 
-        _child = Child.objects.create(name="B")
-        d = ModelDict.from_model(_child, "id", "parent__id", "parent__name")
+        _child = Child.objects.create(name="B", description="E")
+        d = ModelDict.from_model(_child, "id", "parent__id", "parent__name", "parent__description")
         self.assertDictEqual(
             d,
             {
@@ -87,7 +88,7 @@ class QuerySetTest(TestCase):
         )
 
         d = ModelDict.from_model(self.child)
-        self.assertEqual(len(d), 5)
+        self.assertEqual(len(d), 6)
 
     def test_wrong_path(self):
         self.assertRaises(
@@ -142,7 +143,7 @@ class QuerySetTest(TestCase):
             expected_dicts,
         )
 
-        # Test multiple renamed fileds together
+        # Test multiple renamed fields together
         expected_dicts = [
             {"id": self.child.pk, "child_name": self.child.name},
             {"id": self.other_child.pk, "child_name": self.other_child.name},
@@ -157,7 +158,7 @@ class QuerySetTest(TestCase):
             expected_dicts,
         )
 
-        # Test multiple renamed fileds together with another that's not
+        # Test multiple renamed fields together with another that's not
         expected_dicts = [
             {
                 "id": self.parent.pk,
@@ -175,6 +176,27 @@ class QuerySetTest(TestCase):
             list(
                 Parent.objects.filter(name="A").dicts(
                     "id", child_id="child__id", child_name="child__name"
+                )
+            ),
+            expected_dicts,
+        )
+
+        # Test annotated and renamed fields
+        expected_dicts = [
+            {
+                "id": self.child.pk,
+                "child_name": self.child.name,
+            },
+            {
+                "id": self.other_child.pk,
+                "child_name": self.other_child.name,
+            },
+        ]
+
+        self.assertListEqual(
+            list(
+                Parent.objects.filter(name="A").annotate(child_id=F("child__id"), child_name=F("child__name")).dicts(
+                    "child_name", id="child_id"
                 )
             ),
             expected_dicts,

@@ -48,6 +48,7 @@ ParentManager = Manager.from_queryset(ParentQuerySet)
 
 class Parent(TimeStampedModel, BananasModel):
     name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
     objects = ParentManager()
 
     @property
@@ -75,6 +76,7 @@ ChildManager = Manager.from_queryset(ChildQuerySet)
 
 class Child(TimeStampedModel, BananasModel):
     name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
     parent = models.ForeignKey(Parent, null=True, on_delete=models.CASCADE)
     objects = ChildManager()
 

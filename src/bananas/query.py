@@ -38,12 +38,16 @@ class ModelDictIterable:
         query = queryset.query
         compiler = query.get_compiler(queryset.db)
 
-        field_names: List[str] = list(query.values_select)
-        extra_names: List[str] = list(query.extra_select)
-        annotation_names: List[str] = list(query.annotation_select)
+        if hasattr(query, "selected") and query.selected:
+            names = list(query.selected)
+        else:
+            extra_names: List[str] = list(query.extra_select)
+            field_names: List[str] = list(query.values_select)
+            annotation_names: List[str] = list(query.annotation_select)
 
-        # Modified super(); rename fields given in queryset.values() kwargs
-        names = extra_names + field_names + annotation_names
+            # Modified super(); rename fields given in queryset.values() kwargs
+            names = extra_names + field_names + annotation_names
+
         if self.named_fields:
             names = self.rename_fields(names)
 
