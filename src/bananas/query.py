@@ -77,7 +77,7 @@ class ModelDictQuerySetMixin:
             fields += tuple(named_fields.values())
 
         clone = self.values(*fields)
-        clone._iterable_class = ModelDictIterable  # type: ignore[assignment]
+        clone._iterable_class = ModelDictIterable
 
         # QuerySet._hints is a dict object used by db router
         # to aid deciding which db should get a request. Currently
@@ -85,7 +85,7 @@ class ModelDictQuerySetMixin:
         # fine to set a custom key on this dict as it's a guaranteed
         # way that it'll be returned with the QuerySet instance
         # while leaving the queryset intact
-        clone._add_hints(**{"_named_fields": named_fields})  # type: ignore[attr-defined]
+        clone._add_hints(**{"_named_fields": named_fields})
 
         return clone
 
@@ -95,7 +95,7 @@ _MT = TypeVar("_MT", bound=Model)
 
 if TYPE_CHECKING:
 
-    class ModelDictQuerySet(  # type: ignore[misc]
+    class ModelDictQuerySet(
         ModelDictQuerySetMixin,
         QuerySet[_MT],
         IsQuerySet[_MT],

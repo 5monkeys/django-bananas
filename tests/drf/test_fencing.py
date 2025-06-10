@@ -145,7 +145,7 @@ class TestHeaderDateParser(TestCase):
 class TestParseDateModified(TestCase):
     def test_replaces_microsecond(self):
         class A(TimeStampedModel):
-            date_modified = datetime.datetime(  # type: ignore[assignment]
+            date_modified = datetime.datetime(
                 2021, 1, 14, 17, 30, 1, 1, tzinfo=datetime.timezone.utc
             )
 
@@ -156,7 +156,7 @@ class TestParseDateModified(TestCase):
 
     def test_can_get_none(self):
         class A(TimeStampedModel):
-            date_modified = None  # type: ignore[assignment]
+            date_modified = None
 
         self.assertIsNone(parse_date_modified(A()))
 

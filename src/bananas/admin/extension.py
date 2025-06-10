@@ -133,12 +133,12 @@ class ModelAdminView(ModelAdmin):
         return perm
 
     def has_module_permission(self, request: HttpRequest) -> bool:
-        return request.user.has_perm(self.access_permission)
+        return bool(request.user.has_perm(self.access_permission))
 
     def has_change_permission(
         self, request: HttpRequest, obj: Optional[MT] = None
     ) -> bool:
-        return request.user.has_perm(self.access_permission)
+        return bool(request.user.has_perm(self.access_permission))
 
     # TODO: Remove obj?
     def has_add_permission(
@@ -234,7 +234,7 @@ def register(
         inner_view.verbose_name = verbose_name
 
         access_perm_codename = "can_access_" + model_name.lower()
-        access_perm_name = _("Can access {verbose_name}").format(
+        access_perm_name = str(_("Can access {verbose_name}")).format(
             verbose_name=verbose_name
         )
         # The first permission here is expected to be
@@ -385,7 +385,7 @@ class AdminView(View):
 
     def has_permission(self, perm: str) -> bool:
         perm = self.get_permission(perm)
-        return self.request.user.has_perm(perm)
+        return bool(self.request.user.has_perm(perm))
 
     def has_access(self) -> bool:
         assert self.admin is not None

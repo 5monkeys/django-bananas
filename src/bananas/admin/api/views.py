@@ -53,7 +53,7 @@ class LoginAPI(BananasAdminAPI):
         login_form = AuthenticationForm(request, data=request.data)
 
         if not login_form.is_valid():
-            raise serializers.ValidationError(login_form.errors)  # type: ignore[arg-type]
+            raise serializers.ValidationError(login_form.errors)
 
         auth_login(request, login_form.get_user())
 
@@ -111,10 +111,10 @@ class ChangePasswordAPI(BananasAdminAPI):
         password_form = PasswordChangeForm(request.user, data=request.data)
 
         if not password_form.is_valid():
-            raise serializers.ValidationError(password_form.errors)  # type: ignore[arg-type]
+            raise serializers.ValidationError(password_form.errors)
 
         password_form.save()
-        update_session_auth_hash(request, password_form.user)  # type: ignore[arg-type]
+        update_session_auth_hash(request, password_form.user)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
