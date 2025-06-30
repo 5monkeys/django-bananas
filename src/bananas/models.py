@@ -173,7 +173,7 @@ class UUIDModel(models.Model):
 
 
 class SecretField(models.CharField):
-    description = str(_("Generates and stores a random key."))
+    description = _("Generates and stores a random key.")
 
     default_error_messages = {  # noqa: RUF012
         "random-is-none": _("%(cls)s.get_random_bytes returned None"),
