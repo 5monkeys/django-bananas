@@ -38,6 +38,7 @@ Currently tested only for
 -   Django 4.2 under Python 3.8-3.13
 -   Django 5.0 under Python 3.10-3.13
 -   Django 5.1 under Python 3.10-3.13
+-   Django 5.2 under Python 3.10-3.13
 
 Pull requests welcome!
 

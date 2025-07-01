@@ -27,6 +27,7 @@ Currently supported engines are:
 You can add your own by running ``register(scheme, module_name)`` before
 parsing.
 """
+
 from typing import Any, Dict, Final, List, Mapping, NamedTuple, Optional, Tuple, Union
 from urllib.parse import parse_qs, unquote_plus, urlsplit
 

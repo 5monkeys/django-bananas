@@ -106,15 +106,13 @@ _MT_co = TypeVar("_MT_co", bound=Model, covariant=True)
 
 
 class UsesQuerySet(Protocol[_MT_co]):
-    def get_queryset(self) -> "QuerySet[_MT_co]":
-        ...
+    def get_queryset(self) -> "QuerySet[_MT_co]": ...
 
 
 class FencedUpdateModelMixin(UpdateModelMixin, abc.ABC):
     @property
     @abc.abstractmethod
-    def fence(self) -> Fence:
-        ...
+    def fence(self) -> Fence: ...
 
     # django-restframework uses an "advanced self-type" on self in
     # perform_update() which subtly breaks subclassing. We try to remedy this by
@@ -197,7 +195,7 @@ T = TypeVar("T")
 
 
 def as_set(
-    fn: Callable[[InstanceType], Optional[T]]
+    fn: Callable[[InstanceType], Optional[T]],
 ) -> Callable[[InstanceType], Optional[FrozenSet[T]]]:
     @wraps(fn)
     def wrapper(instance: InstanceType) -> Optional[FrozenSet[T]]:
@@ -208,7 +206,7 @@ def as_set(
 
 
 def allow_if_match(
-    version_getter: Callable[[InstanceType], Optional[str]]
+    version_getter: Callable[[InstanceType], Optional[str]],
 ) -> Fence[InstanceType, FrozenSet[str]]:
     return Fence(
         get_token=header_etag_parser("If-Match"),

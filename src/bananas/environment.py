@@ -27,8 +27,7 @@ __all__ = ["env", "parse_bool", "parse_int", "parse_tuple", "parse_list", "parse
 log = logging.getLogger(__name__)
 
 
-class Undefined:
-    ...
+class Undefined: ...
 
 
 UNDEFINED: Final = Undefined()
@@ -95,12 +94,10 @@ Q = TypeVar("Q", covariant=True)
 
 
 class _Instantiable(Protocol[Q]):
-    def __init__(self, value: Iterable[Q]) -> None:
-        ...
+    def __init__(self, value: Iterable[Q]) -> None: ...
 
 
-class _InstantiableIterable(Iterable[Q], _Instantiable[Q], Generic[Q]):
-    ...
+class _InstantiableIterable(Iterable[Q], _Instantiable[Q], Generic[Q]): ...
 
 
 T = TypeVar("T", bound=_InstantiableIterable)
@@ -128,23 +125,19 @@ P = TypeVar("P", bound=Union[Builtin, tuple, list, set])
 
 
 @overload
-def get_parser(typ: Type[B]) -> Callable[[str], B]:
-    ...
+def get_parser(typ: Type[B]) -> Callable[[str], B]: ...
 
 
 @overload
-def get_parser(typ: Type[tuple]) -> Callable[[str], Tuple[str, ...]]:
-    ...
+def get_parser(typ: Type[tuple]) -> Callable[[str], Tuple[str, ...]]: ...
 
 
 @overload
-def get_parser(typ: Type[list]) -> Callable[[str], List[str]]:
-    ...
+def get_parser(typ: Type[list]) -> Callable[[str], List[str]]: ...
 
 
 @overload
-def get_parser(typ: Type[set]) -> Callable[[str], Set[str]]:
-    ...
+def get_parser(typ: Type[set]) -> Callable[[str], Set[str]]: ...
 
 
 def get_parser(typ: Type[P]) -> Callable[[str], P]:
@@ -238,12 +231,12 @@ class EnvironWrapper:
     get: Callable[..., str]
 
     @overload
-    def parse(self, parser: Callable[[str], S], key: str, default: None) -> Optional[S]:
-        ...
+    def parse(
+        self, parser: Callable[[str], S], key: str, default: None
+    ) -> Optional[S]: ...
 
     @overload
-    def parse(self, parser: Callable[[str], S], key: str, default: S) -> S:
-        ...
+    def parse(self, parser: Callable[[str], S], key: str, default: S) -> S: ...
 
     def parse(
         self, parser: Callable[[str], S], key: str, default: Optional[S] = None
@@ -258,56 +251,48 @@ class EnvironWrapper:
             return default
 
     @overload
-    def get_bool(self, key: str, default: U) -> Union[bool, U]:
-        ...
+    def get_bool(self, key: str, default: U) -> Union[bool, U]: ...
 
     @overload
-    def get_bool(self, key: str, default: None = None) -> Optional[bool]:
-        ...
+    def get_bool(self, key: str, default: None = None) -> Optional[bool]: ...
 
     def get_bool(self, key: str, default: object = None) -> object:
         return self.parse(parse_bool, key, default=default)
 
     @overload
-    def get_int(self, key: str, default: U) -> Union[int, U]:
-        ...
+    def get_int(self, key: str, default: U) -> Union[int, U]: ...
 
     @overload
-    def get_int(self, key: str, default: None = None) -> Optional[int]:
-        ...
+    def get_int(self, key: str, default: None = None) -> Optional[int]: ...
 
     def get_int(self, key: str, default: object = None) -> object:
         return self.parse(parse_int, key, default=default)
 
     @overload
-    def get_tuple(self, key: str, default: U) -> Union[Tuple[str, ...], U]:
-        ...
+    def get_tuple(self, key: str, default: U) -> Union[Tuple[str, ...], U]: ...
 
     @overload
-    def get_tuple(self, key: str, default: None = None) -> Optional[Tuple[str, ...]]:
-        ...
+    def get_tuple(
+        self, key: str, default: None = None
+    ) -> Optional[Tuple[str, ...]]: ...
 
     def get_tuple(self, key: str, default: object = None) -> object:
         return self.parse(parse_tuple, key, default=default)
 
     @overload
-    def get_list(self, key: str, default: U) -> Union[List[str], U]:
-        ...
+    def get_list(self, key: str, default: U) -> Union[List[str], U]: ...
 
     @overload
-    def get_list(self, key: str, default: None = None) -> Optional[List[str]]:
-        ...
+    def get_list(self, key: str, default: None = None) -> Optional[List[str]]: ...
 
     def get_list(self, key: str, default: object = None) -> object:
         return self.parse(parse_list, key, default=default)
 
     @overload
-    def get_set(self, key: str, default: U) -> Union[Set[str], U]:
-        ...
+    def get_set(self, key: str, default: U) -> Union[Set[str], U]: ...
 
     @overload
-    def get_set(self, key: str, default: None = None) -> Optional[Set[str]]:
-        ...
+    def get_set(self, key: str, default: None = None) -> Optional[Set[str]]: ...
 
     def get_set(self, key: str, default: object = None) -> object:
         return self.parse(parse_set, key, default=default)

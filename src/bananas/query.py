@@ -38,12 +38,16 @@ class ModelDictIterable:
         query = queryset.query
         compiler = query.get_compiler(queryset.db)
 
-        field_names: List[str] = list(query.values_select)
-        extra_names: List[str] = list(query.extra_select)
-        annotation_names: List[str] = list(query.annotation_select)
+        if hasattr(query, "selected") and query.selected:
+            names = list(query.selected)
+        else:
+            extra_names: List[str] = list(query.extra_select)
+            field_names: List[str] = list(query.values_select)
+            annotation_names: List[str] = list(query.annotation_select)
 
-        # Modified super(); rename fields given in queryset.values() kwargs
-        names = extra_names + field_names + annotation_names
+            # Modified super(); rename fields given in queryset.values() kwargs
+            names = extra_names + field_names + annotation_names
+
         if self.named_fields:
             names = self.rename_fields(names)
 
@@ -62,8 +66,7 @@ _MT_co = TypeVar("_MT_co", bound=Model, covariant=True)
 class IsQuerySet(Protocol[_MT_co]):
     def values(
         self, *fields: Union[str, Combinable], **expressions: Any
-    ) -> "_QuerySet[_MT_co, ModelDict]":
-        ...
+    ) -> "_QuerySet[_MT_co, ModelDict]": ...
 
 
 class ModelDictQuerySetMixin:
@@ -74,7 +77,7 @@ class ModelDictQuerySetMixin:
             fields += tuple(named_fields.values())
 
         clone = self.values(*fields)
-        clone._iterable_class = ModelDictIterable  # type: ignore[assignment]
+        clone._iterable_class = ModelDictIterable
 
         # QuerySet._hints is a dict object used by db router
         # to aid deciding which db should get a request. Currently
@@ -82,7 +85,7 @@ class ModelDictQuerySetMixin:
         # fine to set a custom key on this dict as it's a guaranteed
         # way that it'll be returned with the QuerySet instance
         # while leaving the queryset intact
-        clone._add_hints(**{"_named_fields": named_fields})  # type: ignore[attr-defined]
+        clone._add_hints(**{"_named_fields": named_fields})
 
         return clone
 
@@ -92,7 +95,7 @@ _MT = TypeVar("_MT", bound=Model)
 
 if TYPE_CHECKING:
 
-    class ModelDictQuerySet(  # type: ignore[misc]
+    class ModelDictQuerySet(
         ModelDictQuerySetMixin,
         QuerySet[_MT],
         IsQuerySet[_MT],
