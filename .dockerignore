@@ -1,0 +1,12 @@
+*
+!Dockerfile
+!setup.py
+!setup.cfg
+!pyproject.toml
+!README.rst
+!MANIFEST.in
+!LICENSE
+!src/
+!src/**
+!example/
+!example/**

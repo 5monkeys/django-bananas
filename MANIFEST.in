@@ -1,5 +1,5 @@
 include setup.py README.rst MANIFEST.in LICENSE AUTHORS
-exclude tox.ini *.yml *.yaml Makefile Dockerfile .editorconfig flake.nix flake.lock
+exclude tox.ini *.yml *.yaml Makefile Dockerfile .editorconfig flake.nix flake.lock .dockerignore
 
 recursive-include src/bananas/templates *
 recursive-include src/bananas/static *
