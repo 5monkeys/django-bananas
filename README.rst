@@ -32,13 +32,11 @@ with the ``drf`` extra to keep those in sync:
 
 Currently tested only for
 
--   Django 3.2 under Python 3.8-3.10
--   Django 4.0 under Python 3.8-3.10
--   Django 4.1 under Python 3.8-3.13
--   Django 4.2 under Python 3.8-3.13
+-   Django 4.2 under Python 3.8-3.12
 -   Django 5.0 under Python 3.10-3.13
 -   Django 5.1 under Python 3.10-3.13
--   Django 5.2 under Python 3.10-3.13
+-   Django 5.2 under Python 3.10-3.14
+-   Django 6.0 under Python 3.12-3.14
 
 Pull requests welcome!
 
@@ -529,12 +527,12 @@ Testing and development requirements can be installed using package extras
 ``drf`` extra when installing ``dev``.
 
 To get started, setup a virtualenv and then install test requirements and run
-tests and checks on Python 3.9/Django 3.1 with:
+tests and typehints on Python 3.14/Django 6.0 with:
 
 .. code-block:: bash
 
     python3 -m pip install -e .[test]
-    TOXENV=py39-django31,checks python3 -m tox
+    TOXENV=py314-django60,type-check python3 -m tox
 
 You can install development requirements into your virtualenv. Linting and
 formatting uses pre-commit which you could also install on a system level.
