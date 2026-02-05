@@ -56,6 +56,10 @@ body:not(.popup) #header #object-tools {
   text-indent: -20000px;
 }
 
+#changelist .changelist-form-container:has(#changelist-filter) > div {
+  max-width: 100%;
+}
+
 #header #changelist-search input[type="submit"]:hover {
   background-image: url(../../img/search.svg), linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15));
 }
