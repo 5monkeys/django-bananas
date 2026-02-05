@@ -35,6 +35,7 @@ class AllowIfMatchAPI(FencedUpdateModelMixin, GenericViewSet):
 
 
 router = DefaultRouter()
+router.include_format_suffixes = False
 router.register(r"if-unmodified", AllowIfUnmodifiedSinceAPI, "if-unmodified")
 router.register(r"if-match", AllowIfMatchAPI, "if-match")
 

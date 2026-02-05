@@ -1,16 +1,28 @@
+import os
 from pathlib import Path
-
-try:
-    from test.support.os_helper import (
-        EnvironmentVarGuard,
-    )
-except ImportError:  # pragma: no cover
-    # Compatibility for Python <=3.9
-    from test.support import EnvironmentVarGuard
 
 from django.test import TestCase
 
 from bananas import secrets
+
+
+class EnvironmentVarGuard:
+    def __init__(self):
+        self._original = None
+
+    def __enter__(self):
+        self._original = os.environ.copy()
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        os.environ.clear()
+        os.environ.update(self._original or {})
+
+    def set(self, name, value):
+        os.environ[str(name)] = str(value)
+
+    def unset(self, name):
+        os.environ.pop(name, None)
 
 
 class SecretsTest(TestCase):

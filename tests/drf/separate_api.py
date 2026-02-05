@@ -11,6 +11,7 @@ class SomeThingAPI(ViewSet):
 
 
 separate_router = DefaultRouter()
+separate_router.include_format_suffixes = False
 separate_router.register(r"some-thing", SomeThingAPI, "some-thing")
 
 urlpatterns = [re_path("", include(separate_router.urls))]
