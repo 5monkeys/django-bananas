@@ -11,6 +11,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
 )
 
 from django.db.models import Model
@@ -66,7 +67,7 @@ _MT_co = TypeVar("_MT_co", bound=Model, covariant=True)
 class IsQuerySet(Protocol[_MT_co]):
     def values(
         self, *fields: Union[str, Combinable], **expressions: Any
-    ) -> "_QuerySet[_MT_co, ModelDict]": ...
+    ) -> "_QuerySet[_MT_co, dict[str, Any]]": ...
 
 
 class ModelDictQuerySetMixin:
@@ -76,8 +77,8 @@ class ModelDictQuerySetMixin:
         if named_fields:
             fields += tuple(named_fields.values())
 
-        clone = self.values(*fields)
-        clone._iterable_class = ModelDictIterable
+        clone = cast("_QuerySet[_MT_co, ModelDict]", self.values(*fields))
+        clone._iterable_class = ModelDictIterable  # type: ignore[assignment]
 
         # QuerySet._hints is a dict object used by db router
         # to aid deciding which db should get a request. Currently
@@ -85,7 +86,7 @@ class ModelDictQuerySetMixin:
         # fine to set a custom key on this dict as it's a guaranteed
         # way that it'll be returned with the QuerySet instance
         # while leaving the queryset intact
-        clone._add_hints(**{"_named_fields": named_fields})
+        clone._add_hints(**{"_named_fields": named_fields})  # type: ignore[attr-defined]
 
         return clone
 

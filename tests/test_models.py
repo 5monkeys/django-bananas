@@ -116,9 +116,11 @@ class QuerySetTest(TestCase):
         self.assertTrue(hasattr(Parent.objects, "dicts"))
 
         simple = Simple.objects.all().dicts("name").first()  # type: ignore[attr-defined]
+        assert simple
         self.assertEqual(simple.name, self.simple.name)
 
         simple = Simple.objects.dicts("name").first()
+        assert simple
         self.assertEqual(simple.name, self.simple.name)
 
         child = Child.objects.dicts("name", "parent__name").first()

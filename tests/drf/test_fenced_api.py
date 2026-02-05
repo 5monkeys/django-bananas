@@ -12,7 +12,7 @@ from tests.models import Parent
 
 
 class TestAllowIfUnmodifiedSince(APITestCase):
-    url = partial(reverse, "if-unmodified-detail")
+    url = staticmethod(partial(reverse, "if-unmodified-detail"))
 
     def test_returns_bad_request_for_missing_header(self):
         item = Parent.objects.create()
@@ -62,7 +62,7 @@ class TestAllowIfUnmodifiedSince(APITestCase):
 
 
 class TestAllowIfMatch(APITestCase):
-    url = partial(reverse, "if-match-detail")
+    url = staticmethod(partial(reverse, "if-match-detail"))
 
     def test_returns_bad_request_for_missing_header(self):
         item = Parent.objects.create()
