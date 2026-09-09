@@ -229,17 +229,17 @@ class QuerySetTest(TestCase):
 
         field = SecretModel._meta.get_field("secret")
 
-        field_length = field.get_field_length(field.num_bytes)
+        field_length = field.get_field_length(field.num_bytes)  # type: ignore[union-attr]
 
         self.assertEqual(len(model.secret), field_length)
 
-        field.auto = False
-        self.assertEqual(len(field.pre_save(model, False)), field_length)
+        field.auto = False  # type: ignore[union-attr]
+        self.assertEqual(len(field.pre_save(model, False)), field_length)  # type: ignore[union-attr]
 
         self.assertRaisesMessage(
             ValidationError,
             "SecretField.get_random_bytes returned None",
-            field._check_random_bytes,
+            field._check_random_bytes,  # type: ignore[union-attr]
             None,
         )
 
@@ -247,7 +247,7 @@ class QuerySetTest(TestCase):
             ValidationError,
             "Too few random bytes received from get_random_bytes. "
             "Number of bytes=3, min_length=32",
-            field._check_random_bytes,
+            field._check_random_bytes,  # type: ignore[union-attr]
             "123",
         )
 
@@ -256,7 +256,7 @@ class QuerySetTest(TestCase):
 
         field = URLSecretModel._meta.get_field("secret")
 
-        field_length = field.get_field_length(field.num_bytes)
+        field_length = field.get_field_length(field.num_bytes)  # type: ignore[union-attr]
 
         # secret value may be shorter
         self.assertLessEqual(len(model.secret), field_length)

@@ -4,14 +4,17 @@ from django.conf import settings
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import gettext as _
 from drf_yasg import openapi
-from drf_yasg.generators import EndpointEnumerator, OpenAPISchemaGenerator
+from drf_yasg.generators import (
+    EndpointEnumerator,
+    OpenAPISchemaGenerator,
+    is_custom_action,
+)
 from drf_yasg.inspectors.view import SwaggerAutoSchema
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.request import Request
 from rest_framework.routers import SimpleRouter
-from rest_framework.schemas.coreapi import is_custom_action
 
 from bananas.admin.api.versioning import BananasVersioning
 
